@@ -320,25 +320,32 @@ a:hover {
     background: linear-gradient(145deg, #25252f, #4d4d5c);
 }
 
-#selfDestructButton {
-    grid-column: 1 / -1;
+#empireButton {
+    background: linear-gradient(145deg, #5a3d00, #d9a400);
+}
 
+.menuItem.slim {
     flex-direction: row;
-    gap: 12px;
+    gap: 8px;
 
     min-height: 0;
-    margin-top: 6px;
-    padding: 13px;
+    margin-top: 4px;
+    padding: 12px 4px;
 
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+}
+
+.menuItem.slim .mi {
+    font-size: 18px;
+}
+
+#selfDestructButton {
     border-color: rgba(255, 70, 70, 0.4);
 
     background: linear-gradient(145deg, #2b0000, #7d0000);
 
     color: #ffb3b3;
-}
-
-#selfDestructButton .mi {
-    font-size: 20px;
 }
 
 #homeMenu button:active {
@@ -2216,11 +2223,8 @@ input:focus-visible {
 #casinoTitle,
 #casesTitle,
 #stockTitle {
-    background: linear-gradient(180deg, #ffffff 20%, #b9b9c8);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: none;
+    color: #fff;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
 }
 
 #backButton,
@@ -2557,6 +2561,412 @@ input:focus-visible {
     border-color: rgba(255, 90, 90, 0.5);
 }
 
+
+/* =========================================================
+   EMPIRE (businesses + real estate)
+   ========================================================= */
+
+#empireScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 730;
+
+    display: none;
+
+    overflow-y: auto;
+
+    padding: 35px 20px 60px;
+
+    background:
+        radial-gradient(circle at top, rgba(217, 164, 0, 0.16), transparent 45%),
+        rgba(4, 4, 4, 0.98);
+
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a46 transparent;
+}
+
+.screenBack {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 800;
+
+    padding: 11px 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+
+    background: #14141c;
+    color: white;
+
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.screenBack:hover {
+    background: #292930;
+    transform: translateY(-2px);
+}
+
+#empireTitle {
+    margin: 10px 0 18px;
+
+    text-align: center;
+    font-size: clamp(32px, 6vw, 50px);
+    font-weight: 1000;
+    letter-spacing: 3px;
+
+    color: #fff3c4;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
+}
+
+#empireStats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+
+    width: min(900px, 96vw);
+    margin: 0 auto 20px;
+}
+
+.empireStat {
+    padding: 14px 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+
+    background: linear-gradient(160deg, #1a1a22, #0c0c10);
+
+    text-align: center;
+}
+
+.empireStatLabel {
+    color: #8b8b9b;
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.empireStatValue {
+    margin-top: 6px;
+
+    color: #ffd84d;
+
+    font-size: 20px;
+    font-weight: 1000;
+}
+
+.empireStatValue.green {
+    color: #5dff8a;
+}
+
+.empireStatSub {
+    margin-top: 3px;
+
+    color: #777;
+
+    font-size: 11px;
+}
+
+#empireToolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    width: min(900px, 96vw);
+    margin: 0 auto 14px;
+}
+
+.empireTabs,
+.empireModes {
+    display: flex;
+    gap: 6px;
+}
+
+.empireTab,
+.empireMode {
+    padding: 10px 16px;
+
+    border: 1px solid #3a3a46;
+    border-radius: 10px;
+
+    background: #15151c;
+    color: #bbb;
+
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.empireMode {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.empireTab.active {
+    border-color: rgba(255, 216, 77, 0.6);
+    background: linear-gradient(135deg, #4a3500, #9a7300);
+    color: white;
+}
+
+.empireMode.active {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: #34343f;
+    color: white;
+}
+
+#empireMarket {
+    display: none;
+
+    width: min(900px, 96vw);
+    margin: 0 auto 14px;
+    padding: 14px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+
+    background: linear-gradient(160deg, #1a1a22, #0c0c10);
+}
+
+#marketTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    font-weight: 900;
+}
+
+#marketMult {
+    color: #ffd84d;
+}
+
+#marketBar {
+    position: relative;
+
+    height: 8px;
+    margin: 12px 0 8px;
+
+    border-radius: 8px;
+
+    background: linear-gradient(90deg, #14804a, #444 50%, #b02222);
+}
+
+#marketDot {
+    position: absolute;
+    top: -4px;
+
+    width: 16px;
+    height: 16px;
+
+    margin-left: -8px;
+
+    border: 2px solid #fff;
+    border-radius: 50%;
+
+    background: #111;
+}
+
+#marketNote {
+    color: #8b8b9b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.empireList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    width: min(900px, 96vw);
+    margin: 0 auto;
+}
+
+.empireRow {
+    display: grid;
+    grid-template-columns: 58px 1fr auto;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 4px solid #2c2c36;
+    border-radius: 16px;
+
+    background: linear-gradient(160deg, #16161d, #0b0b0f);
+}
+
+.empireRow.owned {
+    border-left-color: #ffd84d;
+}
+
+.empireIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    height: 58px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    font-size: 32px;
+}
+
+.empireName {
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.empireMeta {
+    margin-top: 3px;
+
+    color: #a5a5b3;
+
+    font-size: 13px;
+}
+
+.empireInc {
+    color: #5dff8a;
+    font-weight: 900;
+}
+
+.msBar {
+    height: 6px;
+    margin-top: 9px;
+
+    border-radius: 6px;
+
+    background: #23232d;
+
+    overflow: hidden;
+}
+
+.msFill {
+    height: 100%;
+
+    border-radius: 6px;
+
+    background: linear-gradient(90deg, #b88a00, #ffe27a);
+}
+
+.msText {
+    margin-top: 4px;
+
+    color: #777;
+
+    font-size: 11px;
+}
+
+.empireActions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.empireBtn {
+    min-width: 150px;
+    padding: 10px 14px;
+
+    border: 1px solid rgba(255, 216, 77, 0.4);
+    border-radius: 12px;
+
+    background: linear-gradient(135deg, #5a3d00, #b68900);
+    color: #fff;
+
+    font-weight: 900;
+    cursor: pointer;
+
+    line-height: 1.25;
+
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.empireBtn small {
+    display: block;
+
+    color: #ffe9a0;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.empireBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+}
+
+.empireBtn:disabled {
+    border-color: #3a3a46;
+
+    background: #1c1c24;
+    color: #777;
+
+    cursor: not-allowed;
+}
+
+.empireBtn:disabled small {
+    color: #666;
+}
+
+.empireBtn.sell {
+    border-color: rgba(255, 90, 90, 0.4);
+
+    background: linear-gradient(135deg, #4a1010, #8a1c1c);
+}
+
+.empireBtn.sell:disabled {
+    border-color: #3a3a46;
+    background: #1c1c24;
+}
+
+.empireFoot {
+    width: min(900px, 96vw);
+    margin: 18px auto 0;
+
+    color: #777;
+
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+
+    #empireStats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .empireRow {
+        grid-template-columns: 48px 1fr;
+    }
+
+    .empireIcon {
+        width: 48px;
+        height: 48px;
+
+        font-size: 26px;
+    }
+
+    .empireActions {
+        grid-column: 1 / -1;
+        flex-direction: row;
+    }
+
+    .empireBtn {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
 /* =========================================================
    MOBILE
    ========================================================= */
@@ -2722,11 +3132,15 @@ alt=""
                 <span class="mi">📈</span><span>STOCK MARKET</span>
             </button>
 
-            <button id="backgroundButton" class="menuItem" role="menuitem" data-keep="1" onclick="changeBackground()">
-                <span class="mi">🖼️</span><span>CHANGE BACKGROUND</span>
+            <button id="empireButton" class="menuItem" role="menuitem" onclick="openEmpire()">
+                <span class="mi">🏢</span><span>EMPIRE</span>
             </button>
 
-            <button id="selfDestructButton" class="menuItem" role="menuitem" onclick="selfDestruct()">
+            <button id="backgroundButton" class="menuItem slim" role="menuitem" data-keep="1" onclick="changeBackground()">
+                <span class="mi">🖼️</span><span>BACKGROUND</span>
+            </button>
+
+            <button id="selfDestructButton" class="menuItem slim" role="menuitem" onclick="selfDestruct()">
                 <span class="mi">💥</span><span>SELF DESTRUCT</span>
             </button>
 
@@ -3622,6 +4036,75 @@ onclick="closeCases()"
 </div>
 
 <!-- =========================================================
+     EMPIRE
+     ========================================================= -->
+
+<div id="empireScreen">
+
+    <button class="screenBack" onclick="closeEmpire()">← BACK</button>
+
+    <h1 id="empireTitle">🏢 EMPIRE</h1>
+
+    <div id="empireStats">
+
+        <div class="empireStat">
+            <div class="empireStatLabel">CASH</div>
+            <div class="empireStatValue" id="empCash">$0</div>
+        </div>
+
+        <div class="empireStat">
+            <div class="empireStatLabel">INCOME / SEC</div>
+            <div class="empireStatValue green" id="empIncome">$0</div>
+            <div class="empireStatSub" id="empIncomeSub"></div>
+        </div>
+
+        <div class="empireStat">
+            <div class="empireStatLabel">INCOME / HOUR</div>
+            <div class="empireStatValue green" id="empHour">$0</div>
+        </div>
+
+        <div class="empireStat">
+            <div class="empireStatLabel">NET WORTH</div>
+            <div class="empireStatValue" id="empWorth">$0</div>
+            <div class="empireStatSub">cash + property value</div>
+        </div>
+
+    </div>
+
+    <div id="empireToolbar">
+
+        <div class="empireTabs">
+            <button class="empireTab active" id="tabBiz" onclick="empireSetTab('biz')">🏪 BUSINESSES</button>
+            <button class="empireTab" id="tabProp" onclick="empireSetTab('prop')">🏘️ REAL ESTATE</button>
+        </div>
+
+        <div class="empireModes" id="empireModes">
+            <button class="empireMode active" data-mode="1" onclick="empireSetMode('1')">×1</button>
+            <button class="empireMode" data-mode="10" onclick="empireSetMode('10')">×10</button>
+            <button class="empireMode" data-mode="100" onclick="empireSetMode('100')">×100</button>
+            <button class="empireMode" data-mode="max" onclick="empireSetMode('max')">MAX</button>
+        </div>
+
+    </div>
+
+    <div id="empireMarket">
+        <div id="marketTop">
+            <span id="marketLabel">HOUSING MARKET</span>
+            <span id="marketMult">×1.00</span>
+        </div>
+        <div id="marketBar"><div id="marketDot"></div></div>
+        <div id="marketNote"></div>
+    </div>
+
+    <div class="empireList" id="empireBizList"></div>
+
+    <div class="empireList" id="empirePropList" style="display:none"></div>
+
+    <div class="empireFoot" id="empireFoot"></div>
+
+</div>
+
+<!-- =========================================================
      SELF DESTRUCT
      ========================================================= -->
 
@@ -4510,6 +4993,7 @@ function doRebirth() {
         "• Your click upgrades will reset to $1 per click\n" +
         "• You keep your stocks & portfolio\n" +
         "• You keep your offline vault & its upgrades\n" +
+        "• You keep your businesses & real estate\n" +
         "• Permanent multiplier becomes " +
         (getRebirthMultiplier() + 0.25).toFixed(2) +
         "×\n\n" +
@@ -8343,6 +8827,8 @@ function resetGame() {
 
 function performReset() {
 
+    resetEmpire();
+
 
     gabeClicks = 0;
 
@@ -9011,6 +9497,11 @@ function selfDestruct() {
         "none";
 
     document.getElementById(
+        "empireScreen"
+    ).style.display =
+        "none";
+
+    document.getElementById(
         "backgroundButton"
     ).style.display =
         "none";
@@ -9304,6 +9795,787 @@ updateClicker();
             closeConfirm();
         }
     });
+
+})();
+</script>
+
+<script>
+/* =========================================================
+   EMPIRE: businesses + real estate (passive income)
+   ========================================================= */
+
+(function() {
+
+    "use strict";
+
+    /* ---------- tuning ---------- */
+
+    const BIZ_RATIO = 1.14;          /* each extra level costs 14% more */
+    const MAX_LEVEL = 250;
+    const MILESTONES = [10, 25, 50, 100, 150, 200, 250];   /* income x2 each */
+
+    const PROP_RATIO = 1.10;         /* each extra unit of a property costs 10% more */
+    const SELL_RATE = 0.85;          /* you get 85% of market value when selling */
+    const SYNERGY_PER_PROPERTY = 0.01;   /* +1% business income per property owned */
+    const SYNERGY_MAX = 2;               /* ...up to +200% */
+
+    const OFFLINE_CAP_MS = 4 * 60 * 60 * 1000;   /* earn while away, max 4 hours */
+
+    /* ---------- definitions ---------- */
+
+    function roundSig(n, sig) {
+        const p = Math.pow(10, Math.floor(Math.log10(n)) - sig + 1);
+        return Math.round(n / p) * p;
+    }
+
+    const BIZ_NAMES = [
+        ["🍋", "Lemonade Stand"],
+        ["📰", "Paper Route"],
+        ["🚗", "Car Wash"],
+        ["🍕", "Pizza Shop"],
+        ["🕹️", "Arcade"],
+        ["🏋️", "Gym Chain"],
+        ["☕", "Coffee Empire"],
+        ["💻", "Tech Startup"],
+        ["🎬", "Movie Studio"],
+        ["🛢️", "Oil Company"],
+        ["🚀", "Space Agency"],
+        ["👑", "Gabe Corp"]
+    ];
+
+    const BIZ = BIZ_NAMES.map(function(n, i) {
+
+        const cost = roundSig(250 * Math.pow(7.5, i), 2);
+
+        return {
+            id: "biz" + i,
+            icon: n[0],
+            name: n[1],
+            cost: cost,
+            /* income per second at level 1 (payback ~8-14 minutes) */
+            base: cost / (450 + 50 * i)
+        };
+    });
+
+    const PROP_NAMES = [
+        ["🏠", "Studio Apartment"],
+        ["🏘️", "Duplex"],
+        ["🏡", "Suburban House"],
+        ["🏬", "Strip Mall"],
+        ["🏢", "Apartment Block"],
+        ["🏙️", "Office Tower"],
+        ["🏨", "Luxury Hotel"],
+        ["🛍️", "Shopping Mall"],
+        ["🌆", "Skyscraper"],
+        ["🏝️", "Private Island"]
+    ];
+
+    const PROPS = PROP_NAMES.map(function(n, i) {
+
+        const price = roundSig(5000 * Math.pow(8, i), 2);
+
+        return {
+            id: "prop" + i,
+            icon: n[0],
+            name: n[1],
+            price: price,
+            /* rent per second per unit (payback ~25-40 minutes) */
+            rent: price / (1500 + 100 * i)
+        };
+    });
+
+
+    /* ---------- state ---------- */
+
+    let bizLevel = {};
+    let propOwned = {};
+    let carry = 0;
+    let lastTick = Date.now();
+    let buyMode = "1";
+    let tab = "biz";
+
+    function loadJSON(key) {
+        try {
+            const v = JSON.parse(localStorage.getItem(key));
+            return v && typeof v === "object" ? v : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    bizLevel = loadJSON("empireBiz");
+    propOwned = loadJSON("empireProps");
+
+    function saveEmpire() {
+        try {
+            localStorage.setItem("empireBiz", JSON.stringify(bizLevel));
+            localStorage.setItem("empireProps", JSON.stringify(propOwned));
+            localStorage.setItem("empireLast", String(Date.now()));
+        } catch (e) {}
+    }
+
+    window.resetEmpire = function() {
+        bizLevel = {};
+        propOwned = {};
+        carry = 0;
+        lastTick = Date.now();
+        saveEmpire();
+        updateUI(true);
+    };
+
+
+    /* ---------- number formatting ---------- */
+
+    const SUFFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc"];
+
+    function fmt(n) {
+
+        if (!isFinite(n)) {
+            return "∞";
+        }
+
+        if (n < 1000) {
+            return n < 10 && n % 1 !== 0
+                ? (Math.round(n * 100) / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })
+                : Math.floor(n).toLocaleString("en-US");
+        }
+
+        if (n < 1e6) {
+            return Math.floor(n).toLocaleString("en-US");
+        }
+
+        let tier = Math.min(SUFFIXES.length - 1, Math.floor(Math.log10(n) / 3));
+        const scaled = n / Math.pow(1000, tier);
+
+        return (scaled >= 100 ? scaled.toFixed(0) : scaled >= 10 ? scaled.toFixed(1) : scaled.toFixed(2)) + SUFFIXES[tier];
+    }
+
+    function money(n) {
+        return "$" + fmt(n);
+    }
+
+
+    /* ---------- economy maths ---------- */
+
+    function level(b) { return bizLevel[b.id] || 0; }
+    function owned(p) { return propOwned[p.id] || 0; }
+
+    function milestonesPassed(lv) {
+        let c = 0;
+        for (let i = 0; i < MILESTONES.length; i++) {
+            if (MILESTONES[i] <= lv) { c++; }
+        }
+        return c;
+    }
+
+    function nextMilestone(lv) {
+        for (let i = 0; i < MILESTONES.length; i++) {
+            if (MILESTONES[i] > lv) { return MILESTONES[i]; }
+        }
+        return null;
+    }
+
+    function totalProps() {
+        let n = 0;
+        PROPS.forEach(function(p) { n += owned(p); });
+        return n;
+    }
+
+    function synergy() {
+        return 1 + Math.min(SYNERGY_MAX, SYNERGY_PER_PROPERTY * totalProps());
+    }
+
+    function bizIncomeAt(b, lv) {
+        return b.base * lv * Math.pow(2, milestonesPassed(lv));
+    }
+
+    function bizBusinessIncome() {
+        let sum = 0;
+        BIZ.forEach(function(b) { sum += bizIncomeAt(b, level(b)); });
+        return sum * synergy();
+    }
+
+    function rentIncome() {
+        let sum = 0;
+        PROPS.forEach(function(p) { sum += owned(p) * p.rent; });
+        return sum;
+    }
+
+    function totalIncome() {
+        return bizBusinessIncome() + rentIncome();
+    }
+
+    /* Housing market: slow smooth cycle (same for everyone, based on the clock). */
+    function marketAt(t) {
+        const min = t / 60000;
+        return 1 +
+            0.22 * Math.sin(2 * Math.PI * min / 50) +
+            0.08 * Math.sin(2 * Math.PI * min / 13 + 1.3);
+    }
+
+    function market() {
+        return marketAt(Date.now());
+    }
+
+    /* cost of buying k more levels of a business (current level lv) */
+    function bizBulkCost(b, lv, k) {
+        return Math.ceil(b.cost * Math.pow(BIZ_RATIO, lv) * (Math.pow(BIZ_RATIO, k) - 1) / (BIZ_RATIO - 1));
+    }
+
+    function bizMaxAffordable(b, lv, cash) {
+
+        const room = MAX_LEVEL - lv;
+
+        if (room <= 0) { return 0; }
+
+        const first = b.cost * Math.pow(BIZ_RATIO, lv);
+
+        if (cash < Math.ceil(first)) { return 0; }
+
+        let k = Math.floor(Math.log(1 + cash * (BIZ_RATIO - 1) / first) / Math.log(BIZ_RATIO));
+
+        k = Math.max(0, Math.min(room, k));
+
+        while (k > 0 && bizBulkCost(b, lv, k) > cash) { k--; }
+
+        return k;
+    }
+
+    function bizPlan(b) {
+
+        const lv = level(b);
+        const room = MAX_LEVEL - lv;
+
+        if (room <= 0) { return { k: 0, cost: 0, maxed: true }; }
+
+        let k;
+
+        if (buyMode === "max") {
+            k = bizMaxAffordable(b, lv, gabeClicks);
+            if (k === 0) { k = 1; }
+        } else {
+            k = Math.min(parseInt(buyMode, 10), room);
+        }
+
+        return { k: k, cost: bizBulkCost(b, lv, k), maxed: false };
+    }
+
+    /* property pricing */
+    function propBulkCost(p, have, k, m) {
+        return Math.ceil(p.price * m * Math.pow(PROP_RATIO, have) * (Math.pow(PROP_RATIO, k) - 1) / (PROP_RATIO - 1));
+    }
+
+    function propMaxAffordable(p, have, cash, m) {
+
+        const first = p.price * m * Math.pow(PROP_RATIO, have);
+
+        if (cash < Math.ceil(first)) { return 0; }
+
+        let k = Math.floor(Math.log(1 + cash * (PROP_RATIO - 1) / first) / Math.log(PROP_RATIO));
+
+        k = Math.max(0, k);
+
+        while (k > 0 && propBulkCost(p, have, k, m) > cash) { k--; }
+
+        return k;
+    }
+
+    function propPlan(p, m) {
+
+        const have = owned(p);
+
+        let k;
+
+        if (buyMode === "max") {
+            k = propMaxAffordable(p, have, gabeClicks, m);
+            if (k === 0) { k = 1; }
+        } else {
+            k = parseInt(buyMode, 10);
+        }
+
+        return { k: k, cost: propBulkCost(p, have, k, m) };
+    }
+
+    function propSellValue(p, m) {
+        const have = owned(p);
+        if (have <= 0) { return 0; }
+        return Math.floor(p.price * m * Math.pow(PROP_RATIO, have - 1) * SELL_RATE);
+    }
+
+    function propValue(p, m) {
+        const have = owned(p);
+        let v = 0;
+        for (let j = 0; j < have; j++) {
+            v += Math.floor(p.price * m * Math.pow(PROP_RATIO, j) * SELL_RATE);
+        }
+        return v;
+    }
+
+    function netWorth() {
+        const m = market();
+        let v = gabeClicks;
+        PROPS.forEach(function(p) { v += propValue(p, m); });
+        return v;
+    }
+
+
+    /* ---------- passive income tick ---------- */
+
+    function accrue() {
+
+        const now = Date.now();
+
+        let dt = now - lastTick;
+
+        if (dt < 0) { dt = 0; }
+        if (dt > OFFLINE_CAP_MS) { dt = OFFLINE_CAP_MS; }
+
+        lastTick = now;
+
+        const inc = totalIncome();
+
+        if (inc <= 0 || dt <= 0) { return 0; }
+
+        carry += inc * dt / 1000;
+
+        const whole = Math.floor(carry);
+
+        if (whole > 0) {
+            gabeClicks += whole;
+            carry -= whole;
+        }
+
+        return whole;
+    }
+
+    /* Keep income flowing before every save, and save the empire with the game. */
+    const originalSave = window.saveGame;
+
+    window.saveGame = function() {
+        accrue();
+        originalSave();
+        saveEmpire();
+    };
+
+    setInterval(function() {
+
+        const earned = accrue();
+
+        if (earned > 0) {
+            updateClicker();
+        }
+
+        updateUI(false);
+
+    }, 1000);
+
+
+    /* ---------- UI ---------- */
+
+    const bizRows = {};
+    const propRows = {};
+
+    function setText(el, value) {
+        if (el._v !== value) {
+            el._v = value;
+            el.textContent = value;
+        }
+    }
+
+    function setDisabled(el, value) {
+        if (el.disabled !== value) { el.disabled = value; }
+    }
+
+    function el(tag, cls, text) {
+        const e = document.createElement(tag);
+        if (cls) { e.className = cls; }
+        if (text !== undefined) { e.textContent = text; }
+        return e;
+    }
+
+    function buildRow(def, kind) {
+
+        const row = el("div", "empireRow");
+
+        row.appendChild(el("div", "empireIcon", def.icon));
+
+        const info = el("div", "empireInfo");
+
+        info.appendChild(el("div", "empireName", def.name));
+
+        const meta = el("div", "empireMeta");
+        info.appendChild(meta);
+
+        const parts = { row: row, meta: meta };
+
+        if (kind === "biz") {
+
+            const bar = el("div", "msBar");
+            const fill = el("div", "msFill");
+            bar.appendChild(fill);
+            info.appendChild(bar);
+
+            const ms = el("div", "msText");
+            info.appendChild(ms);
+
+            parts.fill = fill;
+            parts.ms = ms;
+        }
+
+        row.appendChild(info);
+
+        const actions = el("div", "empireActions");
+
+        const buy = el("button", "empireBtn");
+        const buyTop = el("span");
+        const buySub = el("small");
+        buy.appendChild(buyTop);
+        buy.appendChild(buySub);
+        actions.appendChild(buy);
+
+        parts.buy = buy;
+        parts.buyTop = buyTop;
+        parts.buySub = buySub;
+
+        if (kind === "prop") {
+
+            const sell = el("button", "empireBtn sell");
+            const sellTop = el("span");
+            const sellSub = el("small");
+            sell.appendChild(sellTop);
+            sell.appendChild(sellSub);
+            actions.appendChild(sell);
+
+            parts.sell = sell;
+            parts.sellTop = sellTop;
+            parts.sellSub = sellSub;
+        }
+
+        row.appendChild(actions);
+
+        return parts;
+    }
+
+    function buildUI() {
+
+        const bizList = document.getElementById("empireBizList");
+        const propList = document.getElementById("empirePropList");
+
+        BIZ.forEach(function(b) {
+            const parts = buildRow(b, "biz");
+            parts.buy.addEventListener("click", function() { buyBiz(b); });
+            bizRows[b.id] = parts;
+            bizList.appendChild(parts.row);
+        });
+
+        PROPS.forEach(function(p) {
+            const parts = buildRow(p, "prop");
+            parts.buy.addEventListener("click", function() { buyProp(p); });
+            parts.sell.addEventListener("click", function() { sellProp(p); });
+            propRows[p.id] = parts;
+            propList.appendChild(parts.row);
+        });
+    }
+
+    function screenOpen() {
+        return document.getElementById("empireScreen").style.display === "block";
+    }
+
+    function updateUI(force) {
+
+        if (!force && !screenOpen()) { return; }
+
+        const inc = totalIncome();
+        const syn = synergy();
+
+        setText(document.getElementById("empCash"), money(gabeClicks));
+        setText(document.getElementById("empIncome"), money(inc));
+        setText(document.getElementById("empHour"), money(inc * 3600));
+        setText(document.getElementById("empWorth"), money(netWorth()));
+
+        setText(
+            document.getElementById("empIncomeSub"),
+            "businesses " + money(bizBusinessIncome()) + " · rent " + money(rentIncome())
+        );
+
+        if (tab === "biz") {
+
+            BIZ.forEach(function(b) {
+
+                const r = bizRows[b.id];
+                const lv = level(b);
+                const plan = bizPlan(b);
+                const cur = bizIncomeAt(b, lv) * syn;
+                const nxt = nextMilestone(lv);
+
+                r.row.classList.toggle("owned", lv > 0);
+
+                setText(
+                    r.meta,
+                    lv === 0
+                        ? "Not owned · earns " + money(b.base * syn) + "/s at level 1"
+                        : "Level " + lv + " · earning " + money(cur) + "/s"
+                );
+
+                if (nxt) {
+
+                    const prev = MILESTONES[MILESTONES.indexOf(nxt) - 1] || 0;
+
+                    r.fill.style.width = Math.max(0, Math.min(100, (lv - prev) / (nxt - prev) * 100)) + "%";
+
+                    setText(r.ms, "Level " + nxt + ": income ×2");
+
+                } else {
+
+                    r.fill.style.width = "100%";
+
+                    setText(r.ms, "All milestones reached");
+                }
+
+                if (plan.maxed) {
+
+                    setText(r.buyTop, "MAXED");
+                    setText(r.buySub, "level " + MAX_LEVEL);
+
+                    setDisabled(r.buy, true);
+
+                } else {
+
+                    setText(r.buyTop, (lv === 0 ? "BUY" : "UPGRADE") + (plan.k > 1 ? " ×" + plan.k : ""));
+                    setText(r.buySub, money(plan.cost));
+
+                    setDisabled(r.buy, gabeClicks < plan.cost);
+                }
+            });
+
+        } else {
+
+            const m = market();
+
+            const dot = document.getElementById("marketDot");
+            const pos = Math.max(0, Math.min(100, (m - 0.7) / 0.6 * 100));
+
+            dot.style.left = pos + "%";
+
+            const trendUp = marketAt(Date.now() + 5 * 60000) > m;
+
+            setText(document.getElementById("marketMult"), "×" + m.toFixed(2) + (trendUp ? " ▲" : " ▼"));
+
+            setText(
+                document.getElementById("marketLabel"),
+                m < 0.88 ? "🟢 BUYER'S MARKET" : m > 1.12 ? "🔴 SELLER'S MARKET" : "⚪ STABLE MARKET"
+            );
+
+            setText(
+                document.getElementById("marketNote"),
+                (m < 0.88
+                    ? "Property prices are low. Good time to buy."
+                    : m > 1.12
+                        ? "Property prices are high. Good time to sell, a bad time to buy."
+                        : "Prices are around normal.") +
+                " Prices are trending " + (trendUp ? "up" : "down") + " over the next few minutes."
+            );
+
+            PROPS.forEach(function(p) {
+
+                const r = propRows[p.id];
+                const have = owned(p);
+                const plan = propPlan(p, m);
+
+                r.row.classList.toggle("owned", have > 0);
+
+                setText(
+                    r.meta,
+                    "Owned " + have + " · rent " + money(have * p.rent) + "/s (" + money(p.rent) + "/s each)"
+                );
+
+                setText(r.buyTop, "BUY" + (plan.k > 1 ? " ×" + plan.k : ""));
+                setText(r.buySub, money(plan.cost));
+
+                setDisabled(r.buy, gabeClicks < plan.cost);
+
+                setText(r.sellTop, "SELL");
+                setText(r.sellSub, have > 0 ? "for " + money(propSellValue(p, m)) : "none owned");
+
+                setDisabled(r.sell, have <= 0);
+            });
+        }
+
+        setText(
+            document.getElementById("empireFoot"),
+            tab === "biz"
+                ? "Property synergy: +" + Math.round((syn - 1) * 100) + "% business income (+1% per property owned, max +200%). " +
+                  "Your empire keeps earning while you're away for up to 4 hours."
+                : "Selling returns " + Math.round(SELL_RATE * 100) + "% of market value. Rent isn't affected by the market, only buy and sell prices. " +
+                  "Every property owned boosts your business income by 1%."
+        );
+    }
+
+
+    /* ---------- actions ---------- */
+
+    function notEnough() {
+        showToast("You don't have enough money!");
+    }
+
+    function buyBiz(b) {
+
+        const plan = bizPlan(b);
+
+        if (plan.maxed) { return; }
+
+        if (gabeClicks < plan.cost) {
+            notEnough();
+            return;
+        }
+
+        const before = level(b);
+
+        gabeClicks -= plan.cost;
+
+        bizLevel[b.id] = before + plan.k;
+
+        const hit = MILESTONES.filter(function(m) { return m > before && m <= before + plan.k; });
+
+        if (hit.length) {
+            showToast("🎉 " + b.name + " reached level " + hit[hit.length - 1] + "!\nIts income is now ×" + Math.pow(2, milestonesPassed(before + plan.k)) + " from milestones.");
+        } else if (before === 0) {
+            showToast("🏪 " + b.name + " opened!\nEarning " + money(b.base * synergy()) + " per second.");
+        }
+
+        saveGame();
+        updateClicker();
+        updateUI(true);
+    }
+
+    function buyProp(p) {
+
+        const m = market();
+        const plan = propPlan(p, m);
+
+        if (gabeClicks < plan.cost) {
+            notEnough();
+            return;
+        }
+
+        gabeClicks -= plan.cost;
+
+        propOwned[p.id] = owned(p) + plan.k;
+
+        saveGame();
+        updateClicker();
+        updateUI(true);
+    }
+
+    function sellProp(p) {
+
+        if (owned(p) <= 0) { return; }
+
+        const value = propSellValue(p, market());
+
+        gabeClicks += value;
+
+        propOwned[p.id] = owned(p) - 1;
+
+        showToast("🏷️ Sold 1 " + p.name + "\n+" + money(value));
+
+        saveGame();
+        updateClicker();
+        updateUI(true);
+    }
+
+    window.empireSetTab = function(t) {
+
+        tab = t;
+
+        document.getElementById("tabBiz").classList.toggle("active", t === "biz");
+        document.getElementById("tabProp").classList.toggle("active", t === "prop");
+
+        document.getElementById("empireBizList").style.display = t === "biz" ? "flex" : "none";
+        document.getElementById("empirePropList").style.display = t === "prop" ? "flex" : "none";
+        document.getElementById("empireMarket").style.display = t === "prop" ? "block" : "none";
+
+        updateUI(true);
+    };
+
+    window.empireSetMode = function(mode) {
+
+        buyMode = mode;
+
+        document.querySelectorAll("#empireModes .empireMode").forEach(function(btn) {
+            btn.classList.toggle("active", btn.getAttribute("data-mode") === mode);
+        });
+
+        updateUI(true);
+    };
+
+    window.openEmpire = function() {
+
+        document.getElementById("clickerScreen").style.display = "none";
+        document.getElementById("casinoScreen").style.display = "none";
+        document.getElementById("stockMarketScreen").style.display = "none";
+        document.getElementById("casesScreen").style.display = "none";
+        document.getElementById("empireScreen").style.display = "block";
+
+        updateUI(true);
+    };
+
+    window.closeEmpire = function() {
+        document.getElementById("empireScreen").style.display = "none";
+    };
+
+
+    /* ---------- start ---------- */
+
+    buildUI();
+
+    /* Offline earnings from the last time the game was saved. */
+    (function() {
+
+        const now = Date.now();
+        const last = parseInt(localStorage.getItem("empireLast"), 10) || 0;
+
+        lastTick = now;
+
+        if (last <= 0) { return; }
+
+        const away = now - last;
+
+        const inc = totalIncome();
+
+        if (away < 30000 || inc <= 0) { return; }
+
+        const credited = Math.min(away, OFFLINE_CAP_MS);
+
+        const earned = Math.floor(inc * credited / 1000);
+
+        gabeClicks += earned;
+
+        /* wait until the loading screen is gone so the message can be seen */
+        let tries = 0;
+
+        const wait = setInterval(function() {
+
+            const loading = document.getElementById("loadingScreen");
+
+            tries++;
+
+            if (!loading || loading.style.display === "none" || tries > 60) {
+
+                clearInterval(wait);
+
+                showToast(
+                    "💼 Welcome back!\nYour empire earned " + money(earned) + " while you were away" +
+                    (away > OFFLINE_CAP_MS ? " (4 hour limit)." : ".")
+                );
+
+                updateClicker();
+            }
+
+        }, 500);
+    })();
+
+    updateUI(true);
 
 })();
 </script>
