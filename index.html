@@ -524,6 +524,18 @@ button:active {
     line-height: 1.4;
 }
 
+.vaultButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+@media (max-width: 800px) {
+    .vaultButtons {
+        width: 100%;
+    }
+}
+
 #casinoKickOverlay {
     position: fixed;
     inset: 0;
@@ -1999,6 +2011,47 @@ onclick="openCasino()"
 
 </div>
 
+<div class="upgrade" id="vaultBox">
+
+<div class="upgradeInfo">
+
+    <div class="upgradeName">
+        🏦 Offline Vault
+    </div>
+
+    <div class="upgradeDescription" id="vaultDescription">
+        Earns clicks even while the website is closed.
+    </div>
+
+    <div class="upgradeCost" id="vaultStored">
+        Stored: 0 / 50
+    </div>
+
+    <div class="upgradeCost" id="vaultUpgradeInfo"></div>
+
+</div>
+
+<div class="vaultButtons">
+
+    <button
+        id="vaultCollectButton"
+        onclick="collectVault()"
+        disabled
+    >
+        NOTHING TO COLLECT
+    </button>
+
+    <button
+        id="vaultUpgradeButton"
+        onclick="buyVaultUpgrade()"
+    >
+        UPGRADE STORAGE
+    </button>
+
+</div>
+
+</div>
+
 <button
 id="rebirthButton"
 onclick="doRebirth()"
@@ -2809,6 +2862,189 @@ function getRebirthCost() {
 
 
 /* =========================================================
+   OFFLINE VAULT (earns clicks even while the page is closed)
+   ========================================================= */
+
+/* Capacity per level (level 0 is free and always active). */
+const VAULT_CAPACITIES = [50, 100, 250, 500, 1000, 2500, 5000, 10000];
+
+/* Cost to go from level i to level i+1. */
+const VAULT_COSTS = [250, 1000, 5000, 20000, 75000, 250000, 1000000];
+
+/* Base fill rate: 1 click per minute, multiplied by the rebirth multiplier. */
+const VAULT_BASE_PER_MINUTE = 1;
+
+let vaultLevel =
+    Math.min(
+        VAULT_CAPACITIES.length - 1,
+        parseInt(localStorage.getItem("vaultLevel")) || 0
+    );
+
+let vaultAmount =
+    parseFloat(localStorage.getItem("vaultAmount")) || 0;
+
+let vaultLastTick =
+    parseInt(localStorage.getItem("vaultLastTick")) || Date.now();
+
+function getVaultCapacity() {
+    return VAULT_CAPACITIES[vaultLevel];
+}
+
+function getVaultRatePerMinute() {
+    return VAULT_BASE_PER_MINUTE * getRebirthMultiplier();
+}
+
+/* Adds the clicks earned since the last tick (works across page loads,
+   because the timestamp is saved). */
+function updateVault() {
+    const now = Date.now();
+
+    let elapsedMinutes = (now - vaultLastTick) / 60000;
+
+    if (elapsedMinutes < 0) {
+        elapsedMinutes = 0;
+    }
+
+    vaultAmount = Math.min(
+        getVaultCapacity(),
+        vaultAmount + elapsedMinutes * getVaultRatePerMinute()
+    );
+
+    vaultLastTick = now;
+}
+
+function formatVaultTime(minutes) {
+    if (minutes < 1) {
+        return "less than a minute";
+    }
+
+    if (minutes < 60) {
+        return Math.ceil(minutes) + " min";
+    }
+
+    const hours = minutes / 60;
+
+    if (hours < 48) {
+        return hours.toFixed(1) + " h";
+    }
+
+    return (hours / 24).toFixed(1) + " days";
+}
+
+function updateVaultUI() {
+    const stored = document.getElementById("vaultStored");
+
+    if (!stored) {
+        return;
+    }
+
+    const capacity = getVaultCapacity();
+    const rate = getVaultRatePerMinute();
+
+    document.getElementById("vaultDescription").textContent =
+        "Earns " + rate.toFixed(2) + " click" +
+        (rate === 1 ? "" : "s") +
+        " per minute, even while the website is closed.";
+
+    const missing = capacity - vaultAmount;
+
+    stored.textContent =
+        "Stored: " +
+        (Math.floor(vaultAmount * 10) / 10).toLocaleString("en-US") +
+        " / " + capacity.toLocaleString("en-US") +
+        (missing > 0.05
+            ? "  (full in " + formatVaultTime(missing / rate) + ")"
+            : "  (FULL)");
+
+    const collectButton = document.getElementById("vaultCollectButton");
+
+    collectButton.disabled = vaultAmount < 1;
+
+    collectButton.textContent =
+        vaultAmount < 1
+            ? "NOTHING TO COLLECT"
+            : "COLLECT " + formatNumber(vaultAmount);
+
+    const upgradeInfo = document.getElementById("vaultUpgradeInfo");
+    const upgradeButton = document.getElementById("vaultUpgradeButton");
+
+    if (vaultLevel >= VAULT_CAPACITIES.length - 1) {
+        upgradeInfo.textContent = "Vault is fully upgraded!";
+        upgradeButton.disabled = true;
+        upgradeButton.textContent = "MAX LEVEL";
+    } else {
+        const cost = VAULT_COSTS[vaultLevel];
+
+        upgradeInfo.textContent =
+            "Next: " +
+            VAULT_CAPACITIES[vaultLevel + 1].toLocaleString("en-US") +
+            " storage — Cost: " +
+            cost.toLocaleString("en-US") + " clicks";
+
+        upgradeButton.disabled = gabeClicks < cost;
+
+        upgradeButton.textContent =
+            gabeClicks >= cost
+                ? "UPGRADE STORAGE"
+                : "NOT ENOUGH CLICKS";
+    }
+}
+
+function collectVault() {
+    updateVault();
+
+    const amount = Math.floor(vaultAmount);
+
+    if (amount < 1) {
+        return;
+    }
+
+    gabeClicks += amount;
+    vaultAmount -= amount;
+
+    updateClicker();
+    saveGame();
+}
+
+function buyVaultUpgrade() {
+    if (vaultLevel >= VAULT_CAPACITIES.length - 1) {
+        return;
+    }
+
+    const cost = VAULT_COSTS[vaultLevel];
+
+    if (gabeClicks < cost) {
+        alert("You don't have enough clicks!");
+        return;
+    }
+
+    /* Settle what has been earned so far before changing the capacity. */
+    updateVault();
+
+    gabeClicks -= cost;
+    vaultLevel += 1;
+
+    updateClicker();
+    saveGame();
+
+    alert(
+        "VAULT UPGRADED!\n\nOffline storage is now " +
+        getVaultCapacity().toLocaleString("en-US") +
+        " clicks."
+    );
+}
+
+/* Keep the vault ticking while the page is open. */
+setInterval(
+    function() {
+        updateVault();
+        updateVaultUI();
+    },
+    1000
+);
+
+
+/* =========================================================
    CASINO WIN TRACKING (Easter egg)
    ========================================================= */
 
@@ -2979,6 +3215,8 @@ function updateClicker() {
     updateStockBalances();
 
     updateRebirthUI();
+
+    updateVaultUI();
 }
 
 
@@ -2999,6 +3237,12 @@ function formatNumber(number) {
    ========================================================= */
 
 function saveGame() {
+
+    updateVault();
+
+    localStorage.setItem("vaultLevel", vaultLevel);
+    localStorage.setItem("vaultAmount", vaultAmount);
+    localStorage.setItem("vaultLastTick", vaultLastTick);
 
     localStorage.setItem(
         "gabeClicks",
@@ -3242,6 +3486,7 @@ function doRebirth() {
         "• Your clicks will be reset to 0\n" +
         "• Your click power upgrades will reset to 1\n" +
         "• You keep your stocks & portfolio\n" +
+        "• You keep your offline vault & its upgrades\n" +
         "• Permanent multiplier becomes " +
         (getRebirthMultiplier() + 0.25).toFixed(2) +
         "×\n\n" +
@@ -5317,7 +5562,25 @@ function saveStockGame() {
     Simulate one market movement.
 */
 
-function simulateStock(ticker) {
+/* How far the market "fast-forwards" when you come back:
+   10,800 steps x 8 seconds = 24 hours. */
+const MARKET_MAX_CATCHUP_STEPS = 10800;
+
+function simulateStock(ticker, simTime, volScale, driftScale) {
+
+    if (volScale === undefined) {
+        volScale = 1;
+    }
+
+    if (driftScale === undefined) {
+        driftScale = 1;
+    }
+
+    /* simTime lets offline catch-up steps be stamped with the
+       moment they "would have" happened. */
+    if (!simTime) {
+        simTime = Date.now();
+    }
 
     const definition =
         stockDefinitions[ticker];
@@ -5409,6 +5672,13 @@ function simulateStock(ticker) {
     }
 
 
+    /* Offline catch-up uses calmer steps so a whole night away
+       doesn't turn a stock into 100x. Live play uses scale 1. */
+    randomMove =
+        (randomMove - definition.drift) * volScale +
+        definition.drift * driftScale;
+
+
     stock.price *=
         1 + randomMove;
 
@@ -5432,7 +5702,7 @@ function simulateStock(ticker) {
             stock.price,
 
         time:
-            Date.now()
+            simTime
 
     });
 
@@ -5489,11 +5759,29 @@ function updateMarketFromTime() {
 
         const movements =
             Math.min(
-                150,
+                MARKET_MAX_CATCHUP_STEPS,
                 Math.floor(
                     elapsed /
                     8000
                 )
+            );
+
+        const catchUpStart =
+            now - movements * 8000;
+
+        /* Up to 300 steps (~40 min) behave exactly like live play.
+           Longer absences get scaled down so total movement stays
+           roughly what ~40 minutes of live trading would do. */
+        const volScale =
+            Math.min(
+                1,
+                Math.sqrt(300 / Math.max(1, movements))
+            );
+
+        const driftScale =
+            Math.min(
+                1,
+                300 / Math.max(1, movements)
             );
 
 
@@ -5504,7 +5792,10 @@ function updateMarketFromTime() {
         ) {
 
             simulateStock(
-                ticker
+                ticker,
+                catchUpStart + (i + 1) * 8000,
+                volScale,
+                driftScale
             );
         }
 
@@ -7037,6 +7328,10 @@ function resetGame() {
 
     rebirthLevel = 0;
 
+    vaultLevel = 0;
+    vaultAmount = 0;
+    vaultLastTick = Date.now();
+
     casinoBalanceSnapshots = [];
     casinoKickUntil = 0;
 
@@ -7099,6 +7394,10 @@ function resetGame() {
     localStorage.removeItem(
         "rebirthLevel"
     );
+
+    localStorage.removeItem("vaultLevel");
+    localStorage.removeItem("vaultAmount");
+    localStorage.removeItem("vaultLastTick");
 
     localStorage.removeItem(
         "casinoKickUntil"
