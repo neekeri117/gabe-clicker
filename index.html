@@ -8085,6 +8085,26 @@ const CASE_CARD_GAP = 8;
 const CASE_REEL_CARDS = 64;
 const CASE_SPIN_MS = 5200;
 
+/* Case opening sound. The mp3 is cut so the ticking runs for exactly
+   CASE_SPIN_MS and the reveal sting hits as the reel stops. If you
+   change CASE_SPIN_MS, the sound will no longer line up. */
+const caseOpenSound = new Audio("csgo-case-open-cut.mp3");
+
+caseOpenSound.preload = "auto";
+
+function playCaseOpenSound() {
+
+    try {
+        caseOpenSound.currentTime = 0;
+
+        const p = caseOpenSound.play();
+
+        if (p && p.catch) {
+            p.catch(function() {});
+        }
+    } catch (e) {}
+}
+
 let caseOpening = false;
 
 let caseHistory = [];
@@ -8346,6 +8366,8 @@ function openCase(caseKey) {
     const wobble = (Math.random() - 0.5) * CASE_CARD_WIDTH * 0.7;
 
     setCaseReelPosition(winIndex, true, wobble);
+
+    playCaseOpenSound();
 
     setTimeout(
         function() {
