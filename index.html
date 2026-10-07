@@ -141,6 +141,7 @@ a:hover {
 
 #clickerButton,
 #stockMarketButton,
+#casesButton,
 #backgroundButton,
 #selfDestructButton {
     position: fixed;
@@ -189,6 +190,7 @@ a:hover {
 #stockMarketButton:hover,
 #backgroundButton:hover,
 #selfDestructButton:hover,
+#casesButton:hover,
 .casinoButton:hover,
 .upgrade button:hover,
 #resetButton:hover,
@@ -237,6 +239,7 @@ button:active {
 
 #backButton,
 #casinoBackButton,
+#casesBackButton,
 #stockBackButton {
     position: fixed;
     top: 20px;
@@ -259,6 +262,7 @@ button:active {
 
 #backButton:hover,
 #casinoBackButton:hover,
+#casesBackButton:hover,
 #stockBackButton:hover {
     background: #292929;
     transform: translateY(-2px);
@@ -266,6 +270,7 @@ button:active {
 
 #clickerTitle,
 #casinoTitle,
+#casesTitle,
 #stockTitle {
     text-align: center;
     font-weight: 1000;
@@ -522,6 +527,345 @@ button:active {
     color: #888;
     font-size: 13px;
     line-height: 1.4;
+}
+
+/* =========================================================
+   CASES
+   ========================================================= */
+
+#casesButton {
+    bottom: 280px;
+    background: linear-gradient(135deg, #3a1a6e, #8847ff);
+}
+
+#casesScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 720;
+
+    display: none;
+
+    overflow-y: auto;
+
+    padding: 35px 20px 60px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(136, 71, 255, 0.18),
+            transparent 45%
+        ),
+        rgba(3, 3, 5, 0.98);
+}
+
+#casesTitle {
+    font-size: clamp(32px, 6vw, 50px);
+    margin: 10px 0 10px;
+}
+
+#casesBalance {
+    width: fit-content;
+
+    margin: 0 auto 25px;
+    padding: 10px 22px;
+
+    border: 1px solid #705900;
+    border-radius: 999px;
+
+    background: rgba(80, 60, 0, 0.3);
+
+    color: #ffd84d;
+
+    font-size: 20px;
+    font-weight: 1000;
+}
+
+#caseReelWindow {
+    position: relative;
+
+    width: min(820px, 96vw);
+    height: 136px;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    border: 2px solid #333;
+    border-radius: 14px;
+
+    background: #0a0a0d;
+
+    box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.8),
+        0 12px 35px rgba(0, 0, 0, 0.6);
+}
+
+#caseReelWindow::before,
+#caseReelWindow::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+
+    width: 90px;
+
+    pointer-events: none;
+}
+
+#caseReelWindow::before {
+    left: 0;
+    background: linear-gradient(90deg, #0a0a0d, transparent);
+}
+
+#caseReelWindow::after {
+    right: 0;
+    background: linear-gradient(270deg, #0a0a0d, transparent);
+}
+
+#caseReelMarker {
+    position: absolute;
+
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    z-index: 6;
+
+    width: 4px;
+
+    transform: translateX(-50%);
+
+    background: #ffd84d;
+
+    box-shadow:
+        0 0 12px rgba(255, 216, 77, 0.9),
+        0 0 28px rgba(255, 216, 77, 0.5);
+}
+
+#caseReelTrack {
+    display: flex;
+    gap: 8px;
+
+    padding: 13px 0;
+
+    will-change: transform;
+}
+
+.caseCard {
+    flex: none;
+
+    width: 104px;
+    height: 110px;
+
+    border-radius: 9px;
+
+    position: relative;
+    overflow: hidden;
+
+    box-shadow:
+        inset 0 -26px 30px rgba(0, 0, 0, 0.35),
+        0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.caseCard::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 7px;
+
+    background: rgba(255, 255, 255, 0.55);
+}
+
+#caseResult {
+    min-height: 62px;
+
+    margin: 22px auto 6px;
+
+    text-align: center;
+
+    font-size: 22px;
+    font-weight: 1000;
+}
+
+#caseResultSub {
+    min-height: 24px;
+
+    margin-bottom: 18px;
+
+    text-align: center;
+
+    color: #aaa;
+    font-weight: bold;
+}
+
+#caseHistory {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+
+    flex-wrap: wrap;
+
+    min-height: 34px;
+
+    margin: 0 auto 26px;
+}
+
+.caseHistoryChip {
+    padding: 6px 10px;
+
+    border-radius: 7px;
+
+    color: #fff;
+
+    font-size: 13px;
+    font-weight: 1000;
+
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+#casePanels {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    gap: 25px;
+
+    flex-wrap: wrap;
+}
+
+.caseOpenButton {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 14px;
+    padding: 13px;
+
+    border: 1px solid #555;
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4a2799,
+            #8847ff
+        );
+
+    color: white;
+
+    font-size: 17px;
+    font-weight: 1000;
+
+    cursor: pointer;
+
+    transition: 0.18s ease;
+}
+
+.caseOpenButton:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+}
+
+.caseOpenButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.caseOddsRow {
+    display: grid;
+
+    grid-template-columns: 14px 1fr 70px 60px;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 7px 0;
+
+    border-bottom: 1px solid #222;
+
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.caseOddsDot {
+    width: 14px;
+    height: 14px;
+
+    border-radius: 4px;
+}
+
+.caseOddsHeader {
+    color: #777;
+    font-size: 11px;
+}
+
+.casePrice {
+    margin-bottom: 12px;
+
+    text-align: center;
+
+    color: #ffd84d;
+
+    font-size: 22px;
+    font-weight: 1000;
+}
+
+.caseBlurb {
+    margin: 0 0 12px;
+
+    text-align: center;
+
+    color: #888;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Floating "+$X" when you click Gabe */
+.moneyPopup {
+    position: fixed;
+    z-index: 9100;
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+    user-select: none;
+
+    color: #5dff8a;
+
+    font-size: 30px;
+    font-weight: 1000;
+    letter-spacing: 1px;
+    white-space: nowrap;
+
+    text-shadow:
+        0 0 12px rgba(0, 255, 120, 0.55),
+        0 3px 6px rgba(0, 0, 0, 0.9);
+
+    animation: moneyFloat 0.9s ease-out forwards;
+}
+
+@keyframes moneyFloat {
+
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    15% {
+        transform: translate(-50%, -70%) scale(1.15);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--drift, 0px)), -170%) scale(1);
+    }
 }
 
 .vaultButtons {
@@ -1660,6 +2004,7 @@ button:active {
 
     #clickerButton,
     #stockMarketButton,
+    #casesButton,
     #backgroundButton,
     #selfDestructButton {
         left: 10px;
@@ -1669,6 +2014,10 @@ button:active {
         padding: 11px 14px;
 
         font-size: 13px;
+    }
+
+    #casesButton {
+        bottom: 265px;
     }
 
     #clickerButton {
@@ -1689,6 +2038,7 @@ button:active {
 
     #clickerScreen,
     #casinoScreen,
+    #casesScreen,
     #stockMarketScreen {
         padding-left: 12px;
         padding-right: 12px;
@@ -1828,6 +2178,14 @@ onclick="selfDestruct()"
 
 SELF DESTRUCT </button>
 
+<button
+id="casesButton"
+onclick="openCases()"
+
+>
+
+📦 CASES </button>
+
 <!-- =========================================================
      CLICKER SCREEN
      ========================================================= -->
@@ -1858,11 +2216,11 @@ onclick="gabeClick(event)"
 >
 
 <div id="clickCount">
-    CLICKS: 0
+    $0
 </div>
 
 <div id="clickPower">
-    +1 CLICKS PER CLICK
+    +$1 PER CLICK
 </div>
 
 <div id="rebirthDisplay" style="margin-top:8px;font-size:18px;font-weight:900;color:#ffd84d;">
@@ -1870,7 +2228,7 @@ onclick="gabeClick(event)"
 </div>
 
 <div id="clickHint">
-    CLICK GABE TO GET CLICKS
+    CLICK GABE TO MAKE MONEY
 </div>
 
 <button
@@ -1905,11 +2263,11 @@ onclick="openCasino()"
     </div>
 
     <div class="upgradeDescription">
-        +1 click power
+        +$1 per click
     </div>
 
     <div class="upgradeCost">
-        Cost: 100 clicks
+        Cost: $100
     </div>
 
 </div>
@@ -1918,7 +2276,7 @@ onclick="openCasino()"
     id="upgrade1Button"
     onclick="buyUpgrade(1)"
 >
-    NOT ENOUGH CLICKS
+    NOT ENOUGH MONEY
 </button>
 
 
@@ -1934,11 +2292,11 @@ onclick="openCasino()"
     </div>
 
     <div class="upgradeDescription">
-        +5 click power
+        +$5 per click
     </div>
 
     <div class="upgradeCost">
-        Cost: 500 clicks
+        Cost: $500
     </div>
 
 </div>
@@ -1947,7 +2305,7 @@ onclick="openCasino()"
     id="upgrade2Button"
     onclick="buyUpgrade(2)"
 >
-    NOT ENOUGH CLICKS
+    NOT ENOUGH MONEY
 </button>
 
 
@@ -1963,11 +2321,11 @@ onclick="openCasino()"
     </div>
 
     <div class="upgradeDescription">
-        +25 click power
+        +$25 per click
     </div>
 
     <div class="upgradeCost">
-        Cost: 2,500 clicks
+        Cost: $2,500
     </div>
 
 </div>
@@ -1976,7 +2334,7 @@ onclick="openCasino()"
     id="upgrade3Button"
     onclick="buyUpgrade(3)"
 >
-    NOT ENOUGH CLICKS
+    NOT ENOUGH MONEY
 </button>
 
 
@@ -1992,11 +2350,11 @@ onclick="openCasino()"
     </div>
 
     <div class="upgradeDescription">
-        +100 click power
+        +$100 per click
     </div>
 
     <div class="upgradeCost">
-        Cost: 10,000 clicks
+        Cost: $10,000
     </div>
 
 </div>
@@ -2005,7 +2363,7 @@ onclick="openCasino()"
     id="upgrade4Button"
     onclick="buyUpgrade(4)"
 >
-    NOT ENOUGH CLICKS
+    NOT ENOUGH MONEY
 </button>
 
 
@@ -2020,7 +2378,7 @@ onclick="openCasino()"
     </div>
 
     <div class="upgradeDescription" id="vaultDescription">
-        Earns clicks even while the website is closed.
+        Earns money even while the website is closed.
     </div>
 
     <div class="upgradeCost" id="vaultStored">
@@ -2057,16 +2415,16 @@ id="rebirthButton"
 onclick="doRebirth()"
 disabled
 >
-    REBIRTH (need more clicks)
+    REBIRTH (need more money)
 </button>
 
 <div id="rebirthInfo">
-    Next rebirth: 50,000 clicks
+    Next rebirth: $50,000
 </div>
 
 <div id="rebirthHint">
-    Rebirth resets your clicks &amp; upgrades,<br>
-    but permanently multiplies all future clicks.<br>
+    Rebirth resets your money &amp; upgrades,<br>
+    but permanently multiplies all future click earnings.<br>
     Stocks and portfolio are kept.
 </div>
 
@@ -2104,7 +2462,7 @@ onclick="closeCasino()"
 </h1>
 
 <div id="casinoBalance">
-    CLICKS: 0
+    $0
 </div>
 
 <div class="casinoPanels">
@@ -2384,7 +2742,7 @@ onclick="closeStockMarket()"
 <div class="stockBalanceBox">
 
     <div class="stockBalanceLabel">
-        AVAILABLE CLICKS
+        AVAILABLE CASH
     </div>
 
     <div
@@ -2666,6 +3024,48 @@ No real money or securities are involved.
 </div>
 
 <!-- =========================================================
+     CASES SCREEN
+     ========================================================= -->
+
+<div id="casesScreen">
+
+<button
+id="casesBackButton"
+onclick="closeCases()"
+
+>
+
+← BACK </button>
+
+<h1 id="casesTitle">
+    📦 GABE CASES 📦
+</h1>
+
+<div id="casesBalance">
+    $0
+</div>
+
+<div id="caseReelWindow">
+
+    <div id="caseReelMarker"></div>
+
+    <div id="caseReelTrack"></div>
+
+</div>
+
+<div id="caseResult">
+    PICK A CASE AND OPEN IT
+</div>
+
+<div id="caseResultSub"></div>
+
+<div id="caseHistory"></div>
+
+<div id="casePanels"></div>
+
+</div>
+
+<!-- =========================================================
      SELF DESTRUCT
      ========================================================= -->
 
@@ -2942,16 +3342,15 @@ function updateVaultUI() {
     const rate = getVaultRatePerMinute();
 
     document.getElementById("vaultDescription").textContent =
-        "Earns " + rate.toFixed(2) + " click" +
-        (rate === 1 ? "" : "s") +
+        "Earns $" + rate.toFixed(2) +
         " per minute, even while the website is closed.";
 
     const missing = capacity - vaultAmount;
 
     stored.textContent =
         "Stored: " +
-        (Math.floor(vaultAmount * 10) / 10).toLocaleString("en-US") +
-        " / " + capacity.toLocaleString("en-US") +
+        "$" + (Math.floor(vaultAmount * 10) / 10).toLocaleString("en-US") +
+        " / $" + capacity.toLocaleString("en-US") +
         (missing > 0.05
             ? "  (full in " + formatVaultTime(missing / rate) + ")"
             : "  (FULL)");
@@ -2963,7 +3362,7 @@ function updateVaultUI() {
     collectButton.textContent =
         vaultAmount < 1
             ? "NOTHING TO COLLECT"
-            : "COLLECT " + formatNumber(vaultAmount);
+            : "COLLECT $" + formatNumber(vaultAmount);
 
     const upgradeInfo = document.getElementById("vaultUpgradeInfo");
     const upgradeButton = document.getElementById("vaultUpgradeButton");
@@ -2978,15 +3377,15 @@ function updateVaultUI() {
         upgradeInfo.textContent =
             "Next: " +
             VAULT_CAPACITIES[vaultLevel + 1].toLocaleString("en-US") +
-            " storage — Cost: " +
-            cost.toLocaleString("en-US") + " clicks";
+            " storage — Cost: $" +
+            cost.toLocaleString("en-US");
 
         upgradeButton.disabled = gabeClicks < cost;
 
         upgradeButton.textContent =
             gabeClicks >= cost
                 ? "UPGRADE STORAGE"
-                : "NOT ENOUGH CLICKS";
+                : "NOT ENOUGH MONEY";
     }
 }
 
@@ -3014,7 +3413,7 @@ function buyVaultUpgrade() {
     const cost = VAULT_COSTS[vaultLevel];
 
     if (gabeClicks < cost) {
-        alert("You don't have enough clicks!");
+        alert("You don't have enough money!");
         return;
     }
 
@@ -3030,7 +3429,7 @@ function buyVaultUpgrade() {
     alert(
         "VAULT UPGRADED!\n\nOffline storage is now " +
         getVaultCapacity().toLocaleString("en-US") +
-        " clicks."
+        " dollars."
     );
 }
 
@@ -3140,16 +3539,22 @@ function updateClickDisplay() {
     document.getElementById(
         "clickCount"
     ).textContent =
-        "CLICKS: " +
+        "$" +
         formatNumber(gabeClicks);
 }
 
 function updateCasinoBalance() {
 
+    const casesBalance = document.getElementById("casesBalance");
+
+    if (casesBalance) {
+        casesBalance.textContent = "$" + formatNumber(gabeClicks);
+    }
+
     document.getElementById(
         "casinoBalance"
     ).textContent =
-        "CLICKS: " +
+        "$" +
         formatNumber(gabeClicks);
 }
 
@@ -3170,9 +3575,8 @@ function updateRebirthUI() {
     const info = document.getElementById("rebirthInfo");
     if (info) {
         info.textContent =
-            "Next rebirth: " +
-            formatNumber(cost) +
-            " clicks";
+            "Next rebirth: $" +
+            formatNumber(cost);
     }
 
     const btn = document.getElementById("rebirthButton");
@@ -3194,18 +3598,17 @@ function updateClicker() {
 
     updateClickDisplay();
 
-    const effectivePower = Math.floor(
-        clickPower * getRebirthMultiplier()
-    );
+    const effectivePower =
+        clickPower * getRebirthMultiplier();
 
     document.getElementById(
         "clickPower"
     ).textContent =
-        "+" +
-        formatNumber(effectivePower) +
-        " CLICKS PER CLICK" +
+        "+$" +
+        formatMoney(effectivePower) +
+        " PER CLICK" +
         (rebirthLevel > 0
-            ? " (base " + formatNumber(clickPower) + " × " + getRebirthMultiplier().toFixed(2) + ")"
+            ? " (base $" + formatNumber(clickPower) + " × " + getRebirthMultiplier().toFixed(2) + ")"
             : "");
 
     updateShopButtons();
@@ -3223,6 +3626,15 @@ function updateClicker() {
 /* =========================================================
    NUMBER FORMAT
    ========================================================= */
+
+/* Like formatNumber, but keeps up to 2 decimals (for per-click amounts). */
+function formatMoney(number) {
+
+    return (Math.round(number * 100) / 100).toLocaleString(
+        "en-US",
+        { maximumFractionDigits: 2 }
+    );
+}
 
 function formatNumber(number) {
 
@@ -3295,13 +3707,68 @@ function gabeClick(event) {
         event.preventDefault();
     }
 
-    const effectivePower = Math.floor(
-        clickPower * getRebirthMultiplier()
-    );
+    const effectivePower =
+        clickPower * getRebirthMultiplier();
 
     gabeClicks += effectivePower;
 
+    showMoneyPopup(event, effectivePower);
+
     updateClicker();
+}
+
+/* Floating "+$X" text that rises from where you clicked. */
+function showMoneyPopup(event, amount) {
+
+    let x;
+    let y;
+
+    if (
+        event &&
+        typeof event.clientX === "number" &&
+        (event.clientX !== 0 || event.clientY !== 0)
+    ) {
+
+        x = event.clientX;
+        y = event.clientY;
+
+    } else {
+
+        /* No pointer position (e.g. keyboard) - use the image centre. */
+        const rect = document
+            .getElementById("gabeClickerImage")
+            .getBoundingClientRect();
+
+        x = rect.left + rect.width / 2;
+        y = rect.top + rect.height / 2;
+    }
+
+    const popup = document.createElement("div");
+
+    popup.className = "moneyPopup";
+
+    popup.textContent = "+$" + formatMoney(amount);
+
+    /* Small random sideways drift so fast clicking doesn't stack perfectly. */
+    popup.style.left = (x + (Math.random() * 40 - 20)) + "px";
+    popup.style.top = (y - 20) + "px";
+    popup.style.setProperty("--drift", (Math.random() * 60 - 30) + "px");
+
+    document.body.appendChild(popup);
+
+    /* Keep the page light if someone clicks extremely fast. */
+    const existing = document.querySelectorAll(".moneyPopup");
+
+    if (existing.length > 40) {
+        existing[0].remove();
+    }
+
+    setTimeout(
+        function() {
+            popup.remove();
+        },
+        900
+    );
 }
 
 function openClicker() {
@@ -3446,7 +3913,7 @@ function buyUpgrade(id) {
     ) {
 
         alert(
-            "You don't have enough clicks!"
+            "You don't have enough money!"
         );
 
         return;
@@ -3463,9 +3930,9 @@ function buyUpgrade(id) {
     saveGame();
 
     alert(
-        "UPGRADE BOUGHT!\n\n+" +
+        "UPGRADE BOUGHT!\n\n+$" +
         upgrade.power +
-        " clicks per click!"
+        " per click!"
     );
 }
 
@@ -3477,14 +3944,14 @@ function doRebirth() {
     const cost = getRebirthCost();
 
     if (gabeClicks < cost) {
-        alert("You need " + formatNumber(cost) + " clicks to rebirth!");
+        alert("You need $" + formatNumber(cost) + " to rebirth!");
         return;
     }
 
     const confirmed = confirm(
         "REBIRTH?\n\n" +
-        "• Your clicks will be reset to 0\n" +
-        "• Your click power upgrades will reset to 1\n" +
+        "• Your money will be reset to $0\n" +
+        "• Your click upgrades will reset to $1 per click\n" +
         "• You keep your stocks & portfolio\n" +
         "• You keep your offline vault & its upgrades\n" +
         "• Permanent multiplier becomes " +
@@ -3511,7 +3978,7 @@ function doRebirth() {
         rebirthLevel +
         "\nPermanent multiplier: " +
         getRebirthMultiplier().toFixed(2) +
-        "×\n\nAll future clicks are stronger!"
+        "×\n\nAll future clicks earn more!"
     );
 }
 
@@ -3545,7 +4012,7 @@ function updateShopButtons() {
             button.disabled = true;
 
             button.textContent =
-                "NOT ENOUGH CLICKS";
+                "NOT ENOUGH MONEY";
         }
     }
 }
@@ -3711,7 +4178,7 @@ function spinRoulette() {
     ) {
 
         alert(
-            "You don't have enough clicks!"
+            "You don't have enough money!"
         );
 
         return;
@@ -4206,7 +4673,7 @@ function blackjackDeal() {
     ) {
 
         alert(
-            "You don't have enough clicks!"
+            "You don't have enough money!"
         );
 
         return;
@@ -4432,7 +4899,7 @@ function blackjackDouble() {
     ) {
 
         alert(
-            "You don't have enough clicks to double!"
+            "You don't have enough money to double!"
         );
 
         return;
@@ -4495,9 +4962,9 @@ function blackjackFinish(
         document.getElementById(
             "blackjackStatus"
         ).textContent =
-            "🎉 BLACKJACK! +" +
-            winnings +
-            " CLICKS!";
+            "🎉 BLACKJACK! +$" +
+            formatNumber(winnings) +
+            "!";
 
         recordCasinoWin();
 
@@ -4511,9 +4978,8 @@ function blackjackFinish(
         document.getElementById(
             "blackjackStatus"
         ).textContent =
-            "🎉 YOU WIN! +" +
-            winnings +
-            " CLICKS";
+            "🎉 YOU WIN! +$" +
+            formatNumber(winnings);
 
         recordCasinoWin();
 
@@ -4812,7 +5278,7 @@ function dropPlinko() {
     ) {
 
         alert(
-            "You don't have enough clicks!"
+            "You don't have enough money!"
         );
 
         return;
@@ -5072,9 +5538,9 @@ function finishPlinko() {
         ).textContent =
             "💀 " +
             multiplier +
-            "× — YOU LOST " +
-            (plinkoBetAmount - winnings) +
-            " CLICKS!";
+            "× — YOU LOST $" +
+            formatNumber(plinkoBetAmount - winnings) +
+            "!";
 
     } else if (
         multiplier === 1
@@ -5092,9 +5558,9 @@ function finishPlinko() {
         ).textContent =
             "🎉 " +
             multiplier +
-            "× — YOU WON " +
-            winnings +
-            " CLICKS!";
+            "× — YOU WON $" +
+            formatNumber(winnings) +
+            "!";
     }
 
     /* Check the casino kick rule after every drop. */
@@ -6643,7 +7109,7 @@ function updateStockBalances() {
     document.getElementById(
         "stockCashBalance"
     ).textContent =
-        formatNumber(
+        "$" + formatNumber(
             gabeClicks
         );
 
@@ -6651,7 +7117,7 @@ function updateStockBalances() {
     document.getElementById(
         "stockPortfolioValue"
     ).textContent =
-        formatNumber(
+        "$" + formatNumber(
             portfolioValue
         );
 
@@ -6659,7 +7125,7 @@ function updateStockBalances() {
     document.getElementById(
         "stockTotalWealth"
     ).textContent =
-        formatNumber(
+        "$" + formatNumber(
             gabeClicks +
             portfolioValue
         );
@@ -6818,7 +7284,7 @@ function buyStock() {
     ) {
 
         alert(
-            "You don't have enough clicks!"
+            "You don't have enough money!"
         );
 
         return;
@@ -7552,6 +8018,378 @@ function resetGame() {
    SELF DESTRUCT
    ========================================================= */
 
+/* =========================================================
+   CASES (CS-style case opening, colours only for now)
+   ========================================================= */
+
+/* Rarity colours (same palette as CS). */
+const CASE_TIERS = {
+
+    consumer:   { name: "CONSUMER GRADE",   color: "#b0c3d9" },
+    industrial: { name: "INDUSTRIAL GRADE", color: "#5e98d9" },
+    milspec:    { name: "MIL-SPEC",         color: "#4b69ff" },
+    restricted: { name: "RESTRICTED",       color: "#8847ff" },
+    classified: { name: "CLASSIFIED",       color: "#d32ce6" },
+    covert:     { name: "COVERT",           color: "#eb4b4b" },
+    contraband: { name: "CONTRABAND",       color: "#ffd700" }
+
+};
+
+/*
+    chance = % chance to roll that colour
+    mult   = payout as a multiple of the case price
+             (each drop is also randomised by about +/-15%,
+              like different skin prices)
+*/
+const CASE_TYPES = {
+
+    weapon: {
+
+        name: "GABE WEAPON CASE",
+
+        price: 1000,
+
+        blurb: "CS2 drop rates: 79.92% / 15.98% / 3.20% / 0.64% / 0.26%",
+
+        drops: [
+            { tier: "milspec",    chance: 79.92, mult: 0.35 },
+            { tier: "restricted", chance: 15.98, mult: 1.2  },
+            { tier: "classified", chance: 3.20,  mult: 4    },
+            { tier: "covert",     chance: 0.64,  mult: 20   },
+            { tier: "contraband", chance: 0.26,  mult: 75   }
+        ]
+    },
+
+    scrap: {
+
+        name: "GABE SCRAP CASE",
+
+        price: 100,
+
+        blurb: "Cheap case where the low grades can drop too.",
+
+        drops: [
+            { tier: "consumer",   chance: 38, mult: 0.2 },
+            { tier: "industrial", chance: 30, mult: 0.5 },
+            { tier: "milspec",    chance: 20, mult: 0.9 },
+            { tier: "restricted", chance: 8,  mult: 2   },
+            { tier: "classified", chance: 3,  mult: 6   },
+            { tier: "covert",     chance: 1,  mult: 20  }
+        ]
+    }
+
+};
+
+const CASE_CARD_WIDTH = 104;
+const CASE_CARD_GAP = 8;
+const CASE_REEL_CARDS = 64;
+const CASE_SPIN_MS = 5200;
+
+let caseOpening = false;
+
+let caseHistory = [];
+
+function pickCaseDrop(caseDef) {
+
+    let total = 0;
+
+    caseDef.drops.forEach(function(drop) {
+        total += drop.chance;
+    });
+
+    let roll = Math.random() * total;
+
+    for (const drop of caseDef.drops) {
+
+        roll -= drop.chance;
+
+        if (roll < 0) {
+            return drop;
+        }
+    }
+
+    return caseDef.drops[caseDef.drops.length - 1];
+}
+
+/* Colours that scroll past on the reel. Rare colours are shown more
+   often than they drop, so the reel looks exciting like in CS. */
+function randomReelTier(caseDef) {
+
+    let total = 0;
+
+    caseDef.drops.forEach(function(drop) {
+        total += Math.sqrt(drop.chance);
+    });
+
+    let roll = Math.random() * total;
+
+    for (const drop of caseDef.drops) {
+
+        roll -= Math.sqrt(drop.chance);
+
+        if (roll < 0) {
+            return drop.tier;
+        }
+    }
+
+    return caseDef.drops[0].tier;
+}
+
+function renderCaseReel(caseDef, winningTier, winIndex) {
+
+    const track = document.getElementById("caseReelTrack");
+
+    track.innerHTML = "";
+
+    for (let i = 0; i < CASE_REEL_CARDS; i++) {
+
+        const tier = i === winIndex
+            ? winningTier
+            : randomReelTier(caseDef);
+
+        const color = CASE_TIERS[tier].color;
+
+        const card = document.createElement("div");
+
+        card.className = "caseCard";
+
+        card.style.background =
+            "linear-gradient(160deg, " + color + ", " + color + "99)";
+
+        track.appendChild(card);
+    }
+}
+
+function setCaseReelPosition(index, animate, extraOffset) {
+
+    const track = document.getElementById("caseReelTrack");
+
+    const windowWidth =
+        document.getElementById("caseReelWindow").clientWidth;
+
+    const step = CASE_CARD_WIDTH + CASE_CARD_GAP;
+
+    const cardCentre = index * step + CASE_CARD_WIDTH / 2;
+
+    const offset = cardCentre - windowWidth / 2 + (extraOffset || 0);
+
+    if (!animate) {
+
+        track.style.transition = "none";
+
+        track.style.transform = "translateX(" + (-offset) + "px)";
+
+        return;
+    }
+
+    track.style.transition = "none";
+
+    track.style.transform = "translateX(0px)";
+
+    void track.offsetWidth;
+
+    track.style.transition =
+        "transform " + (CASE_SPIN_MS / 1000) + "s cubic-bezier(0.08, 0.55, 0.1, 1)";
+
+    track.style.transform = "translateX(" + (-offset) + "px)";
+}
+
+function renderCasePanels() {
+
+    const container = document.getElementById("casePanels");
+
+    container.innerHTML = "";
+
+    for (const key in CASE_TYPES) {
+
+        const def = CASE_TYPES[key];
+
+        const panel = document.createElement("div");
+
+        panel.className = "casinoPanel";
+
+        let html =
+            "<h2>" + def.name + "</h2>" +
+            '<div class="casePrice">$' + formatNumber(def.price) + "</div>" +
+            '<div class="caseBlurb">' + def.blurb + "</div>" +
+            '<div class="caseOddsRow caseOddsHeader">' +
+                "<div></div><div>COLOUR</div><div>CHANCE</div><div>PAYOUT</div>" +
+            "</div>";
+
+        def.drops.forEach(function(drop) {
+
+            const tier = CASE_TIERS[drop.tier];
+
+            html +=
+                '<div class="caseOddsRow">' +
+                    '<div class="caseOddsDot" style="background:' + tier.color + '"></div>' +
+                    '<div style="color:' + tier.color + '">' + tier.name + "</div>" +
+                    "<div>" + drop.chance + "%</div>" +
+                    "<div>" + drop.mult + "×</div>" +
+                "</div>";
+        });
+
+        html +=
+            '<button class="caseOpenButton" id="openCase_' + key + '" ' +
+            'onclick="openCase(\'' + key + '\')">' +
+            "OPEN CASE — $" + formatNumber(def.price) +
+            "</button>";
+
+        panel.innerHTML = html;
+
+        container.appendChild(panel);
+    }
+}
+
+function setCaseButtonsDisabled(disabled) {
+
+    for (const key in CASE_TYPES) {
+
+        const button = document.getElementById("openCase_" + key);
+
+        if (button) {
+            button.disabled = disabled;
+        }
+    }
+}
+
+function renderCaseHistory() {
+
+    const container = document.getElementById("caseHistory");
+
+    container.innerHTML = "";
+
+    caseHistory.forEach(function(entry) {
+
+        const chip = document.createElement("div");
+
+        chip.className = "caseHistoryChip";
+
+        chip.style.background = CASE_TIERS[entry.tier].color;
+
+        chip.textContent = "+$" + formatNumber(entry.payout);
+
+        container.appendChild(chip);
+    });
+}
+
+function openCases() {
+
+    document.getElementById("clickerScreen").style.display = "none";
+    document.getElementById("casinoScreen").style.display = "none";
+    document.getElementById("stockMarketScreen").style.display = "none";
+    document.getElementById("casesScreen").style.display = "block";
+
+    updateCasinoBalance();
+
+    if (!caseOpening) {
+
+        /* Show a resting reel so the screen isn't empty. */
+        const def = CASE_TYPES.weapon;
+
+        renderCaseReel(def, "milspec", 8);
+
+        setCaseReelPosition(8, false, 0);
+    }
+
+    renderCaseHistory();
+}
+
+function closeCases() {
+
+    document.getElementById("casesScreen").style.display = "none";
+}
+
+function openCase(caseKey) {
+
+    if (caseOpening) {
+        return;
+    }
+
+    const def = CASE_TYPES[caseKey];
+
+    if (gabeClicks < def.price) {
+
+        alert("You don't have enough money!");
+
+        return;
+    }
+
+    const drop = pickCaseDrop(def);
+
+    const jitter = 0.85 + Math.random() * 0.3;
+
+    const payout = Math.round(def.price * drop.mult * jitter);
+
+    caseOpening = true;
+
+    setCaseButtonsDisabled(true);
+
+    gabeClicks -= def.price;
+
+    updateClicker();
+
+    saveGame();
+
+    const result = document.getElementById("caseResult");
+
+    result.textContent = "OPENING...";
+
+    result.style.color = "#fff";
+
+    document.getElementById("caseResultSub").textContent = "";
+
+    const winIndex = 50 + Math.floor(Math.random() * 6);
+
+    renderCaseReel(def, drop.tier, winIndex);
+
+    const wobble = (Math.random() - 0.5) * CASE_CARD_WIDTH * 0.7;
+
+    setCaseReelPosition(winIndex, true, wobble);
+
+    setTimeout(
+        function() {
+
+            gabeClicks += payout;
+
+            const tier = CASE_TIERS[drop.tier];
+
+            const profit = payout - def.price;
+
+            result.textContent = tier.name;
+
+            result.style.color = tier.color;
+
+            document.getElementById("caseResultSub").textContent =
+                "+$" + formatNumber(payout) +
+                " (" + (payout / def.price).toFixed(2) + "× — " +
+                (profit >= 0 ? "profit $" : "loss $") +
+                formatNumber(Math.abs(profit)) + ")";
+
+            caseHistory.unshift({ tier: drop.tier, payout: payout });
+
+            if (caseHistory.length > 12) {
+                caseHistory.pop();
+            }
+
+            renderCaseHistory();
+
+            caseOpening = false;
+
+            setCaseButtonsDisabled(false);
+
+            updateClicker();
+
+            saveGame();
+
+        },
+        CASE_SPIN_MS + 150
+    );
+}
+
+renderCasePanels();
+
+
 function selfDestruct() {
 
     const screen =
@@ -7581,6 +8419,16 @@ function selfDestruct() {
 
     document.getElementById(
         "stockMarketButton"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "casesButton"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "casesScreen"
     ).style.display =
         "none";
 
