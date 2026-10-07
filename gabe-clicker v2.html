@@ -1,0 +1,7381 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyvä Nettisivu</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background: url("israel-jeffrey-epstein.gif") center / cover fixed no-repeat;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.28);
+    pointer-events: none;
+    z-index: -1;
+}
+
+a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   LOADING SCREEN
+   ========================================================= */
+
+#loadingScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background: #050505;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+#loadingText {
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    margin-bottom: 15px;
+}
+
+#loadingPercent {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#loadingBar {
+    width: min(340px, 80vw);
+    height: 22px;
+    padding: 3px;
+
+    border: 1px solid #444;
+    border-radius: 20px;
+
+    background: #151515;
+    overflow: hidden;
+}
+
+#loadingProgress {
+    width: 41%;
+    height: 100%;
+
+    border-radius: 20px;
+
+    background: linear-gradient(
+        90deg,
+        #8b0000,
+        #ff3030,
+        #ffd34d
+    );
+
+    transition: width 0.1s linear;
+}
+
+
+/* =========================================================
+   SIDE IMAGES
+   ========================================================= */
+
+#rightImage1,
+#rightImage2 {
+    position: fixed;
+    right: 20px;
+    width: 180px;
+    z-index: 20;
+
+    border-radius: 14px;
+
+    user-select: none;
+    -webkit-user-drag: none;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+}
+
+#rightImage1 {
+    top: 20px;
+}
+
+#rightImage2 {
+    top: 220px;
+}
+
+
+/* =========================================================
+   MAIN BUTTONS
+   ========================================================= */
+
+#clickerButton,
+#stockMarketButton,
+#backgroundButton,
+#selfDestructButton {
+    position: fixed;
+    left: 20px;
+    z-index: 100;
+
+    min-width: 190px;
+    padding: 14px 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+
+    color: white;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    transition: 0.18s ease;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+}
+
+#clickerButton {
+    bottom: 215px;
+    background: linear-gradient(135deg, #8d0000, #d71919);
+}
+
+#stockMarketButton {
+    bottom: 150px;
+    background: linear-gradient(135deg, #064d2b, #0b9b55);
+}
+
+#backgroundButton {
+    bottom: 85px;
+    background: linear-gradient(135deg, #252525, #444);
+}
+
+#selfDestructButton {
+    bottom: 20px;
+    background: linear-gradient(135deg, #430000, #a00000);
+}
+
+#clickerButton:hover,
+#stockMarketButton:hover,
+#backgroundButton:hover,
+#selfDestructButton:hover,
+.casinoButton:hover,
+.upgrade button:hover,
+#resetButton:hover,
+.betButtons button:hover,
+#blackjackControls button:hover,
+#plinkoDropButton:hover,
+.stockActionButton:hover,
+.stockTab:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+}
+
+#clickerButton:active,
+#stockMarketButton:active,
+#backgroundButton:active,
+#selfDestructButton:active,
+button:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+
+/* =========================================================
+   CLICKER
+   ========================================================= */
+
+#clickerScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+
+    display: none;
+
+    overflow-y: auto;
+
+    padding: 35px 25px 50px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(120, 0, 0, 0.25),
+            transparent 45%
+        ),
+        rgba(3, 3, 3, 0.97);
+}
+
+#backButton,
+#casinoBackButton,
+#stockBackButton {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 800;
+
+    padding: 11px 18px;
+
+    border: 1px solid #555;
+    border-radius: 10px;
+
+    background: #151515;
+    color: white;
+
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.18s ease;
+}
+
+#backButton:hover,
+#casinoBackButton:hover,
+#stockBackButton:hover {
+    background: #292929;
+    transform: translateY(-2px);
+}
+
+#clickerTitle,
+#casinoTitle,
+#stockTitle {
+    text-align: center;
+    font-weight: 1000;
+    letter-spacing: 3px;
+    text-shadow: 0 5px 25px black;
+}
+
+#clickerTitle {
+    font-size: clamp(32px, 6vw, 52px);
+    margin: 10px 0 20px;
+}
+
+#gabeClickerImage {
+    display: block;
+
+    width: 300px;
+    max-width: 75vw;
+
+    margin: 0 auto;
+
+    border-radius: 20px;
+
+    user-select: none;
+    -webkit-user-drag: none;
+
+    cursor: pointer;
+
+    transition: 0.12s ease;
+
+    filter: drop-shadow(
+        0 15px 25px rgba(0, 0, 0, 0.7)
+    );
+}
+
+#gabeClickerImage:hover {
+    transform: scale(1.025);
+}
+
+#gabeClickerImage:active {
+    transform: scale(0.96);
+}
+
+#clickerArea {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#clickCount {
+    margin-top: 18px;
+
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 1000;
+
+    color: #ffd84d;
+
+    text-shadow:
+        0 3px 15px rgba(255, 190, 0, 0.25);
+}
+
+#clickPower {
+    margin-top: 7px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#clickHint {
+    margin-top: 7px;
+    color: #aaa;
+}
+
+#casinoButton {
+    margin-top: 22px;
+
+    padding: 14px 30px;
+
+    border: 1px solid #b98b00;
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        #6b4a00,
+        #c79200
+    );
+
+    color: white;
+
+    font-size: 18px;
+    font-weight: 1000;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   SHOP
+   ========================================================= */
+
+#shop {
+    width: min(750px, 95vw);
+
+    margin: 35px auto 0;
+    padding: 24px;
+
+    border: 1px solid #333;
+    border-radius: 20px;
+
+    background: rgba(15, 15, 15, 0.9);
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.5);
+}
+
+#shop h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 27px;
+}
+
+.upgrade {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 17px 0;
+
+    border-top: 1px solid #292929;
+}
+
+.upgradeInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.upgradeName {
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.upgradeDescription {
+    margin-top: 5px;
+    color: #bbb;
+}
+
+.upgradeCost {
+    margin-top: 5px;
+    color: #ffd84d;
+    font-weight: bold;
+}
+
+.upgrade button,
+#resetButton,
+#plinkoDropButton,
+#rouletteSpinButton,
+#blackjackControls button,
+.betButtons button {
+    border: 1px solid #555;
+    border-radius: 9px;
+
+    background: linear-gradient(
+        135deg,
+        #1c1c1c,
+        #353535
+    );
+
+    color: white;
+
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.18s ease;
+}
+
+.upgrade button {
+    min-width: 155px;
+    padding: 11px 15px;
+}
+
+.upgrade button:disabled,
+#rouletteSpinButton:disabled,
+#blackjackControls button:disabled,
+#plinkoDropButton:disabled,
+.stockActionButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+#resetButton {
+    display: block;
+
+    margin: 25px auto 0;
+    padding: 11px 22px;
+
+    background: linear-gradient(
+        135deg,
+        #580000,
+        #a40000
+    );
+}
+
+#rebirthButton {
+    display: block;
+
+    margin: 18px auto 0;
+    padding: 14px 24px;
+
+    border: 1px solid #7a5a00;
+    border-radius: 9px;
+
+    background: linear-gradient(
+        135deg,
+        #5a3d00,
+        #c9a000
+    );
+
+    color: white;
+
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+
+    transition: 0.18s ease;
+}
+
+#rebirthButton:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+}
+
+#rebirthButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#rebirthInfo {
+    margin-top: 12px;
+    text-align: center;
+    color: #ffd84d;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+#rebirthHint {
+    margin-top: 6px;
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+#casinoKickOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.92);
+    flex-direction: column;
+    text-align: center;
+    padding: 30px;
+}
+
+#casinoKickOverlay h1 {
+    font-size: clamp(28px, 6vw, 48px);
+    color: #ff4d4d;
+    margin-bottom: 12px;
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+#casinoKickOverlay p {
+    font-size: 18px;
+    color: #ccc;
+    max-width: 480px;
+    line-height: 1.5;
+}
+
+#casinoKickOverlay button {
+    margin-top: 25px;
+    padding: 14px 28px;
+    border: 1px solid #555;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #333, #111);
+    color: white;
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   CASINO
+   ========================================================= */
+
+#casinoScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 700;
+
+    display: none;
+
+    overflow-y: auto;
+
+    padding: 35px 20px 50px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(90, 50, 0, 0.2),
+            transparent 45%
+        ),
+        rgba(2, 2, 2, 0.98);
+}
+
+#casinoTitle {
+    font-size: clamp(32px, 6vw, 50px);
+    margin: 10px 0 10px;
+}
+
+#casinoBalance {
+    width: fit-content;
+
+    margin: 0 auto 30px;
+    padding: 10px 22px;
+
+    border: 1px solid #705900;
+    border-radius: 999px;
+
+    background: rgba(80, 60, 0, 0.3);
+
+    color: #ffd84d;
+
+    font-size: 20px;
+    font-weight: 1000;
+}
+
+.casinoPanels {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    gap: 25px;
+
+    flex-wrap: wrap;
+}
+
+.casinoPanel {
+    width: 380px;
+    max-width: 95vw;
+
+    padding: 22px;
+
+    border: 1px solid #333;
+    border-radius: 20px;
+
+    background: linear-gradient(
+        145deg,
+        #111,
+        #080808
+    );
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.55);
+}
+
+.casinoPanel h2 {
+    margin: 0 0 18px;
+
+    text-align: center;
+
+    font-size: 25px;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.casinoInput {
+    width: 100%;
+
+    margin: 8px 0;
+
+    padding: 12px 14px;
+
+    border: 1px solid #444;
+    border-radius: 9px;
+
+    outline: none;
+
+    background: #080808;
+    color: white;
+
+    font-size: 16px;
+}
+
+.casinoInput:focus {
+    border-color: #d7a900;
+
+    box-shadow:
+        0 0 0 2px rgba(215, 169, 0, 0.15);
+}
+
+.betButtons {
+    display: flex;
+    justify-content: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    margin: 12px 0;
+}
+
+.betButtons button {
+    padding: 10px 15px;
+}
+
+.betButtons button.selected {
+    border-color: #ffd84d;
+
+    background: linear-gradient(
+        135deg,
+        #765800,
+        #bd8d00
+    );
+
+    color: white;
+}
+
+
+/* =========================================================
+   ROULETTE
+   ========================================================= */
+
+.rouletteContainer {
+    position: relative;
+
+    width: 250px;
+    height: 250px;
+
+    margin: 15px auto 20px;
+}
+
+#rouletteWheel {
+    position: absolute;
+
+    top: 5px;
+    left: 5px;
+
+    width: 240px;
+    height: 240px;
+
+    border: 7px solid #c5a227;
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            #138a3d 0deg 9.73deg,
+            #b51d1d 9.73deg 19.46deg,
+            #111 19.46deg 29.19deg,
+            #b51d1d 29.19deg 38.92deg,
+            #111 38.92deg 48.65deg,
+            #b51d1d 48.65deg 58.38deg,
+            #111 58.38deg 68.11deg,
+            #b51d1d 68.11deg 77.84deg,
+            #111 77.84deg 87.57deg,
+            #b51d1d 87.57deg 97.3deg,
+            #111 97.3deg 107.03deg,
+            #b51d1d 107.03deg 116.76deg,
+            #111 116.76deg 126.49deg,
+            #b51d1d 126.49deg 136.22deg,
+            #111 136.22deg 145.95deg,
+            #b51d1d 145.95deg 155.68deg,
+            #111 155.68deg 165.41deg,
+            #b51d1d 165.41deg 175.14deg,
+            #111 175.14deg 184.87deg,
+            #b51d1d 184.87deg 194.6deg,
+            #111 194.6deg 204.33deg,
+            #b51d1d 204.33deg 214.06deg,
+            #111 214.06deg 223.79deg,
+            #b51d1d 223.79deg 233.52deg,
+            #111 233.52deg 243.25deg,
+            #b51d1d 243.25deg 252.98deg,
+            #111 252.98deg 262.71deg,
+            #b51d1d 262.71deg 272.44deg,
+            #111 272.44deg 282.17deg,
+            #b51d1d 282.17deg 291.9deg,
+            #111 291.9deg 301.63deg,
+            #b51d1d 301.63deg 311.36deg,
+            #111 311.36deg 321.09deg,
+            #b51d1d 321.09deg 330.82deg,
+            #111 330.82deg 340.55deg,
+            #b51d1d 340.55deg 350.28deg,
+            #111 350.28deg 360deg
+        );
+
+    box-shadow:
+        inset 0 0 0 5px #111,
+        0 12px 35px rgba(0, 0, 0, 0.7);
+
+    transition:
+        transform 2.1s cubic-bezier(
+            0.12,
+            0.75,
+            0.15,
+            1
+        );
+}
+
+.roulettePointer {
+    position: absolute;
+
+    top: -9px;
+    left: 50%;
+
+    z-index: 10;
+
+    width: 0;
+    height: 0;
+
+    transform: translateX(-50%);
+
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 27px solid #ffd84d;
+
+    filter:
+        drop-shadow(0 3px 5px black);
+}
+
+.roulettePointer::after {
+    content: "";
+
+    position: absolute;
+
+    left: -5px;
+    top: -28px;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: white;
+}
+
+.rouletteCenter {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    z-index: 4;
+
+    width: 48px;
+    height: 48px;
+
+    transform: translate(-50%, -50%);
+
+    border: 4px solid #c5a227;
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #333,
+            #111
+        );
+
+    box-shadow:
+        0 3px 10px black;
+}
+
+#rouletteResult {
+    min-height: 32px;
+
+    text-align: center;
+
+    font-size: 18px;
+    font-weight: 1000;
+}
+
+#rouletteWinningNumber {
+    min-height: 25px;
+
+    margin-top: 5px;
+
+    text-align: center;
+
+    font-size: 24px;
+    font-weight: 1000;
+
+    color: #ffd84d;
+}
+
+#rouletteSpinButton {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 10px;
+    padding: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8c0000,
+            #d21d1d
+        );
+
+    font-size: 18px;
+}
+
+.casinoInfo {
+    margin-top: 15px;
+
+    color: #999;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   BLACKJACK
+   ========================================================= */
+
+#blackjackTable {
+    min-height: 335px;
+
+    padding: 20px;
+
+    border: 2px solid #14652b;
+    border-radius: 20px;
+
+    background:
+        radial-gradient(
+            circle,
+            #08712b,
+            #034419
+        );
+
+    box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.blackjackArea {
+    margin-bottom: 20px;
+
+    text-align: center;
+}
+
+.blackjackArea > strong {
+    font-size: 18px;
+}
+
+.blackjackCards {
+    display: flex;
+    justify-content: center;
+
+    gap: 7px;
+
+    flex-wrap: wrap;
+
+    min-height: 70px;
+
+    margin: 8px 0;
+}
+
+.card {
+    width: 46px;
+    height: 66px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 7px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff,
+            #dcdcdc
+        );
+
+    color: #111;
+
+    font-size: 17px;
+    font-weight: 1000;
+
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.45);
+}
+
+.card.hidden {
+    border: 2px solid white;
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #111 0,
+            #111 5px,
+            #292929 5px,
+            #292929 10px
+        );
+
+    color: white;
+}
+
+#dealerScore,
+#playerScore {
+    font-weight: bold;
+}
+
+#blackjackStatus {
+    min-height: 25px;
+
+    margin: 8px 0;
+
+    text-align: center;
+
+    font-weight: 1000;
+}
+
+#blackjackControls {
+    display: flex;
+    justify-content: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+}
+
+#blackjackControls button {
+    padding: 10px 14px;
+}
+
+
+/* =========================================================
+   PLINKO
+   ========================================================= */
+
+#plinkoCanvas {
+    display: block;
+
+    width: 340px;
+    height: 430px;
+
+    max-width: 100%;
+
+    margin: 10px auto;
+
+    border: 2px solid #444;
+    border-radius: 14px;
+
+    background: #090909;
+
+    box-shadow:
+        inset 0 0 25px black;
+}
+
+#plinkoResult {
+    min-height: 27px;
+
+    margin: 10px 0;
+
+    text-align: center;
+
+    font-weight: 1000;
+}
+
+#plinkoDropButton {
+    display: block;
+
+    width: 100%;
+
+    padding: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #765800,
+            #c39200
+        );
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   STOCK MARKET
+   ========================================================= */
+
+#stockMarketScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 750;
+
+    display: none;
+
+    overflow-y: auto;
+
+    padding: 35px 20px 60px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(0, 100, 55, 0.18),
+            transparent 45%
+        ),
+        rgba(3, 3, 3, 0.98);
+}
+
+#stockTitle {
+    font-size: clamp(32px, 6vw, 52px);
+    margin: 10px 0 8px;
+}
+
+#stockSubtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 25px;
+}
+
+#stockTopBar {
+    width: min(1100px, 96vw);
+    margin: 0 auto 20px;
+
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.stockBalanceBox {
+    min-width: 220px;
+
+    padding: 13px 22px;
+
+    border: 1px solid #333;
+    border-radius: 14px;
+
+    background: linear-gradient(
+        145deg,
+        #121212,
+        #080808
+    );
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.stockBalanceLabel {
+    color: #888;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.stockBalanceValue {
+    margin-top: 4px;
+
+    font-size: 23px;
+    font-weight: 1000;
+
+    color: #ffd84d;
+}
+
+#stockNews {
+    width: min(1100px, 96vw);
+
+    margin: 0 auto 20px;
+
+    padding: 13px 18px;
+
+    border-left: 4px solid #0b9b55;
+    border-radius: 8px;
+
+    background: rgba(15, 40, 25, 0.75);
+
+    color: #ddd;
+
+    font-weight: bold;
+}
+
+.stockLayout {
+    width: min(1100px, 96vw);
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.7fr)
+        minmax(280px, 0.8fr);
+
+    gap: 20px;
+}
+
+.stockPanel {
+    padding: 20px;
+
+    border: 1px solid #333;
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111,
+            #080808
+        );
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.5);
+}
+
+.stockList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stockRow {
+    display: grid;
+
+    grid-template-columns:
+        85px
+        1fr
+        100px
+        100px;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px;
+
+    border: 1px solid #292929;
+    border-radius: 10px;
+
+    background: #0c0c0c;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+.stockRow:hover {
+    background: #161616;
+    transform: translateX(2px);
+}
+
+.stockRow.selected {
+    border-color: #0b9b55;
+    background: rgba(0, 100, 55, 0.18);
+}
+
+.stockTicker {
+    font-size: 17px;
+    font-weight: 1000;
+}
+
+.stockCompany {
+    color: #aaa;
+    font-size: 13px;
+}
+
+.stockPrice {
+    text-align: right;
+    font-weight: 1000;
+}
+
+.stockChange {
+    text-align: right;
+    font-weight: 1000;
+}
+
+.stockPositive {
+    color: #38d878;
+}
+
+.stockNegative {
+    color: #ff4d4d;
+}
+
+.stockChartTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 10px;
+}
+
+.stockChartName {
+    font-size: 25px;
+    font-weight: 1000;
+}
+
+.stockChartPrice {
+    font-size: 24px;
+    font-weight: 1000;
+}
+
+#stockChart {
+    display: block;
+
+    width: 100%;
+    height: 320px;
+
+    border: 1px solid #252525;
+    border-radius: 12px;
+
+    background: #070707;
+}
+/* =========================================================
+   STOCK CHART CONTROLS + TOOLTIP
+   ========================================================= */
+
+.chartControls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.chartToggle {
+    padding: 8px 14px;
+
+    border: 1px solid #444;
+    border-radius: 8px;
+
+    background: #151515;
+    color: #aaa;
+
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+.chartToggle:hover {
+    background: #252525;
+}
+
+.chartToggle.active {
+    background: #0b7441;
+    border-color: #0b9b55;
+    color: white;
+}
+
+#stockTooltip {
+    position: fixed;
+
+    z-index: 99999;
+
+    display: none;
+
+    min-width: 175px;
+
+    padding: 11px 14px;
+
+    border: 1px solid #444;
+    border-radius: 9px;
+
+    background: rgba(5, 8, 7, 0.97);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.7);
+
+    color: white;
+
+    font-size: 13px;
+
+    pointer-events: none;
+}
+
+.stockTooltipTime {
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.stockTooltipPrice {
+    font-size: 18px;
+    font-weight: 1000;
+}
+
+.stockTooltipPercent {
+    margin-top: 4px;
+    font-weight: 1000;
+}
+
+.stockTooltipOHLC {
+    margin-top: 7px;
+    padding-top: 7px;
+
+    border-top: 1px solid #333;
+
+    color: #aaa;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.portfolioMove {
+    font-weight: 1000;
+    margin-top: 3px;
+}
+
+.portfolioProfit {
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.stockTabs {
+    display: flex;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin: 12px 0 20px;
+
+    flex-wrap: wrap;
+}
+
+.stockTab {
+    padding: 8px 13px;
+
+    border: 1px solid #444;
+    border-radius: 8px;
+
+    background: #151515;
+    color: #ccc;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+.stockTab.active {
+    background: #0b7441;
+    border-color: #0b9b55;
+    color: white;
+}
+
+.stockOrderBox {
+    margin-top: 18px;
+
+    padding: 17px;
+
+    border-top: 1px solid #292929;
+}
+
+.stockOrderBox h3 {
+    margin-top: 0;
+}
+
+.stockInput {
+    width: 100%;
+
+    padding: 12px;
+
+    margin: 8px 0;
+
+    border: 1px solid #444;
+    border-radius: 8px;
+
+    background: #070707;
+    color: white;
+
+    font-size: 16px;
+}
+
+.stockActionButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.stockActionButton {
+    flex: 1;
+
+    padding: 12px;
+
+    border: 1px solid #555;
+    border-radius: 9px;
+
+    color: white;
+
+    font-weight: 1000;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+#buyStockButton {
+    background: linear-gradient(
+        135deg,
+        #07552f,
+        #0b9b55
+    );
+}
+
+#sellStockButton {
+    background: linear-gradient(
+        135deg,
+        #720000,
+        #c91616
+    );
+}
+
+.stockInfo {
+    margin-top: 12px;
+
+    color: #888;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.portfolioTitle {
+    margin-top: 0;
+    text-align: center;
+}
+
+.portfolioRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid #292929;
+}
+
+.portfolioTicker {
+    font-weight: 1000;
+}
+
+.portfolioShares {
+    color: #aaa;
+    font-size: 13px;
+}
+
+.portfolioValue {
+    text-align: right;
+    font-weight: bold;
+}
+
+.portfolioEmpty {
+    text-align: center;
+    color: #777;
+    padding: 20px 0;
+}
+
+.marketDisclaimer {
+    width: min(1100px, 96vw);
+
+    margin: 20px auto 0;
+
+    color: #666;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   SELF DESTRUCT
+   ========================================================= */
+
+#selfDestructScreen {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 9000;
+
+    display: none;
+
+    justify-content: center;
+    align-items: center;
+
+    background: #000;
+
+    isolation: isolate;
+    overflow: hidden;
+}
+
+#selfDestructVideo {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+#countdown {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    z-index: 2;
+
+    transform: translate(-50%, -50%);
+
+    margin: 0;
+
+    font-size: clamp(70px, 12vw, 150px);
+    font-weight: 1000;
+
+    color: white;
+
+    text-shadow:
+        0 0 10px black,
+        0 0 25px black,
+        0 5px 20px black;
+}
+
+#finalImage {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 10000;
+
+    display: none;
+
+    width: 100vw;
+    height: 100vh;
+
+    object-fit: cover;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    #rightImage1,
+    #rightImage2 {
+        right: 10px;
+        width: 110px;
+    }
+
+    #rightImage2 {
+        top: 145px;
+    }
+
+    #clickerButton,
+    #stockMarketButton,
+    #backgroundButton,
+    #selfDestructButton {
+        left: 10px;
+
+        min-width: 160px;
+
+        padding: 11px 14px;
+
+        font-size: 13px;
+    }
+
+    #clickerButton {
+        bottom: 205px;
+    }
+
+    #stockMarketButton {
+        bottom: 145px;
+    }
+
+    #backgroundButton {
+        bottom: 85px;
+    }
+
+    #selfDestructButton {
+        bottom: 25px;
+    }
+
+    #clickerScreen,
+    #casinoScreen,
+    #stockMarketScreen {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    #shop {
+        padding: 16px;
+    }
+
+    .upgrade {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .upgrade button {
+        width: 100%;
+    }
+
+    .casinoPanel {
+        width: 100%;
+    }
+
+    #rouletteWheel {
+        width: 220px;
+        height: 220px;
+    }
+
+    .stockLayout {
+        grid-template-columns: 1fr;
+    }
+
+    .stockRow {
+        grid-template-columns:
+            70px
+            1fr
+            85px;
+    }
+
+    .stockRow .stockChange {
+        display: none;
+    }
+
+    .stockChartName {
+        font-size: 20px;
+    }
+
+    .stockChartPrice {
+        font-size: 19px;
+    }
+
+    #stockChart {
+        height: 250px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =========================================================
+     LOADING SCREEN
+     ========================================================= -->
+
+<div id="loadingScreen">
+
+
+<div id="loadingText">
+    LOADING WEBSITE...
+</div>
+
+<div id="loadingPercent">
+    41%
+</div>
+
+<div id="loadingBar">
+    <div id="loadingProgress"></div>
+</div>
+
+
+</div>
+
+<!-- =========================================================
+     SIDE IMAGES
+     ========================================================= -->
+
+<img
+id="rightImage1"
+src="iced out gaben.png"
+draggable="false"
+alt=""
+
+>
+
+<img
+id="rightImage2"
+src="67-pig-sigma-pig.gif"
+draggable="false"
+alt=""
+
+>
+
+<!-- =========================================================
+     MAIN BUTTONS
+     ========================================================= -->
+
+<button
+id="clickerButton"
+onclick="openClicker()"
+
+>
+
+GABE CLICKER </button>
+
+<button
+id="stockMarketButton"
+onclick="openStockMarket()"
+
+>
+
+📈 STOCK MARKET </button>
+
+<button
+id="backgroundButton"
+onclick="changeBackground()"
+
+>
+
+CHANGE BACKGROUND </button>
+
+<button
+id="selfDestructButton"
+onclick="selfDestruct()"
+
+>
+
+SELF DESTRUCT </button>
+
+<!-- =========================================================
+     CLICKER SCREEN
+     ========================================================= -->
+
+<div id="clickerScreen">
+
+<button
+id="backButton"
+onclick="closeClicker()"
+
+>
+
+← BACK </button>
+
+<h1 id="clickerTitle">
+    GABE CLICKER
+</h1>
+
+<div id="clickerArea">
+
+<img
+id="gabeClickerImage"
+src="iced out gaben.png"
+draggable="false"
+alt="Gabe"
+onclick="gabeClick(event)"
+
+>
+
+<div id="clickCount">
+    CLICKS: 0
+</div>
+
+<div id="clickPower">
+    +1 CLICKS PER CLICK
+</div>
+
+<div id="rebirthDisplay" style="margin-top:8px;font-size:18px;font-weight:900;color:#ffd84d;">
+    REBIRTHS: 0 · MULTIPLIER: 1.00×
+</div>
+
+<div id="clickHint">
+    CLICK GABE TO GET CLICKS
+</div>
+
+<button
+id="casinoButton"
+onclick="openCasino()"
+
+>
+
+
+🎰 OPEN CASINO
+
+
+</button>
+
+</div>
+
+<!-- SHOP -->
+
+<div id="shop">
+
+<h2>
+    CLICK SHOP
+</h2>
+
+<div class="upgrade">
+
+
+<div class="upgradeInfo">
+
+    <div class="upgradeName">
+        Strong Finger
+    </div>
+
+    <div class="upgradeDescription">
+        +1 click power
+    </div>
+
+    <div class="upgradeCost">
+        Cost: 100 clicks
+    </div>
+
+</div>
+
+<button
+    id="upgrade1Button"
+    onclick="buyUpgrade(1)"
+>
+    NOT ENOUGH CLICKS
+</button>
+
+
+</div>
+
+<div class="upgrade">
+
+
+<div class="upgradeInfo">
+
+    <div class="upgradeName">
+        Gabe Keyboard
+    </div>
+
+    <div class="upgradeDescription">
+        +5 click power
+    </div>
+
+    <div class="upgradeCost">
+        Cost: 500 clicks
+    </div>
+
+</div>
+
+<button
+    id="upgrade2Button"
+    onclick="buyUpgrade(2)"
+>
+    NOT ENOUGH CLICKS
+</button>
+
+
+</div>
+
+<div class="upgrade">
+
+
+<div class="upgradeInfo">
+
+    <div class="upgradeName">
+        Diamond Mouse
+    </div>
+
+    <div class="upgradeDescription">
+        +25 click power
+    </div>
+
+    <div class="upgradeCost">
+        Cost: 2,500 clicks
+    </div>
+
+</div>
+
+<button
+    id="upgrade3Button"
+    onclick="buyUpgrade(3)"
+>
+    NOT ENOUGH CLICKS
+</button>
+
+
+</div>
+
+<div class="upgrade">
+
+
+<div class="upgradeInfo">
+
+    <div class="upgradeName">
+        Gabe Gaming Chair
+    </div>
+
+    <div class="upgradeDescription">
+        +100 click power
+    </div>
+
+    <div class="upgradeCost">
+        Cost: 10,000 clicks
+    </div>
+
+</div>
+
+<button
+    id="upgrade4Button"
+    onclick="buyUpgrade(4)"
+>
+    NOT ENOUGH CLICKS
+</button>
+
+
+</div>
+
+<button
+id="rebirthButton"
+onclick="doRebirth()"
+disabled
+>
+    REBIRTH (need more clicks)
+</button>
+
+<div id="rebirthInfo">
+    Next rebirth: 50,000 clicks
+</div>
+
+<div id="rebirthHint">
+    Rebirth resets your clicks &amp; upgrades,<br>
+    but permanently multiplies all future clicks.<br>
+    Stocks and portfolio are kept.
+</div>
+
+<button
+id="resetButton"
+onclick="resetGame()"
+
+>
+
+
+RESET GAME
+
+
+</button>
+
+</div>
+</div>
+
+<!-- =========================================================
+     CASINO SCREEN
+     ========================================================= -->
+
+<div id="casinoScreen">
+
+<button
+id="casinoBackButton"
+onclick="closeCasino()"
+
+>
+
+← BACK </button>
+
+<h1 id="casinoTitle">
+    🎰 GABE CASINO 🎰
+</h1>
+
+<div id="casinoBalance">
+    CLICKS: 0
+</div>
+
+<div class="casinoPanels">
+
+<!-- ROULETTE -->
+
+<div class="casinoPanel">
+
+
+<h2>
+    🎡 ROULETTE
+</h2>
+
+<div class="rouletteContainer">
+
+    <div class="roulettePointer"></div>
+
+    <div id="rouletteWheel">
+        <div class="rouletteCenter"></div>
+    </div>
+
+</div>
+
+<div id="rouletteResult">
+    CHOOSE RED, BLACK OR GREEN
+</div>
+
+<div id="rouletteWinningNumber"></div>
+
+<input
+    id="casinoBetAmount"
+    class="casinoInput"
+    type="number"
+    min="1"
+    placeholder="Bet amount"
+>
+
+<div class="betButtons">
+
+    <button
+        id="redButton"
+        onclick="selectCasinoBet('red')"
+    >
+        🔴 RED
+    </button>
+
+    <button
+        id="blackButton"
+        onclick="selectCasinoBet('black')"
+    >
+        ⚫ BLACK
+    </button>
+
+    <button
+        id="greenButton"
+        onclick="selectCasinoBet('green')"
+    >
+        🟢 GREEN
+    </button>
+
+</div>
+
+<button
+    id="rouletteSpinButton"
+    onclick="spinRoulette()"
+>
+    SPIN WHEEL
+</button>
+
+<div class="casinoInfo">
+
+    Red pays 2×<br>
+    Black pays 2×<br>
+    Green pays 35×
+
+</div>
+
+
+</div>
+
+<!-- BLACKJACK -->
+
+<div class="casinoPanel">
+
+
+<h2>
+    🃏 BLACKJACK
+</h2>
+
+<div id="blackjackTable">
+
+    <div class="blackjackArea">
+
+        <strong>
+            DEALER
+        </strong>
+
+        <div
+            id="dealerCards"
+            class="blackjackCards"
+        ></div>
+
+        <div id="dealerScore">
+            Score: 0
+        </div>
+
+    </div>
+
+    <div class="blackjackArea">
+
+        <strong>
+            PLAYER
+        </strong>
+
+        <div
+            id="playerCards"
+            class="blackjackCards"
+        ></div>
+
+        <div id="playerScore">
+            Score: 0
+        </div>
+
+    </div>
+
+    <div id="blackjackStatus">
+        PLACE YOUR BET
+    </div>
+
+</div>
+
+<input
+    id="blackjackBet"
+    class="casinoInput"
+    type="number"
+    min="1"
+    placeholder="Bet amount"
+>
+
+<div id="blackjackControls">
+
+    <button
+        id="blackjackDealButton"
+        onclick="blackjackDeal()"
+    >
+        DEAL
+    </button>
+
+    <button
+        id="blackjackHitButton"
+        onclick="blackjackHit()"
+        disabled
+    >
+        HIT
+    </button>
+
+    <button
+        id="blackjackStandButton"
+        onclick="blackjackStand()"
+        disabled
+    >
+        STAND
+    </button>
+
+    <button
+        id="blackjackDoubleButton"
+        onclick="blackjackDouble()"
+        disabled
+    >
+        DOUBLE
+    </button>
+
+</div>
+
+<div class="casinoInfo">
+
+    Natural blackjack pays 2.5×.<br>
+    Normal wins pay 2×.
+
+</div>
+
+
+</div>
+
+<!-- PLINKO -->
+
+<div class="casinoPanel">
+
+
+<h2>
+    🟡 PLINKO
+</h2>
+
+<canvas
+    id="plinkoCanvas"
+    width="340"
+    height="430"
+></canvas>
+
+<div id="plinkoResult">
+    ENTER A BET AND DROP THE BALL
+</div>
+
+<input
+    id="plinkoBet"
+    class="casinoInput"
+    type="number"
+    min="1"
+    placeholder="Bet amount"
+>
+
+<div class="betButtons">
+
+    <button onclick="setPlinkoBet(10)">
+        10
+    </button>
+
+    <button onclick="setPlinkoBet(100)">
+        100
+    </button>
+
+    <button onclick="setPlinkoBet(1000)">
+        1K
+    </button>
+
+    <button onclick="setPlinkoBet(10000)">
+        10K
+    </button>
+
+</div>
+
+<button
+    id="plinkoDropButton"
+    onclick="dropPlinko()"
+>
+    DROP BALL
+</button>
+
+<div class="casinoInfo">
+
+    Possible multipliers range from 0× to 5×.<br>
+    The big payouts are on the edges!
+
+</div>
+
+
+</div>
+
+</div>
+</div>
+
+<!-- =========================================================
+     STOCK MARKET SCREEN
+     ========================================================= -->
+
+<div id="stockMarketScreen">
+
+<button
+id="stockBackButton"
+onclick="closeStockMarket()"
+
+>
+
+← BACK </button>
+
+<h1 id="stockTitle">
+    📈 GABE STOCK MARKET
+</h1>
+
+<div id="stockSubtitle">
+    FICTIONAL MARKET • REAL-WORLD-INSPIRED BEHAVIOR
+</div>
+
+<div id="stockTopBar">
+
+
+<div class="stockBalanceBox">
+
+    <div class="stockBalanceLabel">
+        AVAILABLE CLICKS
+    </div>
+
+    <div
+        id="stockCashBalance"
+        class="stockBalanceValue"
+    >
+        0
+    </div>
+
+</div>
+
+
+<div class="stockBalanceBox">
+
+    <div class="stockBalanceLabel">
+        PORTFOLIO VALUE
+    </div>
+
+    <div
+        id="stockPortfolioValue"
+        class="stockBalanceValue"
+    >
+        0
+    </div>
+
+</div>
+
+
+<div class="stockBalanceBox">
+
+    <div class="stockBalanceLabel">
+        TOTAL WEALTH
+    </div>
+
+    <div
+        id="stockTotalWealth"
+        class="stockBalanceValue"
+    >
+        0
+    </div>
+
+</div>
+
+
+</div>
+
+<div id="stockNews">
+    📰 MARKET OPEN — Welcome to the Gabe Exchange.
+</div>
+
+<div class="stockLayout">
+
+<!-- LEFT SIDE -->
+
+<div class="stockPanel">
+
+
+<div class="stockChartTitle">
+
+    <div>
+        <div
+            id="stockChartName"
+            class="stockChartName"
+        >
+            NVIDIA
+        </div>
+
+        <div
+            id="stockChartTicker"
+            style="color:#888;"
+        >
+            NVDA
+        </div>
+    </div>
+
+    <div
+        id="stockChartPrice"
+        class="stockChartPrice"
+    >
+        $180.00
+    </div>
+
+</div>
+
+
+<div class="chartControls">
+
+    <button
+        id="lineChartButton"
+        class="chartToggle active"
+        onclick="setStockChartType('line')"
+    >
+        📈 LINE
+    </button>
+
+    <button
+        id="candleChartButton"
+        class="chartToggle"
+        onclick="setStockChartType('candle')"
+    >
+        🕯️ CANDLES
+    </button>
+
+</div>
+
+<canvas
+    id="stockChart"
+    width="750"
+    height="320"
+></canvas>
+
+<div class="stockTabs">
+
+    <button
+        class="stockTab active"
+        data-range="1D"
+        onclick="setStockRange('1D')"
+    >
+        1D
+    </button>
+
+    <button
+        class="stockTab"
+        data-range="1W"
+        onclick="setStockRange('1W')"
+    >
+        1W
+    </button>
+
+    <button
+        class="stockTab"
+        data-range="1M"
+        onclick="setStockRange('1M')"
+    >
+        1M
+    </button>
+
+    <button
+        class="stockTab"
+        data-range="3M"
+        onclick="setStockRange('3M')"
+    >
+        3M
+    </button>
+
+</div>
+
+
+<div class="stockOrderBox">
+
+    <h3>
+        TRADE <span id="tradeTicker">NVDA</span>
+    </h3>
+
+    <input
+        id="stockAmount"
+        class="stockInput"
+        type="number"
+        min="1"
+        step="1"
+        placeholder="Number of shares"
+    >
+
+    <div class="stockActionButtons">
+
+        <button
+            id="buyStockButton"
+            class="stockActionButton"
+            onclick="buyStock()"
+        >
+            BUY
+        </button>
+
+        <button
+            id="sellStockButton"
+            class="stockActionButton"
+            onclick="sellStock()"
+        >
+            SELL
+        </button>
+
+    </div>
+
+    <div
+        id="stockTradeInfo"
+        class="stockInfo"
+    >
+        Enter how many shares you want to trade.
+    </div>
+
+</div>
+
+
+</div>
+
+<!-- RIGHT SIDE -->
+
+<div class="stockPanel">
+
+
+<h2 style="margin-top:0;text-align:center;">
+    MARKET
+</h2>
+
+<div
+    id="stockList"
+    class="stockList"
+></div>
+
+
+</div>
+
+<!-- PORTFOLIO -->
+
+<div class="stockPanel">
+
+
+<h2 class="portfolioTitle">
+    💼 YOUR PORTFOLIO
+</h2>
+
+<div id="portfolioList"></div>
+
+
+</div>
+
+<!-- MARKET INFO -->
+
+<div class="stockPanel">
+
+
+<h2 class="portfolioTitle">
+    📊 MARKET INFO
+</h2>
+
+<div class="stockInfo">
+
+    <p>
+        Every stock has a different personality.
+    </p>
+
+    <p>
+        <strong>NVIDIA / AMD</strong><br>
+        AI and semiconductor hype. High volatility.
+    </p>
+
+    <p>
+        <strong>TESLA</strong><br>
+        Extremely volatile and capable of huge moves.
+    </p>
+
+    <p>
+        <strong>APPLE / MICROSOFT / WALMART</strong><br>
+        More stable companies with smaller average moves.
+    </p>
+
+    <p>
+        <strong>COINBASE</strong><br>
+        The wild card. Very high volatility.
+    </p>
+
+</div>
+
+
+</div>
+
+</div>
+
+<div class="marketDisclaimer">
+
+
+This is a fictional game economy inspired by real-world companies.
+Prices are simulated and are not real stock prices.
+No real money or securities are involved.
+
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     SELF DESTRUCT
+     ========================================================= -->
+
+<div id="selfDestructScreen">
+
+<video
+id="selfDestructVideo"
+src="videoplayback.mp4"
+autoplay
+playsinline
+
+>
+
+</video>
+
+<div id="countdown">
+    5
+</div>
+
+</div>
+
+<img
+id="finalImage"
+src="iced out gaben.png"
+draggable="false"
+alt=""
+
+>
+
+<!-- CASINO KICK OVERLAY -->
+<div id="casinoKickOverlay">
+    <h1>🚫 SECURITY ALERT</h1>
+    <p>
+        You have been removed from the casino for<br>
+        <strong style="color:#ffd84d;">WINNING TOO MUCH TOO FAST</strong>.
+    </p>
+    <p style="margin-top:14px;color:#999;font-size:15px;">
+        Gabe's security team is watching.<br>
+        Come back in a bit and play fair… or don't.
+    </p>
+    <button onclick="dismissCasinoKick()">OK FINE</button>
+</div>
+
+<div id="stockTooltip">
+
+    <div
+        id="stockTooltipTime"
+        class="stockTooltipTime"
+    ></div>
+
+    <div
+        id="stockTooltipPrice"
+        class="stockTooltipPrice"
+    ></div>
+
+    <div
+        id="stockTooltipPercent"
+        class="stockTooltipPercent"
+    ></div>
+
+    <div
+        id="stockTooltipOHLC"
+        class="stockTooltipOHLC"
+    ></div>
+
+</div>
+
+<script>
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+let loadingPercent = 41;
+
+function loadWebsite() {
+
+    if (loadingPercent >= 100) {
+
+        document.getElementById(
+            "loadingPercent"
+        ).textContent = "100%";
+
+        document.getElementById(
+            "loadingProgress"
+        ).style.width = "100%";
+
+        setTimeout(function() {
+
+            document.getElementById(
+                "loadingScreen"
+            ).style.display = "none";
+
+        }, 700);
+
+        return;
+    }
+
+    loadingPercent++;
+
+    document.getElementById(
+        "loadingPercent"
+    ).textContent =
+        loadingPercent + "%";
+
+    document.getElementById(
+        "loadingProgress"
+    ).style.width =
+        loadingPercent + "%";
+
+    let delay = 15;
+
+    if (loadingPercent === 67) {
+        delay = 670;
+    }
+
+    setTimeout(
+        loadWebsite,
+        delay
+    );
+}
+
+loadWebsite();
+
+
+/* =========================================================
+   BACKGROUND
+   ========================================================= */
+
+let imagePositions = [
+    "israel-jeffrey-epstein.gif",
+    "iced out gaben.png",
+    "67-pig-sigma-pig.gif"
+];
+
+function changeBackground() {
+
+    imagePositions.unshift(
+        imagePositions.pop()
+    );
+
+    document.body.style.backgroundImage =
+        "url('" +
+        imagePositions[0] +
+        "')";
+
+    document.getElementById(
+        "rightImage1"
+    ).src =
+        imagePositions[1];
+
+    document.getElementById(
+        "rightImage2"
+    ).src =
+        imagePositions[2];
+}
+
+
+/* =========================================================
+   GAME DATA
+   ========================================================= */
+
+let gabeClicks =
+    parseInt(
+        localStorage.getItem(
+            "gabeClicks"
+        )
+    ) || 0;
+
+let clickPower =
+    parseInt(
+        localStorage.getItem(
+            "clickPower"
+        )
+    ) || 1;
+
+let rebirthLevel =
+    parseInt(
+        localStorage.getItem(
+            "rebirthLevel"
+        )
+    ) || 0;
+
+/* Permanent click multiplier from rebirths (1.00 + 0.25 per rebirth) */
+function getRebirthMultiplier() {
+    return 1 + rebirthLevel * 0.25;
+}
+
+/* Cost to rebirth scales: 50k * 5^level */
+function getRebirthCost() {
+    return Math.floor(50000 * Math.pow(5, rebirthLevel));
+}
+
+
+/* =========================================================
+   CASINO WIN TRACKING (Easter egg)
+   ========================================================= */
+
+/* Kick rule: if your balance grows by CASINO_KICK_MULTIPLIER (or more)
+   compared to your LOWEST balance within the last CASINO_KICK_WINDOW ms,
+   you get kicked. e.g. 10k -> 100k within 60 seconds. */
+const CASINO_KICK_MULTIPLIER = 10;
+const CASINO_KICK_WINDOW = 60000;   /* 60 seconds */
+const CASINO_KICK_MIN_BASE = 100;   /* ignore very tiny balances (e.g. 5 -> 50) */
+
+let casinoBalanceSnapshots = [];
+let casinoKickUntil = parseInt(localStorage.getItem("casinoKickUntil")) || 0;
+
+/* Record the current balance (call BEFORE a bet is deducted,
+   and after a result is paid out). */
+function snapshotCasinoBalance() {
+    const now = Date.now();
+
+    casinoBalanceSnapshots.push({
+        time: now,
+        balance: gabeClicks
+    });
+
+    casinoBalanceSnapshots = casinoBalanceSnapshots.filter(
+        function (s) {
+            return now - s.time <= CASINO_KICK_WINDOW;
+        }
+    );
+}
+
+/* Called after EVERY casino result has been paid out (win or loss). */
+function recordCasinoWin() {
+    snapshotCasinoBalance();
+
+    let lowest = Infinity;
+
+    casinoBalanceSnapshots.forEach(function (s) {
+        if (s.balance < lowest) {
+            lowest = s.balance;
+        }
+    });
+
+    /* Handy for debugging: open the browser console (F12) to watch it. */
+    console.log(
+        "[casino] lowest balance in last " +
+        (CASINO_KICK_WINDOW / 1000) + "s: " + Math.floor(lowest) +
+        " | now: " + Math.floor(gabeClicks) +
+        " | growth: " + (lowest > 0 ? (gabeClicks / lowest).toFixed(2) : "n/a") + "x" +
+        " (kick at " + CASINO_KICK_MULTIPLIER + "x)"
+    );
+
+    if (
+        lowest >= CASINO_KICK_MIN_BASE &&
+        gabeClicks >= lowest * CASINO_KICK_MULTIPLIER
+    ) {
+        kickFromCasino();
+    }
+}
+
+function kickFromCasino() {
+    casinoBalanceSnapshots = [];
+    casinoKickUntil = Date.now() + 60000; /* 60 second ban */
+    localStorage.setItem("casinoKickUntil", casinoKickUntil);
+
+    /* Stop any active games */
+    rouletteSpinning = false;
+    blackjackActive = false;
+    plinkoAnimating = false;
+    plinkoBall = null;
+
+    document.getElementById("casinoScreen").style.display = "none";
+    document.getElementById("clickerScreen").style.display = "block";
+    document.getElementById("casinoKickOverlay").style.display = "flex";
+
+    updateClicker();
+}
+
+function dismissCasinoKick() {
+    document.getElementById("casinoKickOverlay").style.display = "none";
+}
+
+function isCasinoBanned() {
+    return Date.now() < casinoKickUntil;
+}
+
+
+/* =========================================================
+   DISPLAY
+   ========================================================= */
+
+function updateClickDisplay() {
+
+    document.getElementById(
+        "clickCount"
+    ).textContent =
+        "CLICKS: " +
+        formatNumber(gabeClicks);
+}
+
+function updateCasinoBalance() {
+
+    document.getElementById(
+        "casinoBalance"
+    ).textContent =
+        "CLICKS: " +
+        formatNumber(gabeClicks);
+}
+
+function updateRebirthUI() {
+    const mult = getRebirthMultiplier();
+    const cost = getRebirthCost();
+
+    const display = document.getElementById("rebirthDisplay");
+    if (display) {
+        display.textContent =
+            "REBIRTHS: " +
+            rebirthLevel +
+            " · MULTIPLIER: " +
+            mult.toFixed(2) +
+            "×";
+    }
+
+    const info = document.getElementById("rebirthInfo");
+    if (info) {
+        info.textContent =
+            "Next rebirth: " +
+            formatNumber(cost) +
+            " clicks";
+    }
+
+    const btn = document.getElementById("rebirthButton");
+    if (btn) {
+        if (gabeClicks >= cost) {
+            btn.disabled = false;
+            btn.textContent = "🔥 REBIRTH NOW";
+        } else {
+            btn.disabled = true;
+            btn.textContent =
+                "REBIRTH (need " +
+                formatNumber(cost) +
+                ")";
+        }
+    }
+}
+
+function updateClicker() {
+
+    updateClickDisplay();
+
+    const effectivePower = Math.floor(
+        clickPower * getRebirthMultiplier()
+    );
+
+    document.getElementById(
+        "clickPower"
+    ).textContent =
+        "+" +
+        formatNumber(effectivePower) +
+        " CLICKS PER CLICK" +
+        (rebirthLevel > 0
+            ? " (base " + formatNumber(clickPower) + " × " + getRebirthMultiplier().toFixed(2) + ")"
+            : "");
+
+    updateShopButtons();
+
+    updateCasinoBalance();
+
+    updateStockBalances();
+
+    updateRebirthUI();
+}
+
+
+/* =========================================================
+   NUMBER FORMAT
+   ========================================================= */
+
+function formatNumber(number) {
+
+    return Math.floor(number).toLocaleString(
+        "en-US"
+    );
+}
+
+
+/* =========================================================
+   SAVE GAME
+   ========================================================= */
+
+function saveGame() {
+
+    localStorage.setItem(
+        "gabeClicks",
+        gabeClicks
+    );
+
+    localStorage.setItem(
+        "clickPower",
+        clickPower
+    );
+
+    localStorage.setItem(
+        "rebirthLevel",
+        rebirthLevel
+    );
+
+    localStorage.setItem(
+        "casinoKickUntil",
+        casinoKickUntil
+    );
+
+    saveStockGame();
+}
+
+setInterval(
+    function() {
+        saveGame();
+    },
+    1000
+);
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        saveGame();
+        saveStockGame();
+
+    }
+);
+
+
+/* =========================================================
+   CLICKER
+   ========================================================= */
+
+function gabeClick(event) {
+
+    if (event) {
+        event.preventDefault();
+    }
+
+    const effectivePower = Math.floor(
+        clickPower * getRebirthMultiplier()
+    );
+
+    gabeClicks += effectivePower;
+
+    updateClicker();
+}
+
+function openClicker() {
+
+    document.getElementById(
+        "clickerScreen"
+    ).style.display =
+        "block";
+
+    updateClicker();
+}
+
+function closeClicker() {
+
+    document.getElementById(
+        "clickerScreen"
+    ).style.display =
+        "none";
+}
+
+
+/* =========================================================
+   CASINO NAVIGATION
+   ========================================================= */
+
+function openCasino() {
+
+    if (isCasinoBanned()) {
+        const secondsLeft = Math.ceil(
+            (casinoKickUntil - Date.now()) / 1000
+        );
+        alert(
+            "🚫 You are still banned from the casino!\n\nCome back in " +
+            secondsLeft +
+            " seconds.\n\n(You won too much too fast.)"
+        );
+        return;
+    }
+
+    document.getElementById(
+        "clickerScreen"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "casinoScreen"
+    ).style.display =
+        "block";
+
+    updateCasinoBalance();
+
+    snapshotCasinoBalance();
+
+    drawPlinko();
+}
+
+function closeCasino() {
+
+    document.getElementById(
+        "casinoScreen"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "clickerScreen"
+    ).style.display =
+        "block";
+
+    updateClicker();
+}
+
+
+/* =========================================================
+   IMAGE PROTECTION
+   ========================================================= */
+
+document.addEventListener(
+    "dragstart",
+    function(event) {
+
+        if (
+            event.target.tagName === "IMG"
+        ) {
+
+            event.preventDefault();
+        }
+
+    }
+);
+
+document.addEventListener(
+    "contextmenu",
+    function(event) {
+
+        if (
+            event.target.tagName === "IMG"
+        ) {
+
+            event.preventDefault();
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SHOP
+   ========================================================= */
+
+const upgrades = {
+
+    1: {
+        cost: 100,
+        power: 1
+    },
+
+    2: {
+        cost: 500,
+        power: 5
+    },
+
+    3: {
+        cost: 2500,
+        power: 25
+    },
+
+    4: {
+        cost: 10000,
+        power: 100
+    }
+
+};
+
+function buyUpgrade(id) {
+
+    const upgrade =
+        upgrades[id];
+
+    if (
+        gabeClicks <
+        upgrade.cost
+    ) {
+
+        alert(
+            "You don't have enough clicks!"
+        );
+
+        return;
+    }
+
+    gabeClicks -=
+        upgrade.cost;
+
+    clickPower +=
+        upgrade.power;
+
+    updateClicker();
+
+    saveGame();
+
+    alert(
+        "UPGRADE BOUGHT!\n\n+" +
+        upgrade.power +
+        " clicks per click!"
+    );
+}
+
+/* =========================================================
+   REBIRTH
+   ========================================================= */
+
+function doRebirth() {
+    const cost = getRebirthCost();
+
+    if (gabeClicks < cost) {
+        alert("You need " + formatNumber(cost) + " clicks to rebirth!");
+        return;
+    }
+
+    const confirmed = confirm(
+        "REBIRTH?\n\n" +
+        "• Your clicks will be reset to 0\n" +
+        "• Your click power upgrades will reset to 1\n" +
+        "• You keep your stocks & portfolio\n" +
+        "• Permanent multiplier becomes " +
+        (getRebirthMultiplier() + 0.25).toFixed(2) +
+        "×\n\n" +
+        "This cannot be undone!"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    gabeClicks = 0;
+    clickPower = 1;
+    rebirthLevel += 1;
+
+    /* Reset shop UI state is handled by updateClicker */
+    updateClicker();
+    saveGame();
+
+    alert(
+        "🔥 REBIRTH COMPLETE!\n\n" +
+        "Rebirth level: " +
+        rebirthLevel +
+        "\nPermanent multiplier: " +
+        getRebirthMultiplier().toFixed(2) +
+        "×\n\nAll future clicks are stronger!"
+    );
+}
+
+function updateShopButtons() {
+
+    for (
+        let i = 1;
+        i <= 4;
+        i++
+    ) {
+
+        const button =
+            document.getElementById(
+                "upgrade" +
+                i +
+                "Button"
+            );
+
+        if (
+            gabeClicks >=
+            upgrades[i].cost
+        ) {
+
+            button.disabled = false;
+
+            button.textContent =
+                "BUY";
+
+        } else {
+
+            button.disabled = true;
+
+            button.textContent =
+                "NOT ENOUGH CLICKS";
+        }
+    }
+}
+
+
+/* =========================================================
+   ROULETTE
+   ========================================================= */
+
+let selectedCasinoBet = null;
+
+let rouletteSpinning = false;
+
+const rouletteNumbers = [
+
+    0,
+    32,
+    15,
+    19,
+    4,
+    21,
+    2,
+    25,
+    17,
+    34,
+    6,
+    27,
+    13,
+    36,
+    11,
+    30,
+    8,
+    23,
+    10,
+    5,
+    24,
+    16,
+    33,
+    1,
+    20,
+    14,
+    31,
+    9,
+    22,
+    18,
+    29,
+    7,
+    28,
+    12,
+    35,
+    3,
+    26
+
+];
+
+function getRouletteColor(number) {
+
+    if (number === 0) {
+        return "green";
+    }
+
+    const redNumbers = [
+
+        1, 3, 5, 7, 9,
+        12, 14, 16, 18, 19,
+        21, 23, 25, 27, 30,
+        32, 34, 36
+
+    ];
+
+    if (
+        redNumbers.includes(number)
+    ) {
+
+        return "red";
+    }
+
+    return "black";
+}
+
+function selectCasinoBet(color) {
+
+    if (rouletteSpinning) {
+        return;
+    }
+
+    selectedCasinoBet =
+        color;
+
+    document.getElementById(
+        "redButton"
+    ).classList.remove(
+        "selected"
+    );
+
+    document.getElementById(
+        "blackButton"
+    ).classList.remove(
+        "selected"
+    );
+
+    document.getElementById(
+        "greenButton"
+    ).classList.remove(
+        "selected"
+    );
+
+    document.getElementById(
+        color +
+        "Button"
+    ).classList.add(
+        "selected"
+    );
+
+    document.getElementById(
+        "rouletteResult"
+    ).textContent =
+        color.toUpperCase() +
+        " SELECTED";
+
+    document.getElementById(
+        "rouletteWinningNumber"
+    ).textContent =
+        "";
+}
+
+function spinRoulette() {
+
+    if (rouletteSpinning) {
+        return;
+    }
+
+    if (!selectedCasinoBet) {
+
+        alert(
+            "Choose RED, BLACK or GREEN first!"
+        );
+
+        return;
+    }
+
+    const bet =
+        parseInt(
+            document.getElementById(
+                "casinoBetAmount"
+            ).value
+        );
+
+    if (
+        isNaN(bet) ||
+        bet <= 0
+    ) {
+
+        alert(
+            "Enter a valid bet amount!"
+        );
+
+        return;
+    }
+
+    if (
+        bet > gabeClicks
+    ) {
+
+        alert(
+            "You don't have enough clicks!"
+        );
+
+        return;
+    }
+
+    rouletteSpinning = true;
+
+    document.getElementById(
+        "rouletteSpinButton"
+    ).disabled = true;
+
+    document.getElementById(
+        "redButton"
+    ).disabled = true;
+
+    document.getElementById(
+        "blackButton"
+    ).disabled = true;
+
+    document.getElementById(
+        "greenButton"
+    ).disabled = true;
+
+    snapshotCasinoBalance();
+
+    gabeClicks -= bet;
+
+    updateClicker();
+    saveGame();
+
+    const winningNumber =
+        Math.floor(
+            Math.random() * 37
+        );
+
+    const winningColor =
+        getRouletteColor(
+            winningNumber
+        );
+
+    const wheel =
+        document.getElementById(
+            "rouletteWheel"
+        );
+
+    const numberIndex =
+        rouletteNumbers.indexOf(
+            winningNumber
+        );
+
+    const slotAngle =
+        (
+            numberIndex +
+            0.5
+        ) *
+        (
+            360 / 37
+        );
+
+    const randomExtra =
+        Math.random() * 4 - 2;
+
+    const targetAngle =
+        360 -
+        slotAngle +
+        randomExtra;
+
+    const currentRotation =
+        parseFloat(
+            wheel.dataset.rotation ||
+            "0"
+        );
+
+    const currentNormalized =
+        (
+            (
+                currentRotation %
+                360
+            ) +
+            360
+        ) %
+        360;
+
+    let difference =
+        targetAngle -
+        currentNormalized;
+
+    if (
+        difference < 0
+    ) {
+
+        difference += 360;
+    }
+
+    const totalRotation =
+        currentRotation +
+        360 * 6 +
+        difference;
+
+    wheel.dataset.rotation =
+        totalRotation;
+
+    wheel.style.transform =
+        "rotate(" +
+        totalRotation +
+        "deg)";
+
+    document.getElementById(
+        "rouletteResult"
+    ).textContent =
+        "🎡 SPINNING...";
+
+    document.getElementById(
+        "rouletteWinningNumber"
+    ).textContent =
+        "";
+
+    setTimeout(
+        function() {
+
+            let winnings = 0;
+
+            if (
+                winningColor ===
+                selectedCasinoBet
+            ) {
+
+                if (
+                    winningColor ===
+                    "green"
+                ) {
+
+                    winnings =
+                        bet * 35;
+
+                } else {
+
+                    winnings =
+                        bet * 2;
+                }
+
+                gabeClicks +=
+                    winnings;
+
+                document.getElementById(
+                    "rouletteResult"
+                ).textContent =
+                    "🎉 YOU WON!";
+
+                recordCasinoWin();
+
+            } else {
+
+                document.getElementById(
+                    "rouletteResult"
+                ).textContent =
+                    "💀 YOU LOST!";
+            }
+
+            document.getElementById(
+                "rouletteWinningNumber"
+            ).textContent =
+                "● " +
+                winningNumber +
+                " — " +
+                winningColor.toUpperCase();
+
+            rouletteSpinning =
+                false;
+
+            document.getElementById(
+                "rouletteSpinButton"
+            ).disabled = false;
+
+            document.getElementById(
+                "redButton"
+            ).disabled = false;
+
+            document.getElementById(
+                "blackButton"
+            ).disabled = false;
+
+            document.getElementById(
+                "greenButton"
+            ).disabled = false;
+
+            updateClicker();
+
+            saveGame();
+
+        },
+        2150
+    );
+}
+
+
+/* =========================================================
+   BLACKJACK
+   ========================================================= */
+
+let blackjackDeck = [];
+
+let playerHand = [];
+
+let dealerHand = [];
+
+let blackjackBetAmount = 0;
+
+let blackjackActive = false;
+
+function createBlackjackDeck() {
+
+    const suits = [
+        "♠",
+        "♥",
+        "♦",
+        "♣"
+    ];
+
+    const ranks = [
+        "A",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "J",
+        "Q",
+        "K"
+    ];
+
+    blackjackDeck = [];
+
+    for (
+        const suit of suits
+    ) {
+
+        for (
+            const rank of ranks
+        ) {
+
+            blackjackDeck.push({
+
+                suit: suit,
+                rank: rank
+
+            });
+        }
+    }
+}
+
+function shuffleBlackjackDeck() {
+
+    for (
+        let i =
+            blackjackDeck.length - 1;
+
+        i > 0;
+
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+        [
+            blackjackDeck[i],
+            blackjackDeck[j]
+
+        ] = [
+
+            blackjackDeck[j],
+            blackjackDeck[i]
+
+        ];
+    }
+}
+
+function cardValue(card) {
+
+    if (
+        card.rank === "A"
+    ) {
+
+        return 11;
+    }
+
+    if (
+        card.rank === "K" ||
+        card.rank === "Q" ||
+        card.rank === "J"
+    ) {
+
+        return 10;
+    }
+
+    return parseInt(
+        card.rank
+    );
+}
+
+function calculateBlackjackScore(hand) {
+
+    let score = 0;
+
+    let aces = 0;
+
+    for (
+        const card of hand
+    ) {
+
+        score +=
+            cardValue(card);
+
+        if (
+            card.rank === "A"
+        ) {
+
+            aces++;
+        }
+    }
+
+    while (
+        score > 21 &&
+        aces > 0
+    ) {
+
+        score -= 10;
+
+        aces--;
+    }
+
+    return score;
+}
+
+function displayBlackjackCards(
+    elementId,
+    hand,
+    hideFirst
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+    element.innerHTML = "";
+
+    for (
+        let i = 0;
+        i < hand.length;
+        i++
+    ) {
+
+        const cardDiv =
+            document.createElement(
+                "div"
+            );
+
+        cardDiv.className =
+            "card";
+
+        if (
+            hideFirst &&
+            i === 0
+        ) {
+
+            cardDiv.classList.add(
+                "hidden"
+            );
+
+            cardDiv.textContent =
+                "?";
+
+        } else {
+
+            cardDiv.textContent =
+                hand[i].rank +
+                hand[i].suit;
+        }
+
+        element.appendChild(
+            cardDiv
+        );
+    }
+}
+
+function updateBlackjackDisplay(
+    hideDealer
+) {
+
+    displayBlackjackCards(
+        "dealerCards",
+        dealerHand,
+        hideDealer
+    );
+
+    displayBlackjackCards(
+        "playerCards",
+        playerHand,
+        false
+    );
+
+    if (hideDealer) {
+
+        document.getElementById(
+            "dealerScore"
+        ).textContent =
+            "Score: ?";
+
+    } else {
+
+        document.getElementById(
+            "dealerScore"
+        ).textContent =
+            "Score: " +
+            calculateBlackjackScore(
+                dealerHand
+            );
+    }
+
+    document.getElementById(
+        "playerScore"
+    ).textContent =
+        "Score: " +
+        calculateBlackjackScore(
+            playerHand
+        );
+}
+
+function setBlackjackButtons(
+    active
+) {
+
+    document.getElementById(
+        "blackjackHitButton"
+    ).disabled =
+        !active;
+
+    document.getElementById(
+        "blackjackStandButton"
+    ).disabled =
+        !active;
+
+    document.getElementById(
+        "blackjackDoubleButton"
+    ).disabled =
+        !active ||
+        blackjackBetAmount * 2 >
+        gabeClicks;
+
+    document.getElementById(
+        "blackjackDealButton"
+    ).disabled =
+        active;
+}
+
+function blackjackDeal() {
+
+    if (blackjackActive) {
+        return;
+    }
+
+    const bet =
+        parseInt(
+            document.getElementById(
+                "blackjackBet"
+            ).value
+        );
+
+    if (
+        isNaN(bet) ||
+        bet <= 0
+    ) {
+
+        alert(
+            "Enter a valid bet amount!"
+        );
+
+        return;
+    }
+
+    if (
+        bet > gabeClicks
+    ) {
+
+        alert(
+            "You don't have enough clicks!"
+        );
+
+        return;
+    }
+
+    blackjackBetAmount =
+        bet;
+
+    snapshotCasinoBalance();
+
+    gabeClicks -=
+        bet;
+
+    createBlackjackDeck();
+
+    shuffleBlackjackDeck();
+
+    playerHand = [
+
+        blackjackDeck.pop(),
+        blackjackDeck.pop()
+
+    ];
+
+    dealerHand = [
+
+        blackjackDeck.pop(),
+        blackjackDeck.pop()
+
+    ];
+
+    blackjackActive =
+        true;
+
+    document.getElementById(
+        "blackjackStatus"
+    ).textContent =
+        "YOUR TURN";
+
+    updateBlackjackDisplay(
+        true
+    );
+
+    setBlackjackButtons(
+        true
+    );
+
+    updateClicker();
+
+    saveGame();
+
+    const playerScore =
+        calculateBlackjackScore(
+            playerHand
+        );
+
+    const dealerScore =
+        calculateBlackjackScore(
+            dealerHand
+        );
+
+    if (
+        playerScore === 21
+    ) {
+
+        if (
+            dealerScore === 21
+        ) {
+
+            gabeClicks +=
+                blackjackBetAmount;
+
+            blackjackFinish(
+                "tie",
+                blackjackBetAmount
+            );
+
+        } else {
+
+            const winnings =
+                Math.floor(
+                    blackjackBetAmount *
+                    2.5
+                );
+
+            gabeClicks +=
+                winnings;
+
+            blackjackFinish(
+                "blackjack",
+                winnings
+            );
+        }
+    }
+}
+
+function blackjackHit() {
+
+    if (!blackjackActive) {
+        return;
+    }
+
+    playerHand.push(
+        blackjackDeck.pop()
+    );
+
+    const score =
+        calculateBlackjackScore(
+            playerHand
+        );
+
+    updateBlackjackDisplay(
+        true
+    );
+
+    if (
+        score > 21
+    ) {
+
+        blackjackFinish(
+            "bust",
+            0
+        );
+
+        return;
+    }
+
+    if (
+        score === 21
+    ) {
+
+        blackjackStand();
+
+        return;
+    }
+
+    setBlackjackButtons(
+        true
+    );
+}
+
+function blackjackStand() {
+
+    if (!blackjackActive) {
+        return;
+    }
+
+    while (
+        calculateBlackjackScore(
+            dealerHand
+        ) < 17
+    ) {
+
+        dealerHand.push(
+            blackjackDeck.pop()
+        );
+    }
+
+    const playerScore =
+        calculateBlackjackScore(
+            playerHand
+        );
+
+    const dealerScore =
+        calculateBlackjackScore(
+            dealerHand
+        );
+
+    updateBlackjackDisplay(
+        false
+    );
+
+    if (
+        dealerScore > 21
+    ) {
+
+        blackjackFinish(
+            "win",
+            blackjackBetAmount * 2
+        );
+
+    } else if (
+        playerScore >
+        dealerScore
+    ) {
+
+        blackjackFinish(
+            "win",
+            blackjackBetAmount * 2
+        );
+
+    } else if (
+        playerScore <
+        dealerScore
+    ) {
+
+        blackjackFinish(
+            "lose",
+            0
+        );
+
+    } else {
+
+        gabeClicks +=
+            blackjackBetAmount;
+
+        blackjackFinish(
+            "tie",
+            blackjackBetAmount
+        );
+    }
+}
+
+function blackjackDouble() {
+
+    if (!blackjackActive) {
+        return;
+    }
+
+    if (
+        blackjackBetAmount * 2 >
+        gabeClicks
+    ) {
+
+        alert(
+            "You don't have enough clicks to double!"
+        );
+
+        return;
+    }
+
+    gabeClicks -=
+        blackjackBetAmount;
+
+    blackjackBetAmount *= 2;
+
+    playerHand.push(
+        blackjackDeck.pop()
+    );
+
+    const score =
+        calculateBlackjackScore(
+            playerHand
+        );
+
+    updateBlackjackDisplay(
+        true
+    );
+
+    if (
+        score > 21
+    ) {
+
+        blackjackFinish(
+            "bust",
+            0
+        );
+
+        return;
+    }
+
+    blackjackStand();
+}
+
+function blackjackFinish(
+    result,
+    winnings
+) {
+
+    blackjackActive =
+        false;
+
+    setBlackjackButtons(
+        false
+    );
+
+    updateBlackjackDisplay(
+        false
+    );
+
+    if (
+        result ===
+        "blackjack"
+    ) {
+
+        document.getElementById(
+            "blackjackStatus"
+        ).textContent =
+            "🎉 BLACKJACK! +" +
+            winnings +
+            " CLICKS!";
+
+        recordCasinoWin();
+
+    } else if (
+        result === "win"
+    ) {
+
+        gabeClicks +=
+            winnings;
+
+        document.getElementById(
+            "blackjackStatus"
+        ).textContent =
+            "🎉 YOU WIN! +" +
+            winnings +
+            " CLICKS";
+
+        recordCasinoWin();
+
+    } else if (
+        result === "lose"
+    ) {
+
+        document.getElementById(
+            "blackjackStatus"
+        ).textContent =
+            "💀 YOU LOSE!";
+
+    } else if (
+        result === "bust"
+    ) {
+
+        document.getElementById(
+            "blackjackStatus"
+        ).textContent =
+            "💥 BUST! YOU LOSE!";
+
+    } else if (
+        result === "tie"
+    ) {
+
+        document.getElementById(
+            "blackjackStatus"
+        ).textContent =
+            "🤝 PUSH! BET RETURNED.";
+    }
+
+    updateClicker();
+
+    saveGame();
+}
+
+
+/* =========================================================
+   PLINKO
+   ========================================================= */
+
+const plinkoCanvas =
+    document.getElementById(
+        "plinkoCanvas"
+    );
+
+const plinkoCtx =
+    plinkoCanvas.getContext(
+        "2d"
+    );
+
+const plinkoMultipliers = [
+
+    5,
+    2.5,
+    1.5,
+    1,
+    0.5,
+    0,
+    0.5,
+    1,
+    1.5,
+    2.5,
+    5
+
+];
+
+const plinkoRows = 9;
+
+const plinkoPegRadius = 5;
+
+const plinkoBallRadius = 8;
+
+let plinkoPegs = [];
+
+let plinkoBall = null;
+
+let plinkoAnimating = false;
+
+let plinkoBetAmount = 0;
+
+function createPlinkoBoard() {
+
+    plinkoPegs = [];
+
+    const startY = 75;
+
+    const rowSpacing = 38;
+
+    const horizontalSpacing = 34;
+
+    for (
+        let row = 0;
+        row < plinkoRows;
+        row++
+    ) {
+
+        const y =
+            startY +
+            row * rowSpacing;
+
+        const offset =
+            row % 2 === 0
+                ? 0
+                : horizontalSpacing / 2;
+
+        for (
+            let x = 0;
+            x < 10;
+            x++
+        ) {
+
+            const pegX =
+                15 +
+                x *
+                horizontalSpacing +
+                offset;
+
+            if (
+                pegX > 325
+            ) {
+
+                continue;
+            }
+
+            plinkoPegs.push({
+
+                x: pegX,
+                y: y
+
+            });
+        }
+    }
+}
+
+function drawPlinko() {
+
+    plinkoCtx.clearRect(
+        0,
+        0,
+        plinkoCanvas.width,
+        plinkoCanvas.height
+    );
+
+    plinkoCtx.fillStyle =
+        "#090909";
+
+    plinkoCtx.fillRect(
+        0,
+        0,
+        plinkoCanvas.width,
+        plinkoCanvas.height
+    );
+
+    plinkoCtx.fillStyle =
+        "white";
+
+    plinkoCtx.font =
+        "bold 18px Arial";
+
+    plinkoCtx.textAlign =
+        "center";
+
+    plinkoCtx.fillText(
+        "PLINKO",
+        170,
+        28
+    );
+
+    plinkoPegs.forEach(
+        function(peg) {
+
+            plinkoCtx.beginPath();
+
+            plinkoCtx.arc(
+                peg.x,
+                peg.y,
+                plinkoPegRadius,
+                0,
+                Math.PI * 2
+            );
+
+            plinkoCtx.fillStyle =
+                "#eee";
+
+            plinkoCtx.fill();
+
+        }
+    );
+
+    const slotWidth =
+        plinkoCanvas.width /
+        plinkoMultipliers.length;
+
+    for (
+        let i = 0;
+        i < plinkoMultipliers.length;
+        i++
+    ) {
+
+        const x =
+            i *
+            slotWidth;
+
+        plinkoCtx.fillStyle =
+            (i === 0 || i === plinkoMultipliers.length - 1)
+                ? "#6d4f00"
+                : "#1c1c1c";
+
+        plinkoCtx.fillRect(
+            x + 1,
+            385,
+            slotWidth - 2,
+            43
+        );
+
+        plinkoCtx.fillStyle =
+            "#ffd84d";
+
+        plinkoCtx.font =
+            "bold 13px Arial";
+
+        plinkoCtx.textAlign =
+            "center";
+
+        plinkoCtx.fillText(
+            plinkoMultipliers[i] +
+            "×",
+            x +
+            slotWidth / 2,
+            411
+        );
+    }
+
+    if (plinkoBall) {
+
+        plinkoCtx.beginPath();
+
+        plinkoCtx.arc(
+            plinkoBall.x,
+            plinkoBall.y,
+            plinkoBallRadius,
+            0,
+            Math.PI * 2
+        );
+
+        plinkoCtx.fillStyle =
+            "#ffd84d";
+
+        plinkoCtx.fill();
+
+        plinkoCtx.strokeStyle =
+            "white";
+
+        plinkoCtx.lineWidth = 2;
+
+        plinkoCtx.stroke();
+    }
+}
+
+function setPlinkoBet(amount) {
+
+    document.getElementById(
+        "plinkoBet"
+    ).value =
+        amount;
+}
+
+function dropPlinko() {
+
+    if (plinkoAnimating) {
+        return;
+    }
+
+    const bet =
+        parseInt(
+            document.getElementById(
+                "plinkoBet"
+            ).value
+        );
+
+    if (
+        isNaN(bet) ||
+        bet <= 0
+    ) {
+
+        alert(
+            "Enter a valid bet amount!"
+        );
+
+        return;
+    }
+
+    if (
+        bet > gabeClicks
+    ) {
+
+        alert(
+            "You don't have enough clicks!"
+        );
+
+        return;
+    }
+
+    snapshotCasinoBalance();
+
+    gabeClicks -=
+        bet;
+
+    plinkoBetAmount =
+        bet;
+
+    plinkoAnimating =
+        true;
+
+    document.getElementById(
+        "plinkoDropButton"
+    ).disabled = true;
+
+    document.getElementById(
+        "plinkoResult"
+    ).textContent =
+        "BALL DROPPING...";
+
+    updateClicker();
+
+    saveGame();
+
+    createPlinkoBoard();
+
+    plinkoBall = {
+
+        x:
+            plinkoCanvas.width / 2,
+
+        y: 35,
+
+        vx:
+            (Math.random() - 0.5) *
+            1.5,
+
+        vy: 1.5
+
+    };
+
+    requestAnimationFrame(
+        animatePlinko
+    );
+}
+
+function animatePlinko() {
+
+    if (
+        !plinkoAnimating ||
+        !plinkoBall
+    ) {
+
+        return;
+    }
+
+    plinkoBall.vy +=
+        0.12;
+
+    if (
+        plinkoBall.vy > 5
+    ) {
+
+        plinkoBall.vy = 5;
+    }
+
+    plinkoBall.x +=
+        plinkoBall.vx;
+
+    plinkoBall.y +=
+        plinkoBall.vy;
+
+    plinkoBall.vx *=
+        0.995;
+
+    if (
+        plinkoBall.x <
+        plinkoBallRadius
+    ) {
+
+        plinkoBall.x =
+            plinkoBallRadius;
+
+        plinkoBall.vx =
+            Math.abs(
+                plinkoBall.vx
+            );
+    }
+
+    if (
+        plinkoBall.x >
+        plinkoCanvas.width -
+        plinkoBallRadius
+    ) {
+
+        plinkoBall.x =
+            plinkoCanvas.width -
+            plinkoBallRadius;
+
+        plinkoBall.vx =
+            -Math.abs(
+                plinkoBall.vx
+            );
+    }
+
+    plinkoPegs.forEach(
+        function(peg) {
+
+            const dx =
+                plinkoBall.x -
+                peg.x;
+
+            const dy =
+                plinkoBall.y -
+                peg.y;
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+            const collisionDistance =
+                plinkoBallRadius +
+                plinkoPegRadius;
+
+            if (
+                distance <
+                    collisionDistance &&
+                distance > 0
+            ) {
+
+                const nx =
+                    dx / distance;
+
+                const ny =
+                    dy / distance;
+
+                const overlap =
+                    collisionDistance -
+                    distance;
+
+                plinkoBall.x +=
+                    nx *
+                    overlap;
+
+                plinkoBall.y +=
+                    ny *
+                    overlap;
+
+                const direction =
+                    nx >= 0
+                        ? 1
+                        : -1;
+
+                plinkoBall.vx =
+                    direction *
+                    (
+                        1.2 +
+                        Math.random() *
+                        1.5
+                    );
+
+                plinkoBall.vy =
+                    Math.max(
+                        1.5,
+                        plinkoBall.vy *
+                        0.75
+                    );
+            }
+
+        }
+    );
+
+    drawPlinko();
+
+    if (
+        plinkoBall.y >
+        plinkoCanvas.height -
+        35
+    ) {
+
+        finishPlinko();
+
+        return;
+    }
+
+    requestAnimationFrame(
+        animatePlinko
+    );
+}
+
+function finishPlinko() {
+
+    if (!plinkoBall) {
+        return;
+    }
+
+    const slotWidth =
+        plinkoCanvas.width /
+        plinkoMultipliers.length;
+
+    let slot =
+        Math.floor(
+            plinkoBall.x /
+            slotWidth
+        );
+
+    if (
+        slot < 0
+    ) {
+
+        slot = 0;
+    }
+
+    if (
+        slot >=
+        plinkoMultipliers.length
+    ) {
+
+        slot =
+            plinkoMultipliers.length -
+            1;
+    }
+
+    const multiplier =
+        plinkoMultipliers[
+            slot
+        ];
+
+    const winnings =
+        Math.floor(
+            plinkoBetAmount *
+            multiplier
+        );
+
+    gabeClicks +=
+        winnings;
+
+    plinkoAnimating =
+        false;
+
+    plinkoBall =
+        null;
+
+    if (
+        multiplier < 1
+    ) {
+
+        document.getElementById(
+            "plinkoResult"
+        ).textContent =
+            "💀 " +
+            multiplier +
+            "× — YOU LOST " +
+            (plinkoBetAmount - winnings) +
+            " CLICKS!";
+
+    } else if (
+        multiplier === 1
+    ) {
+
+        document.getElementById(
+            "plinkoResult"
+        ).textContent =
+            "🤝 1× — BET RETURNED.";
+
+    } else {
+
+        document.getElementById(
+            "plinkoResult"
+        ).textContent =
+            "🎉 " +
+            multiplier +
+            "× — YOU WON " +
+            winnings +
+            " CLICKS!";
+    }
+
+    /* Check the casino kick rule after every drop. */
+    recordCasinoWin();
+
+    document.getElementById(
+        "plinkoDropButton"
+    ).disabled =
+        false;
+
+    updateClicker();
+
+    saveGame();
+
+    drawPlinko();
+}
+
+createPlinkoBoard();
+
+drawPlinko();
+
+
+/* =========================================================
+   STOCK MARKET
+   ========================================================= */
+
+
+/*
+    These are fictional stocks.
+
+    The company inspirations are real,
+    but ALL prices are fictional.
+*/
+
+const stockDefinitions = {
+
+    NVDA: {
+        name: "NVIDIA",
+        start: 180,
+        volatility: 0.030,
+        drift: 0.00035,
+        sector: "AI / Chips",
+        color: "#76d66e"
+    },
+
+    AAPL: {
+        name: "Apple",
+        start: 255,
+        volatility: 0.011,
+        drift: 0.00016,
+        sector: "Consumer Tech",
+        color: "#d8d8d8"
+    },
+
+    MSFT: {
+        name: "Microsoft",
+        start: 510,
+        volatility: 0.010,
+        drift: 0.00018,
+        sector: "Software",
+        color: "#62a8ff"
+    },
+
+    TSLA: {
+        name: "Tesla",
+        start: 420,
+        volatility: 0.042,
+        drift: 0.00012,
+        sector: "EV / Energy",
+        color: "#ff6666"
+    },
+
+    AMD: {
+        name: "AMD",
+        start: 235,
+        volatility: 0.032,
+        drift: 0.00027,
+        sector: "AI / Chips",
+        color: "#ff7b66"
+    },
+
+    AMZN: {
+        name: "Amazon",
+        start: 230,
+        volatility: 0.016,
+        drift: 0.00022,
+        sector: "E-Commerce",
+        color: "#ffb84d"
+    },
+
+    GOOGL: {
+        name: "Google",
+        start: 290,
+        volatility: 0.014,
+        drift: 0.00020,
+        sector: "Internet",
+        color: "#70a5ff"
+    },
+
+    META: {
+        name: "Meta",
+        start: 760,
+        volatility: 0.020,
+        drift: 0.00025,
+        sector: "Social / Ads",
+        color: "#6b9cff"
+    },
+
+    COIN: {
+        name: "Coinbase",
+        start: 360,
+        volatility: 0.055,
+        drift: 0.00010,
+        sector: "Crypto",
+        color: "#5599ff"
+    },
+
+    WMT: {
+        name: "Walmart",
+        start: 110,
+        volatility: 0.007,
+        drift: 0.00010,
+        sector: "Retail",
+        color: "#6fa8ff"
+    }
+
+};
+
+
+let stockMarket = {};
+
+let stockPortfolio = {};
+
+let selectedStock =
+    localStorage.getItem(
+        "selectedStock"
+    ) || "NVDA";
+
+let selectedStockRange = "1D";
+
+let stockMarketNews =
+    localStorage.getItem(
+        "stockMarketNews"
+    ) ||
+    "📰 MARKET OPEN — Welcome to the Gabe Exchange.";
+
+
+/*
+    Create the initial fictional market.
+*/
+
+function initializeStocks() {
+
+    let savedMarket =
+        localStorage.getItem(
+            "stockMarketData"
+        );
+
+    let savedPortfolio =
+        localStorage.getItem(
+            "stockPortfolio"
+        );
+
+    if (savedMarket) {
+
+        try {
+
+            stockMarket =
+                JSON.parse(
+                    savedMarket
+                );
+
+        } catch (error) {
+
+            stockMarket = {};
+        }
+    }
+
+    if (savedPortfolio) {
+
+        try {
+
+            stockPortfolio =
+                JSON.parse(
+                    savedPortfolio
+                );
+
+        } catch (error) {
+
+            stockPortfolio = {};
+        }
+    }
+
+
+    for (
+        const ticker in stockDefinitions
+    ) {
+
+        const definition =
+            stockDefinitions[ticker];
+
+
+        /*
+            CREATE STOCK
+        */
+
+        if (
+            !stockMarket[ticker]
+        ) {
+
+            stockMarket[ticker] = {
+
+                price:
+                    definition.start,
+
+                previousPrice:
+                    definition.start,
+
+                history: [],
+
+                lastUpdate:
+                    Date.now()
+
+            };
+
+
+            let historicalPrice =
+                definition.start;
+
+
+            for (
+                let i = 0;
+                i < 90;
+                i++
+            ) {
+
+                const randomMove =
+                    (
+                        Math.random() -
+                        0.5
+                    ) *
+                    definition.volatility *
+                    historicalPrice;
+
+                historicalPrice +=
+                    randomMove +
+                    definition.drift *
+                    historicalPrice;
+
+
+                if (
+                    historicalPrice < 1
+                ) {
+
+                    historicalPrice = 1;
+                }
+
+
+                stockMarket[
+                    ticker
+                ].history.push({
+
+                    price:
+                        historicalPrice,
+
+                    time:
+                        Date.now() -
+                        (89 - i) *
+                        8000
+
+                });
+
+            }
+
+
+            stockMarket[
+                ticker
+            ].price =
+                historicalPrice;
+
+
+            stockMarket[
+                ticker
+            ].previousPrice =
+                historicalPrice;
+
+        } else {
+
+            /*
+                MIGRATE OLD HISTORY
+
+                Your old version stored:
+
+                [180, 181, 179, ...]
+
+                The new version stores:
+
+                [
+                    {
+                        price: 180,
+                        time: ...
+                    }
+                ]
+            */
+
+            const history =
+                stockMarket[
+                    ticker
+                ].history;
+
+
+            if (
+                Array.isArray(history) &&
+                history.length > 0 &&
+                typeof history[0] === "number"
+            ) {
+
+                const now =
+                    Date.now();
+
+
+                stockMarket[
+                    ticker
+                ].history =
+                    history.map(
+                        function(price, index) {
+
+                            return {
+
+                                price:
+                                    price,
+
+                                time:
+                                    now -
+                                    (
+                                        history.length -
+                                        1 -
+                                        index
+                                    ) *
+                                    8000
+
+                            };
+
+                        }
+                    );
+
+            }
+
+        }
+
+
+        /*
+            MAKE SURE HISTORY IS VALID
+        */
+
+        if (
+            !stockMarket[ticker].history
+        ) {
+
+            stockMarket[ticker].history = [];
+        }
+
+
+        /*
+            MIGRATE OLD PORTFOLIO
+
+            OLD:
+
+            NVDA: 5
+
+            NEW:
+
+            NVDA: {
+                shares: 5,
+                totalCost: ...
+            }
+        */
+
+        if (
+            typeof stockPortfolio[ticker] ===
+            "number"
+        ) {
+
+            const oldShares =
+                stockPortfolio[ticker];
+
+
+            stockPortfolio[ticker] = {
+
+                shares:
+                    oldShares,
+
+                /*
+                    We don't know the
+                    original purchase price.
+
+                    Using the current price
+                    prevents existing holdings
+                    from showing a fake profit/loss.
+                */
+
+                totalCost:
+                    oldShares *
+                    stockMarket[ticker].price
+
+            };
+
+        }
+
+
+        if (
+            !stockPortfolio[ticker]
+        ) {
+
+            stockPortfolio[ticker] = {
+
+                shares: 0,
+
+                totalCost: 0
+
+            };
+
+        }
+
+    }
+
+
+    saveStockGame();
+}
+
+
+/*
+    Save the stock market.
+*/
+
+function saveStockGame() {
+
+    localStorage.setItem(
+        "stockMarketData",
+        JSON.stringify(
+            stockMarket
+        )
+    );
+
+    localStorage.setItem(
+        "stockPortfolio",
+        JSON.stringify(
+            stockPortfolio
+        )
+    );
+
+    localStorage.setItem(
+        "selectedStock",
+        selectedStock
+    );
+
+    localStorage.setItem(
+        "stockMarketNews",
+        stockMarketNews
+    );
+}
+
+
+/*
+    Simulate one market movement.
+*/
+
+function simulateStock(ticker) {
+
+    const definition =
+        stockDefinitions[ticker];
+
+    const stock =
+        stockMarket[ticker];
+
+
+    stock.previousPrice =
+        stock.price;
+
+
+    let randomMove =
+        (
+            Math.random() -
+            0.5
+        ) *
+        definition.volatility;
+
+
+    randomMove +=
+        definition.drift;
+
+
+    const marketMood =
+        (
+            Math.random() -
+            0.5
+        ) *
+        0.004;
+
+
+    randomMove +=
+        marketMood;
+
+
+    if (
+        ticker === "NVDA" ||
+        ticker === "AMD"
+    ) {
+
+        randomMove +=
+            (
+                Math.random() -
+                0.5
+            ) *
+            0.006;
+
+    }
+
+
+    if (
+        ticker === "TSLA"
+    ) {
+
+        if (
+            Math.random() < 0.025
+        ) {
+
+            randomMove +=
+                (
+                    Math.random() -
+                    0.5
+                ) *
+                0.10;
+
+        }
+
+    }
+
+
+    if (
+        ticker === "COIN"
+    ) {
+
+        if (
+            Math.random() < 0.035
+        ) {
+
+            randomMove +=
+                (
+                    Math.random() -
+                    0.5
+                ) *
+                0.14;
+
+        }
+
+    }
+
+
+    stock.price *=
+        1 + randomMove;
+
+
+    if (
+        stock.price < 1
+    ) {
+
+        stock.price = 1;
+
+    }
+
+
+    /*
+        SAVE PRICE + TIME
+    */
+
+    stock.history.push({
+
+        price:
+            stock.price,
+
+        time:
+            Date.now()
+
+    });
+
+
+    if (
+        stock.history.length > 500
+    ) {
+
+        stock.history.shift();
+
+    }
+
+
+    stock.lastUpdate =
+        Date.now();
+}
+
+/*
+    Simulate the market based on time passed.
+
+    This means prices can change while
+    the player is away from the website.
+*/
+
+function updateMarketFromTime() {
+
+    const now =
+        Date.now();
+
+
+    for (
+        const ticker in stockMarket
+    ) {
+
+        const stock =
+            stockMarket[ticker];
+
+        const elapsed =
+            now -
+            (
+                stock.lastUpdate ||
+                now
+            );
+
+
+        /*
+            Approximately one movement
+            every 8 seconds.
+
+            We limit catch-up movements
+            so opening the page after a
+            very long time doesn't freeze it.
+        */
+
+        const movements =
+            Math.min(
+                150,
+                Math.floor(
+                    elapsed /
+                    8000
+                )
+            );
+
+
+        for (
+            let i = 0;
+            i < movements;
+            i++
+        ) {
+
+            simulateStock(
+                ticker
+            );
+        }
+
+        if (
+            movements > 0
+        ) {
+
+            stock.lastUpdate =
+                now;
+        }
+    }
+
+    saveStockGame();
+}
+
+
+/*
+    Generate a random market event.
+*/
+
+function maybeGenerateMarketEvent() {
+
+    if (
+        Math.random() > 0.035
+    ) {
+
+        return;
+    }
+
+
+    const events = [
+
+        {
+            text:
+                "📰 AI demand explodes across the market.",
+            stocks: [
+                "NVDA",
+                "AMD"
+            ],
+            move: 0.055
+        },
+
+        {
+            text:
+                "📰 Investors rotate into safer companies.",
+            stocks: [
+                "AAPL",
+                "MSFT",
+                "WMT"
+            ],
+            move: 0.018
+        },
+
+        {
+            text:
+                "📰 Tech stocks get hit by profit-taking.",
+            stocks: [
+                "NVDA",
+                "AMD",
+                "AAPL",
+                "MSFT",
+                "META"
+            ],
+            move: -0.035
+        },
+
+        {
+            text:
+                "📰 EV hype returns to Wall Street.",
+            stocks: [
+                "TSLA"
+            ],
+            move: 0.075
+        },
+
+        {
+            text:
+                "📰 Crypto market suddenly goes wild.",
+            stocks: [
+                "COIN"
+            ],
+            move:
+                Math.random() > 0.5
+                    ? 0.12
+                    : -0.12
+        },
+
+        {
+            text:
+                "📰 Consumer spending remains strong.",
+            stocks: [
+                "AMZN",
+                "WMT"
+            ],
+            move: 0.025
+        },
+
+        {
+            text:
+                "📰 Social media advertising beats expectations.",
+            stocks: [
+                "META"
+            ],
+            move: 0.045
+        },
+
+        {
+            text:
+                "📰 Gabe accidentally presses the market button.",
+            stocks: [
+                "NVDA",
+                "TSLA",
+                "COIN"
+            ],
+            move:
+                (
+                    Math.random() -
+                    0.5
+                ) * 0.12
+        }
+
+    ];
+
+
+    const event =
+        events[
+            Math.floor(
+                Math.random() *
+                events.length
+            )
+        ];
+
+
+    event.stocks.forEach(
+        function(ticker) {
+
+            const stock =
+                stockMarket[ticker];
+
+            stock.previousPrice =
+                stock.price;
+
+            stock.price *=
+                1 + event.move;
+
+            if (
+                stock.price < 1
+            ) {
+
+                stock.price = 1;
+            }
+
+            stock.history.push({
+                price: stock.price,
+                time: Date.now()
+            });
+
+            if (
+                stock.history.length > 500
+            ) {
+
+                stock.history.shift();
+            }
+
+        }
+    );
+
+
+    stockMarketNews =
+        event.text;
+
+
+    saveStockGame();
+
+    updateStockUI();
+}
+
+
+/*
+    Update market automatically.
+*/
+
+setInterval(
+    function() {
+
+        for (
+            const ticker in stockMarket
+        ) {
+
+            simulateStock(
+                ticker
+            );
+        }
+
+
+        maybeGenerateMarketEvent();
+
+        updateStockUI();
+
+        saveStockGame();
+
+    },
+    8000
+);
+
+
+/*
+    Open stock market.
+*/
+
+function openStockMarket() {
+
+    document.getElementById(
+        "clickerScreen"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "casinoScreen"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "stockMarketScreen"
+    ).style.display =
+        "block";
+
+
+    updateMarketFromTime();
+
+    updateStockUI();
+}
+
+
+/*
+    Close stock market.
+*/
+
+function closeStockMarket() {
+
+    document.getElementById(
+        "stockMarketScreen"
+    ).style.display =
+        "none";
+}
+
+
+/*
+    Select a stock.
+*/
+
+function selectStock(
+    ticker
+) {
+
+    selectedStock =
+        ticker;
+
+    localStorage.setItem(
+        "selectedStock",
+        ticker
+    );
+
+    selectedStockRange =
+        "1D";
+
+    document
+        .querySelectorAll(
+            ".stockTab"
+        )
+        .forEach(
+            function(button) {
+
+                button.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+    document
+        .querySelector(
+            '[data-range="1D"]'
+        )
+        .classList.add(
+            "active"
+        );
+
+    updateStockUI();
+}
+
+
+/*
+    Select chart range.
+*/
+
+function setStockRange(
+    range
+) {
+
+    selectedStockRange =
+        range;
+
+    document
+        .querySelectorAll(
+            ".stockTab"
+        )
+        .forEach(
+            function(button) {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.range ===
+                    range
+                );
+
+            }
+        );
+
+    drawStockChart();
+}
+const stockChartCanvas = document.getElementById("stockChart");
+
+stockChartCanvas.addEventListener("mousemove", function(event) {
+    if (!stockMarket[selectedStock]) return;
+
+    const stock = stockMarket[selectedStock];
+
+    if (!stock.history || stock.history.length === 0) return;
+
+    const rect = stockChartCanvas.getBoundingClientRect();
+
+    const mouseX = event.clientX - rect.left;
+
+    const padding = 22;
+    const usableWidth = rect.width - padding * 2;
+
+    let position = (mouseX - padding) / usableWidth;
+
+    position = Math.max(0, Math.min(1, position));
+
+    const index = Math.round(
+        position * (stock.history.length - 1)
+    );
+
+    const point = stock.history[index];
+
+    if (!point) return;
+
+    const price = point.price;
+
+    const time = new Date(point.time);
+
+    const timeString = time.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    let percentageText = "";
+
+    if (
+        stockPortfolio[selectedStock] &&
+        stockPortfolio[selectedStock].shares > 0
+    ) {
+        const averageBuy =
+            stockPortfolio[selectedStock].totalCost /
+            stockPortfolio[selectedStock].shares;
+
+        const change =
+            ((price - averageBuy) / averageBuy) * 100;
+
+        percentageText =
+            (change >= 0 ? "+" : "") +
+            change.toFixed(2) +
+            "%";
+    }
+
+    showStockTooltip(
+        event.clientX,
+        event.clientY,
+        point,
+        timeString,
+        percentageText
+    );
+});
+
+
+stockChartCanvas.addEventListener("mouseleave", function() {
+    hideStockTooltip();
+});
+
+
+function showStockTooltip(
+    mouseX,
+    mouseY,
+    point,
+    timeString,
+    percentageText
+) {
+    const tooltip =
+        document.getElementById("stockTooltip");
+
+    const priceElement =
+        document.getElementById("stockTooltipPrice");
+
+    const timeElement =
+        document.getElementById("stockTooltipTime");
+
+    const percentElement =
+        document.getElementById("stockTooltipPercent");
+
+
+    timeElement.textContent = timeString;
+
+    priceElement.textContent =
+        formatStockPrice(point.price) + " C";
+
+
+    if (percentageText) {
+
+        percentElement.textContent =
+            percentageText;
+
+        percentElement.className =
+            "stockTooltipPercent " +
+            (
+                percentageText.startsWith("-")
+                    ? "down"
+                    : "up"
+            );
+
+    } else {
+
+        percentElement.textContent = "";
+
+    }
+
+
+    tooltip.style.left =
+        (mouseX + 15) + "px";
+
+    tooltip.style.top =
+        (mouseY + 15) + "px";
+
+    tooltip.style.display = "block";
+}
+
+
+function hideStockTooltip() {
+
+    document.getElementById(
+        "stockTooltip"
+    ).style.display = "none";
+
+}
+
+/*
+    Get price change percentage.
+*/
+
+function getStockChange(
+    ticker
+) {
+
+    const stock =
+        stockMarket[ticker];
+
+    if (
+        !stock ||
+        !stock.previousPrice
+    ) {
+
+        return 0;
+    }
+
+    return (
+        (
+            stock.price -
+            stock.previousPrice
+        ) /
+        stock.previousPrice
+    ) *
+    100;
+}
+
+
+/*
+    Format stock price.
+*/
+
+function formatStockPrice(
+    price
+) {
+
+    return "$" +
+        price.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+}
+
+
+/*
+    Render stock list.
+*/
+
+function renderStockList() {
+
+    const container =
+        document.getElementById(
+            "stockList"
+        );
+
+    container.innerHTML = "";
+
+
+    for (
+        const ticker in stockDefinitions
+    ) {
+
+        const definition =
+            stockDefinitions[ticker];
+
+        const stock =
+            stockMarket[ticker];
+
+        const change =
+            getStockChange(
+                ticker
+            );
+
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+        row.className =
+            "stockRow" +
+            (
+                ticker === selectedStock
+                    ? " selected"
+                    : ""
+            );
+
+
+        row.onclick =
+            function() {
+
+                selectStock(
+                    ticker
+                );
+
+            };
+
+
+        const changeClass =
+            change >= 0
+                ? "stockPositive"
+                : "stockNegative";
+
+
+        const sign =
+            change >= 0
+                ? "+"
+                : "";
+
+
+        row.innerHTML =
+
+            '<div>' +
+
+                '<div class="stockTicker">' +
+                    ticker +
+                '</div>' +
+
+                '<div class="stockCompany">' +
+                    definition.sector +
+                '</div>' +
+
+            '</div>' +
+
+            '<div>' +
+
+                '<div class="stockCompany">' +
+                    definition.name +
+                '</div>' +
+
+            '</div>' +
+
+            '<div class="stockPrice">' +
+                formatStockPrice(
+                    stock.price
+                ) +
+            '</div>' +
+
+            '<div class="stockChange ' +
+                changeClass +
+            '">' +
+                sign +
+                change.toFixed(2) +
+                "%" +
+            '</div>';
+
+
+        container.appendChild(
+            row
+        );
+    }
+}
+
+
+/*
+    Render portfolio.
+*/
+
+function renderPortfolio() {
+
+    const container =
+        document.getElementById(
+            "portfolioList"
+        );
+
+    container.innerHTML = "";
+
+
+    let hasStocks = false;
+
+
+    for (
+        const ticker in stockPortfolio
+    ) {
+
+        const holding =
+            stockPortfolio[ticker];
+
+
+        if (
+            !holding ||
+            holding.shares <= 0
+        ) {
+
+            continue;
+
+        }
+
+
+        hasStocks = true;
+
+
+        const stock =
+            stockMarket[ticker];
+
+
+        const shares =
+            holding.shares;
+
+
+        const averageBuyPrice =
+            holding.totalCost /
+            shares;
+
+
+        const currentPrice =
+            stock.price;
+
+
+        const value =
+            shares *
+            currentPrice;
+
+
+        const profit =
+            value -
+            holding.totalCost;
+
+
+        const percentage =
+            averageBuyPrice > 0
+                ? (
+                    (
+                        currentPrice -
+                        averageBuyPrice
+                    ) /
+                    averageBuyPrice
+                ) *
+                100
+                : 0;
+
+
+        const moveClass =
+            percentage >= 0
+                ? "stockPositive"
+                : "stockNegative";
+
+
+        const profitClass =
+            profit >= 0
+                ? "stockPositive"
+                : "stockNegative";
+
+
+        const moveSign =
+            percentage >= 0
+                ? "+"
+                : "";
+
+
+        const profitSign =
+            profit >= 0
+                ? "+"
+                : "";
+
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "portfolioRow";
+
+
+        row.innerHTML =
+
+            '<div>' +
+
+                '<div class="portfolioTicker">' +
+                    ticker +
+                '</div>' +
+
+                '<div class="portfolioShares">' +
+                    shares +
+                    " shares" +
+                '</div>' +
+
+                '<div class="portfolioShares">' +
+                    "Avg. buy: " +
+                    formatStockPrice(
+                        averageBuyPrice
+                    ) +
+                '</div>' +
+
+            '</div>' +
+
+            '<div class="portfolioValue">' +
+
+                formatStockPrice(
+                    value
+                ) +
+
+                '<div class="portfolioMove ' +
+                    moveClass +
+                '">' +
+
+                    moveSign +
+                    percentage.toFixed(2) +
+                    "%" +
+
+                '</div>' +
+
+                '<div class="portfolioProfit ' +
+                    profitClass +
+                '">' +
+
+                    profitSign +
+                    formatStockPrice(
+                        Math.abs(profit)
+                    ) +
+
+                '</div>' +
+
+            '</div>';
+
+
+        container.appendChild(
+            row
+        );
+
+    }
+
+
+    if (!hasStocks) {
+
+        container.innerHTML =
+            '<div class="portfolioEmpty">' +
+                "You don't own any stocks yet." +
+            "</div>";
+
+    }
+}
+
+
+/*
+    Calculate portfolio value.
+*/
+
+function getPortfolioValue() {
+
+    let total = 0;
+
+
+    for (
+        const ticker in stockPortfolio
+    ) {
+
+        const holding =
+            stockPortfolio[ticker];
+
+
+        if (
+            !holding ||
+            holding.shares <= 0
+        ) {
+
+            continue;
+        }
+
+
+        total +=
+            holding.shares *
+            stockMarket[ticker].price;
+
+    }
+
+
+    return total;
+}
+
+/*
+    Update stock balances.
+*/
+
+function updateStockBalances() {
+
+    const portfolioValue =
+        getPortfolioValue();
+
+
+    document.getElementById(
+        "stockCashBalance"
+    ).textContent =
+        formatNumber(
+            gabeClicks
+        );
+
+
+    document.getElementById(
+        "stockPortfolioValue"
+    ).textContent =
+        formatNumber(
+            portfolioValue
+        );
+
+
+    document.getElementById(
+        "stockTotalWealth"
+    ).textContent =
+        formatNumber(
+            gabeClicks +
+            portfolioValue
+        );
+}
+
+
+/*
+    Update trade information.
+*/
+
+function updateTradeInfo() {
+
+    const stock =
+        stockMarket[selectedStock];
+
+    const holding =
+        stockPortfolio[selectedStock] || {
+
+            shares: 0,
+            totalCost: 0
+
+        };
+
+
+    const shares =
+        holding.shares;
+
+
+    document.getElementById(
+        "tradeTicker"
+    ).textContent =
+        selectedStock;
+
+
+    document.getElementById(
+        "stockTradeInfo"
+    ).textContent =
+
+        "Price: " +
+        formatStockPrice(
+            stock.price
+        ) +
+
+        " • You own: " +
+        shares +
+        " shares";
+
+}
+
+/*
+    Main stock UI update.
+*/
+
+function updateStockUI() {
+
+    if (
+        !stockMarket[selectedStock]
+    ) {
+
+        selectedStock =
+            "NVDA";
+    }
+
+
+    updateStockBalances();
+
+    renderStockList();
+
+    renderPortfolio();
+
+    updateTradeInfo();
+
+
+    document.getElementById(
+        "stockNews"
+    ).textContent =
+        stockMarketNews;
+
+
+    const definition =
+        stockDefinitions[
+            selectedStock
+        ];
+
+    const stock =
+        stockMarket[
+            selectedStock
+        ];
+
+
+    document.getElementById(
+        "stockChartName"
+    ).textContent =
+        definition.name;
+
+
+    document.getElementById(
+        "stockChartTicker"
+    ).textContent =
+        selectedStock;
+
+
+    document.getElementById(
+        "stockChartPrice"
+    ).textContent =
+        formatStockPrice(
+            stock.price
+        );
+
+
+    drawStockChart();
+}
+
+
+/*
+    Buy stocks.
+*/
+
+function buyStock() {
+
+    const amount =
+        parseInt(
+            document.getElementById(
+                "stockAmount"
+            ).value
+        );
+
+
+    if (
+        isNaN(amount) ||
+        amount <= 0
+    ) {
+
+        alert(
+            "Enter a valid number of shares!"
+        );
+
+        return;
+
+    }
+
+
+    const stock =
+        stockMarket[
+            selectedStock
+        ];
+
+
+    const cost =
+        stock.price *
+        amount;
+
+
+    if (
+        cost > gabeClicks
+    ) {
+
+        alert(
+            "You don't have enough clicks!"
+        );
+
+        return;
+
+    }
+
+
+    gabeClicks -=
+        cost;
+
+
+    if (
+        !stockPortfolio[selectedStock] ||
+        typeof stockPortfolio[selectedStock] === "number"
+    ) {
+
+        stockPortfolio[selectedStock] = {
+
+            shares: 0,
+            totalCost: 0
+
+        };
+
+    }
+
+
+    stockPortfolio[
+        selectedStock
+    ].shares +=
+        amount;
+
+
+    stockPortfolio[
+        selectedStock
+    ].totalCost +=
+        cost;
+
+
+    document.getElementById(
+        "stockAmount"
+    ).value = "";
+
+
+    stockMarketNews =
+        "📈 You bought " +
+        amount +
+        " " +
+        selectedStock +
+        " shares.";
+
+
+    updateClicker();
+
+    updateStockUI();
+
+    saveGame();
+
+}
+/*
+    Sell stocks.
+*/
+
+function sellStock() {
+
+    const amount =
+        parseInt(
+            document.getElementById(
+                "stockAmount"
+            ).value
+        );
+
+
+    if (
+        isNaN(amount) ||
+        amount <= 0
+    ) {
+
+        alert(
+            "Enter a valid number of shares!"
+        );
+
+        return;
+
+    }
+
+
+    const holding =
+        stockPortfolio[
+            selectedStock
+        ];
+
+
+    const owned =
+        holding
+            ? holding.shares
+            : 0;
+
+
+    if (
+        amount > owned
+    ) {
+
+        alert(
+            "You don't own enough shares!"
+        );
+
+        return;
+
+    }
+
+
+    const stock =
+        stockMarket[
+            selectedStock
+        ];
+
+
+    const value =
+        stock.price *
+        amount;
+
+
+    gabeClicks +=
+        value;
+
+
+    /*
+        Remove the same proportion
+        of the original investment.
+    */
+
+    const averageBuyPrice =
+        holding.totalCost /
+        holding.shares;
+
+
+    holding.totalCost -=
+        averageBuyPrice *
+        amount;
+
+
+    holding.shares -=
+        amount;
+
+
+    if (
+        holding.shares <= 0
+    ) {
+
+        holding.shares = 0;
+        holding.totalCost = 0;
+
+    }
+
+
+    document.getElementById(
+        "stockAmount"
+    ).value = "";
+
+
+    stockMarketNews =
+        "📉 You sold " +
+        amount +
+        " " +
+        selectedStock +
+        " shares.";
+
+
+    updateClicker();
+
+    updateStockUI();
+
+    saveGame();
+
+}
+/* =========================================================
+   STOCK CHART TYPE
+   ========================================================= */
+
+let stockChartType = "line";
+
+
+function setStockChartType(type) {
+
+    stockChartType =
+        type;
+
+
+    document.getElementById(
+        "lineChartButton"
+    ).classList.toggle(
+        "active",
+        type === "line"
+    );
+
+
+    document.getElementById(
+        "candleChartButton"
+    ).classList.toggle(
+        "active",
+        type === "candle"
+    );
+
+
+    drawStockChart();
+
+}
+function getCandleData(
+    history,
+    pointsPerCandle = 4
+) {
+
+    const candles = [];
+
+
+    for (
+        let i = 0;
+        i < history.length;
+        i += pointsPerCandle
+    ) {
+
+        const group =
+            history.slice(
+                i,
+                i + pointsPerCandle
+            );
+
+
+        if (
+            group.length === 0
+        ) {
+
+            continue;
+
+        }
+
+
+        const prices =
+            group.map(
+                function(point) {
+
+                    return point.price;
+
+                }
+            );
+
+
+        candles.push({
+
+            time:
+                group[0].time,
+
+            open:
+                prices[0],
+
+            high:
+                Math.max(
+                    ...prices
+                ),
+
+            low:
+                Math.min(
+                    ...prices
+                ),
+
+            close:
+                prices[
+                    prices.length - 1
+                ]
+
+        });
+
+    }
+
+
+    return candles;
+}
+
+
+/*
+    Draw stock chart.
+*/
+
+function drawStockChart() {
+
+    const canvas = document.getElementById("stockChart");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    const stock = stockMarket[selectedStock];
+    if (!stock || !Array.isArray(stock.history)) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "#070707";
+    ctx.fillRect(0, 0, width, height);
+
+    let points = 50;
+    if (selectedStockRange === "1W") points = 100;
+    if (selectedStockRange === "1M") points = 200;
+    if (selectedStockRange === "3M") points = 400;
+
+    const history = stock.history
+        .filter(point => point && typeof point.price === "number")
+        .slice(-points);
+
+    if (history.length < 2) return;
+
+    if (stockChartType === "candle") {
+        drawCandleChart(history);
+    } else {
+        drawLineChart(history);
+    }
+}
+
+function getChartBounds(prices) {
+
+    let min = Math.min(...prices);
+    let max = Math.max(...prices);
+
+    let range = max - min;
+    if (range === 0) range = Math.max(1, max * 0.01);
+
+    const padding = range * 0.12;
+    min -= padding;
+    max += padding;
+
+    return { min, max };
+}
+
+function drawChartGrid(ctx, width, height, min, max) {
+
+    ctx.strokeStyle = "#1b1b1b";
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i < 5; i++) {
+        const y = 25 + (i / 4) * (height - 55);
+
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+    }
+
+    ctx.fillStyle = "#666";
+    ctx.font = "12px Arial";
+    ctx.textAlign = "left";
+
+    for (let i = 0; i < 5; i++) {
+        const price = max - (i / 4) * (max - min);
+        const y = 20 + (i / 4) * (height - 55);
+        ctx.fillText("$" + price.toFixed(2), 8, y);
+    }
+}
+
+function drawCandleChart(history) {
+
+    const canvas = document.getElementById("stockChart");
+    const ctx = canvas.getContext("2d");
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const candles = getCandleData(history, 4);
+    if (!candles.length) return;
+
+    const prices = candles.flatMap(c => [c.high, c.low]);
+    const { min, max } = getChartBounds(prices);
+
+    drawChartGrid(ctx, width, height, min, max);
+
+    function priceToY(price) {
+        return 20 + ((max - price) / (max - min)) * (height - 55);
+    }
+
+    const chartLeft = 35;
+    const chartRight = 10;
+    const usableWidth = width - chartLeft - chartRight;
+    const spacing = usableWidth / candles.length;
+    const bodyWidth = Math.max(5, spacing * 0.58);
+
+    candles.forEach(function(candle, index) {
+
+        const centerX = chartLeft + index * spacing + spacing / 2;
+        const openY = priceToY(candle.open);
+        const closeY = priceToY(candle.close);
+        const highY = priceToY(candle.high);
+        const lowY = priceToY(candle.low);
+        const isUp = candle.close >= candle.open;
+        const candleColor = isUp ? "#35d47a" : "#ff4d4d";
+
+        ctx.strokeStyle = candleColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX, highY);
+        ctx.lineTo(centerX, lowY);
+        ctx.stroke();
+
+        const bodyTop = Math.min(openY, closeY);
+        const bodyHeight = Math.max(2, Math.abs(closeY - openY));
+
+        ctx.fillStyle = candleColor;
+        ctx.fillRect(
+            centerX - bodyWidth / 2,
+            bodyTop,
+            bodyWidth,
+            bodyHeight
+        );
+    });
+}
+
+function drawLineChart(history) {
+
+    const canvas = document.getElementById("stockChart");
+    const ctx = canvas.getContext("2d");
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const prices = history.map(point => point.price);
+    const { min, max } = getChartBounds(prices);
+
+    drawChartGrid(ctx, width, height, min, max);
+
+    const first = prices[0];
+    const last = prices[prices.length - 1];
+    const isUp = last >= first;
+    const lineColor = isUp ? "#35d47a" : "#ff4d4d";
+
+    function priceToY(price) {
+        return 20 + ((max - price) / (max - min)) * (height - 55);
+    }
+
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    history.forEach(function(point, index) {
+        const x = index / (history.length - 1) * (width - 20) + 10;
+        const y = priceToY(point.price);
+
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+
+    ctx.stroke();
+
+    // Fill area underneath the line.
+    const finalX = width - 10;
+    const finalY = priceToY(last);
+
+    ctx.lineTo(finalX, height - 30);
+    ctx.lineTo(10, height - 30);
+    ctx.closePath();
+
+    const gradient = ctx.createLinearGradient(0, 20, 0, height);
+    if (isUp) {
+        gradient.addColorStop(0, "rgba(53,212,122,0.20)");
+        gradient.addColorStop(1, "rgba(53,212,122,0)");
+    } else {
+        gradient.addColorStop(0, "rgba(255,77,77,0.20)");
+        gradient.addColorStop(1, "rgba(255,77,77,0)");
+    }
+
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Current price dot.
+    ctx.beginPath();
+    ctx.arc(finalX, finalY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = lineColor;
+    ctx.fill();
+}
+
+
+/* =========================================================
+   STOCK MARKET INITIALIZATION
+   ========================================================= */
+
+initializeStocks();
+
+updateMarketFromTime();
+
+updateStockUI();
+
+
+/* =========================================================
+   RESET GAME
+   ========================================================= */
+
+function resetGame() {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to reset your entire game?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    gabeClicks = 0;
+
+    clickPower = 1;
+
+    rebirthLevel = 0;
+
+    casinoBalanceSnapshots = [];
+    casinoKickUntil = 0;
+
+
+    selectedCasinoBet =
+        null;
+
+    rouletteSpinning =
+        false;
+
+
+    blackjackDeck = [];
+
+    playerHand = [];
+
+    dealerHand = [];
+
+    blackjackBetAmount = 0;
+
+    blackjackActive =
+        false;
+
+
+    plinkoPegs = [];
+
+    plinkoBall = null;
+
+    plinkoAnimating =
+        false;
+
+    plinkoBetAmount = 0;
+
+
+    /*
+        Reset stock market.
+    */
+
+    stockMarket = {};
+
+    stockPortfolio = {};
+
+    selectedStock =
+        "NVDA";
+
+    selectedStockRange =
+        "1D";
+
+    stockMarketNews =
+        "📰 MARKET OPEN — Welcome to the Gabe Exchange.";
+
+
+    localStorage.removeItem(
+        "gabeClicks"
+    );
+
+    localStorage.removeItem(
+        "clickPower"
+    );
+
+    localStorage.removeItem(
+        "rebirthLevel"
+    );
+
+    localStorage.removeItem(
+        "casinoKickUntil"
+    );
+
+    localStorage.removeItem(
+        "stockMarketData"
+    );
+
+    localStorage.removeItem(
+        "stockPortfolio"
+    );
+
+    localStorage.removeItem(
+        "selectedStock"
+    );
+
+    localStorage.removeItem(
+        "stockMarketNews"
+    );
+
+
+    document.getElementById(
+        "casinoBetAmount"
+    ).value = "";
+
+    document.getElementById(
+        "rouletteResult"
+    ).textContent =
+        "CHOOSE RED, BLACK OR GREEN";
+
+    document.getElementById(
+        "rouletteWinningNumber"
+    ).textContent =
+        "";
+
+    document.getElementById(
+        "redButton"
+    ).classList.remove(
+        "selected"
+    );
+
+    document.getElementById(
+        "blackButton"
+    ).classList.remove(
+        "selected"
+    );
+
+    document.getElementById(
+        "greenButton"
+    ).classList.remove(
+        "selected"
+    );
+
+    document.getElementById(
+        "blackjackBet"
+    ).value = "";
+
+    document.getElementById(
+        "blackjackStatus"
+    ).textContent =
+        "PLACE YOUR BET";
+
+    document.getElementById(
+        "dealerCards"
+    ).innerHTML =
+        "";
+
+    document.getElementById(
+        "playerCards"
+    ).innerHTML =
+        "";
+
+    document.getElementById(
+        "dealerScore"
+    ).textContent =
+        "Score: 0";
+
+    document.getElementById(
+        "playerScore"
+    ).textContent =
+        "Score: 0";
+
+    document.getElementById(
+        "plinkoBet"
+    ).value = "";
+
+    document.getElementById(
+        "plinkoResult"
+    ).textContent =
+        "ENTER A BET AND DROP THE BALL";
+
+    document.getElementById(
+        "rouletteSpinButton"
+    ).disabled =
+        false;
+
+    document.getElementById(
+        "redButton"
+    ).disabled =
+        false;
+
+    document.getElementById(
+        "blackButton"
+    ).disabled =
+        false;
+
+    document.getElementById(
+        "greenButton"
+    ).disabled =
+        false;
+
+    document.getElementById(
+        "plinkoDropButton"
+    ).disabled =
+        false;
+
+    setBlackjackButtons(
+        false
+    );
+
+    document.getElementById(
+        "rouletteWheel"
+    ).style.transform =
+        "rotate(0deg)";
+
+    document.getElementById(
+        "rouletteWheel"
+    ).dataset.rotation =
+        "0";
+
+
+    /*
+        Recreate stock market.
+    */
+
+    initializeStocks();
+
+    createPlinkoBoard();
+
+    drawPlinko();
+
+    updateClicker();
+
+    updateStockUI();
+
+    saveGame();
+}
+
+
+/* =========================================================
+   SELF DESTRUCT
+   ========================================================= */
+
+function selfDestruct() {
+
+    const screen =
+        document.getElementById(
+            "selfDestructScreen"
+        );
+
+    const video =
+        document.getElementById(
+            "selfDestructVideo"
+        );
+
+    const countdown =
+        document.getElementById(
+            "countdown"
+        );
+
+
+    /*
+        Hide normal website buttons.
+    */
+
+    document.getElementById(
+        "clickerButton"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "stockMarketButton"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "backgroundButton"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "selfDestructButton"
+    ).style.display =
+        "none";
+
+
+    /*
+        Close other screens.
+    */
+
+    document.getElementById(
+        "clickerScreen"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "casinoScreen"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "stockMarketScreen"
+    ).style.display =
+        "none";
+
+
+    screen.style.display =
+        "flex";
+
+    countdown.textContent =
+        "5";
+
+
+    video.currentTime = 0;
+
+    video.muted = false;
+
+    video.play().catch(
+        function() {}
+    );
+
+
+    let number = 5;
+
+
+    const timer =
+        setInterval(
+            function() {
+
+                number--;
+
+                countdown.textContent =
+                    number;
+
+                if (
+                    number <= 0
+                ) {
+
+                    clearInterval(
+                        timer
+                    );
+
+                    video.pause();
+
+                    screen.style.display =
+                        "none";
+
+                    document.getElementById(
+                        "finalImage"
+                    ).style.display =
+                        "block";
+                }
+
+            },
+            1000
+        );
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+updateClicker();
+
+</script>
+
+</body>
+</html>
