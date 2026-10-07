@@ -136,61 +136,224 @@ a:hover {
 
 
 /* =========================================================
-   MAIN BUTTONS
+   HOME MENU (replaces the old row of fixed buttons)
    ========================================================= */
 
-#clickerButton,
-#stockMarketButton,
-#casesButton,
-#backgroundButton,
-#selfDestructButton {
+#homeMenu {
     position: fixed;
-    left: 20px;
+    left: 22px;
+    bottom: 22px;
     z-index: 100;
 
-    min-width: 190px;
-    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+}
 
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 12px;
+#homeToggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-    color: white;
-    font-size: 16px;
+    padding: 14px 24px 14px 20px;
+
+    border: 1px solid rgba(255, 216, 77, 0.5);
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, #7a5400, #e0ab00);
+    color: #fff;
+
+    font-size: 15px;
     font-weight: 900;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.5px;
 
     cursor: pointer;
 
-    transition: 0.18s ease;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+    transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+}
+
+#homeToggle:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.6),
+        0 0 24px rgba(255, 200, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+#homeToggleIcon {
+    font-size: 19px;
+    line-height: 1;
+}
+
+#homeToggle .chev {
+    font-size: 11px;
+    opacity: 0.85;
+    transition: transform 0.25s ease;
+}
+
+#homeMenu.open #homeToggle .chev {
+    transform: rotate(180deg);
+}
+
+#menuPanel {
+    order: -1;
+
+    width: 300px;
+    max-width: calc(100vw - 44px);
+
+    padding: 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px;
+
+    background:
+        linear-gradient(160deg, rgba(28, 28, 38, 0.92), rgba(10, 10, 14, 0.94));
+
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateY(16px) scale(0.95);
+    transform-origin: bottom left;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+        visibility 0s linear 0.22s;
+}
+
+#homeMenu.open #menuPanel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: none;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+        visibility 0s;
+}
+
+.menuHeading {
+    margin: 2px 4px 12px;
+
+    color: #8b8b9b;
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.menuGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.menuItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 92px;
+    padding: 14px 8px;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+
+    color: white;
+
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-align: center;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+    transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+}
+
+.menuItem .mi {
+    font-size: 28px;
+    line-height: 1;
+
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+.menuItem:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.15);
+
+    box-shadow:
+        0 12px 26px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 #clickerButton {
-    bottom: 215px;
-    background: linear-gradient(135deg, #8d0000, #d71919);
+    background: linear-gradient(145deg, #7a0000, #e02a2a);
+}
+
+#casesButton {
+    background: linear-gradient(145deg, #34176a, #8f52ff);
 }
 
 #stockMarketButton {
-    bottom: 150px;
-    background: linear-gradient(135deg, #064d2b, #0b9b55);
+    background: linear-gradient(145deg, #05452a, #0fb35f);
 }
 
 #backgroundButton {
-    bottom: 85px;
-    background: linear-gradient(135deg, #252525, #444);
+    background: linear-gradient(145deg, #25252f, #4d4d5c);
 }
 
 #selfDestructButton {
-    bottom: 20px;
-    background: linear-gradient(135deg, #430000, #a00000);
+    grid-column: 1 / -1;
+
+    flex-direction: row;
+    gap: 12px;
+
+    min-height: 0;
+    margin-top: 6px;
+    padding: 13px;
+
+    border-color: rgba(255, 70, 70, 0.4);
+
+    background: linear-gradient(145deg, #2b0000, #7d0000);
+
+    color: #ffb3b3;
 }
 
-#clickerButton:hover,
-#stockMarketButton:hover,
-#backgroundButton:hover,
-#selfDestructButton:hover,
-#casesButton:hover,
+#selfDestructButton .mi {
+    font-size: 20px;
+}
+
+#homeMenu button:active {
+    transform: translateY(1px) scale(0.97);
+}
+
+button:active {
+    transform: translateY(1px) scale(0.98);
+}
+
 .casinoButton:hover,
 .upgrade button:hover,
 #resetButton:hover,
@@ -202,14 +365,6 @@ a:hover {
     transform: translateY(-2px);
     filter: brightness(1.15);
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
-}
-
-#clickerButton:active,
-#stockMarketButton:active,
-#backgroundButton:active,
-#selfDestructButton:active,
-button:active {
-    transform: translateY(1px) scale(0.98);
 }
 
 
@@ -532,11 +687,6 @@ button:active {
 /* =========================================================
    CASES
    ========================================================= */
-
-#casesButton {
-    bottom: 280px;
-    background: linear-gradient(135deg, #3a1a6e, #8847ff);
-}
 
 #casesScreen {
     position: fixed;
@@ -1986,6 +2136,294 @@ button:active {
 }
 
 
+
+/* =========================================================
+   VISUAL POLISH
+   ========================================================= */
+
+:root {
+    --gold: #ffd84d;
+    --line: rgba(255, 255, 255, 0.09);
+    --glass: linear-gradient(160deg, rgba(26, 26, 34, 0.86), rgba(9, 9, 13, 0.92));
+    --shadow-lg: 0 20px 55px rgba(0, 0, 0, 0.55);
+}
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a46 transparent;
+}
+
+body {
+    font-family: "Segoe UI", Inter, system-ui, -apple-system, Roboto, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+    background:
+        radial-gradient(ellipse at center, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.72) 100%),
+        rgba(0, 0, 0, 0.22);
+}
+
+::selection {
+    background: rgba(255, 216, 77, 0.35);
+}
+
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* ---- loading screen ---- */
+
+#loadingScreen {
+    background:
+        radial-gradient(circle at 50% 40%, #1d0a0a, #050505 65%);
+}
+
+#loadingText {
+    background: linear-gradient(180deg, #fff, #c8c8d4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+#loadingBar {
+    padding: 4px;
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 30px rgba(255, 40, 40, 0.15);
+}
+
+#loadingProgress {
+    box-shadow: 0 0 14px rgba(255, 80, 40, 0.6);
+}
+
+/* ---- side images ---- */
+
+#rightImage1,
+#rightImage2 {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#rightImage1:hover,
+#rightImage2:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+}
+
+/* ---- full screens ---- */
+
+#clickerScreen,
+#casinoScreen,
+#casesScreen,
+#stockMarketScreen {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a46 transparent;
+}
+
+#clickerTitle,
+#casinoTitle,
+#casesTitle,
+#stockTitle {
+    background: linear-gradient(180deg, #ffffff 20%, #b9b9c8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.8));
+}
+
+#backButton,
+#casinoBackButton,
+#casesBackButton,
+#stockBackButton {
+    border-color: rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(20, 20, 28, 0.75);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    padding: 11px 20px;
+}
+
+/* ---- panels ---- */
+
+#shop,
+.casinoPanel,
+.stockPanel,
+.stockBalanceBox,
+#menuPanel {
+    border-color: var(--line);
+    background: var(--glass);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.casinoPanel,
+.stockPanel,
+#shop {
+    border-radius: 22px;
+}
+
+.casinoPanel {
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.casinoPanel:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+#casinoBalance,
+#casesBalance {
+    border-color: rgba(255, 216, 77, 0.4);
+    background: linear-gradient(135deg, rgba(110, 80, 0, 0.45), rgba(60, 40, 0, 0.45));
+    box-shadow: 0 0 26px rgba(255, 190, 0, 0.12);
+    text-shadow: 0 0 14px rgba(255, 190, 0, 0.35);
+}
+
+.stockBalanceValue,
+#clickCount {
+    text-shadow: 0 0 18px rgba(255, 190, 0, 0.3);
+}
+
+/* ---- clicker ---- */
+
+#gabeClickerImage {
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 26px;
+}
+
+.upgrade {
+    margin: 0 -10px;
+    padding: 17px 10px;
+    transition: background 0.15s ease;
+}
+
+.upgrade:hover {
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.upgrade button {
+    border-radius: 11px;
+    border-color: rgba(255, 216, 77, 0.35);
+    background: linear-gradient(135deg, #2a2208, #5c470a);
+    color: #ffe9a0;
+}
+
+.upgrade button:disabled {
+    border-color: #444;
+    background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
+    color: #999;
+}
+
+/* ---- cases ---- */
+
+#caseReelWindow {
+    border-color: rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    box-shadow:
+        inset 0 0 40px rgba(0, 0, 0, 0.85),
+        0 16px 44px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+#caseReelMarker {
+    width: 3px;
+    background: linear-gradient(180deg, #fff6c9, #ffd84d 40%, #ffb400);
+}
+
+#caseReelMarker::before,
+#caseReelMarker::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+
+    transform: translateX(-50%);
+}
+
+#caseReelMarker::before {
+    top: 0;
+    border-top: 11px solid #ffd84d;
+}
+
+#caseReelMarker::after {
+    bottom: 0;
+    border-bottom: 11px solid #ffd84d;
+}
+
+.caseCard {
+    border-radius: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.caseCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.28), transparent 45%);
+}
+
+.caseOpenButton {
+    border-radius: 12px;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 22px rgba(80, 40, 180, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.caseHistoryChip {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 9px;
+}
+
+#caseResult {
+    text-shadow: 0 0 22px currentColor;
+}
+
+/* ---- casino + stocks ---- */
+
+.casinoInput,
+.stockInput {
+    border-radius: 11px;
+    border-color: #3a3a46;
+    background: rgba(6, 6, 9, 0.9);
+}
+
+.stockRow {
+    border-radius: 12px;
+    border-color: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.stockRow:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+#stockNews {
+    border-radius: 12px;
+    background: linear-gradient(90deg, rgba(10, 60, 36, 0.8), rgba(15, 30, 22, 0.7));
+    box-shadow: var(--shadow-lg);
+}
+
+#stockChart {
+    border-radius: 14px;
+    background: linear-gradient(180deg, #0a0c0b, #050606);
+}
+
+.moneyPopup {
+    font-size: 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
 /* =========================================================
    MOBILE
    ========================================================= */
@@ -2002,38 +2440,23 @@ button:active {
         top: 145px;
     }
 
-    #clickerButton,
-    #stockMarketButton,
-    #casesButton,
-    #backgroundButton,
-    #selfDestructButton {
-        left: 10px;
-
-        min-width: 160px;
-
-        padding: 11px 14px;
-
-        font-size: 13px;
+    #homeMenu {
+        left: 12px;
+        bottom: 12px;
     }
 
-    #casesButton {
-        bottom: 265px;
+    #homeToggle {
+        padding: 12px 20px 12px 16px;
+        font-size: 14px;
     }
 
-    #clickerButton {
-        bottom: 205px;
+    #menuPanel {
+        width: min(300px, calc(100vw - 24px));
+        padding: 12px;
     }
 
-    #stockMarketButton {
-        bottom: 145px;
-    }
-
-    #backgroundButton {
-        bottom: 85px;
-    }
-
-    #selfDestructButton {
-        bottom: 25px;
+    .menuItem {
+        min-height: 82px;
     }
 
     #clickerScreen,
@@ -2143,48 +2566,48 @@ alt=""
 >
 
 <!-- =========================================================
-     MAIN BUTTONS
+     HOME MENU
      ========================================================= -->
 
-<button
-id="clickerButton"
-onclick="openClicker()"
+<nav id="homeMenu" aria-label="Main menu">
 
->
+    <div id="menuPanel" role="menu">
 
-GABE CLICKER </button>
+        <div class="menuHeading">MENU</div>
 
-<button
-id="stockMarketButton"
-onclick="openStockMarket()"
+        <div class="menuGrid">
 
->
+            <button id="clickerButton" class="menuItem" role="menuitem" onclick="openClicker()">
+                <span class="mi">👆</span><span>GABE CLICKER</span>
+            </button>
 
-📈 STOCK MARKET </button>
+            <button id="casesButton" class="menuItem" role="menuitem" onclick="openCases()">
+                <span class="mi">📦</span><span>CASES</span>
+            </button>
 
-<button
-id="backgroundButton"
-onclick="changeBackground()"
+            <button id="stockMarketButton" class="menuItem" role="menuitem" onclick="openStockMarket()">
+                <span class="mi">📈</span><span>STOCK MARKET</span>
+            </button>
 
->
+            <button id="backgroundButton" class="menuItem" role="menuitem" data-keep="1" onclick="changeBackground()">
+                <span class="mi">🖼️</span><span>CHANGE BACKGROUND</span>
+            </button>
 
-CHANGE BACKGROUND </button>
+            <button id="selfDestructButton" class="menuItem" role="menuitem" onclick="selfDestruct()">
+                <span class="mi">💥</span><span>SELF DESTRUCT</span>
+            </button>
 
-<button
-id="selfDestructButton"
-onclick="selfDestruct()"
+        </div>
 
->
+    </div>
 
-SELF DESTRUCT </button>
+    <button id="homeToggle" aria-haspopup="true" aria-expanded="false">
+        <span id="homeToggleIcon">🏠</span>
+        <span>HOME</span>
+        <span class="chev">▲</span>
+    </button>
 
-<button
-id="casesButton"
-onclick="openCases()"
-
->
-
-📦 CASES </button>
+</nav>
 
 <!-- =========================================================
      CLICKER SCREEN
@@ -8209,7 +8632,7 @@ function setCaseReelPosition(index, animate, extraOffset) {
     void track.offsetWidth;
 
     track.style.transition =
-        "transform " + (CASE_SPIN_MS / 1000) + "s cubic-bezier(0.08, 0.55, 0.1, 1)";
+        "transform " + (CASE_SPIN_MS / 1000) + "s cubic-bezier(0.35, 0.1, 0.4, 1)";
 
     track.style.transform = "translateX(" + (-offset) + "px)";
 }
@@ -8464,6 +8887,11 @@ function selfDestruct() {
     ).style.display =
         "none";
 
+    document.getElementById(
+        "homeMenu"
+    ).style.display =
+        "none";
+
 
     /*
         Close other screens.
@@ -8544,6 +8972,46 @@ function selfDestruct() {
 
 updateClicker();
 
+</script>
+
+
+<script>
+(function() {
+
+    const menu = document.getElementById("homeMenu");
+    const toggle = document.getElementById("homeToggle");
+
+    function setOpen(open) {
+        menu.classList.toggle("open", open);
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    toggle.addEventListener("click", function(e) {
+        e.stopPropagation();
+        setOpen(!menu.classList.contains("open"));
+    });
+
+    menu.querySelectorAll(".menuItem").forEach(function(item) {
+        item.addEventListener("click", function() {
+            if (!item.hasAttribute("data-keep")) {
+                setOpen(false);
+            }
+        });
+    });
+
+    document.addEventListener("click", function(e) {
+        if (!menu.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            setOpen(false);
+        }
+    });
+
+})();
 </script>
 
 </body>
