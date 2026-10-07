@@ -330,17 +330,24 @@ a:hover {
 
     min-height: 0;
     margin-top: 4px;
-    padding: 12px 4px;
+    padding: 12px 6px;
 
-    font-size: 10.5px;
-    letter-spacing: 0.3px;
+    font-size: 11px;
 }
 
 .menuItem.slim .mi {
     font-size: 18px;
 }
 
+#casinoMenuButton {
+    background: linear-gradient(145deg, #6e0a45, #e0338f);
+}
+
 #selfDestructButton {
+    grid-column: 1 / -1;
+
+    gap: 12px;
+
     border-color: rgba(255, 70, 70, 0.4);
 
     background: linear-gradient(145deg, #2b0000, #7d0000);
@@ -3124,6 +3131,10 @@ alt=""
                 <span class="mi">👆</span><span>GABE CLICKER</span>
             </button>
 
+            <button id="casinoMenuButton" class="menuItem" role="menuitem" onclick="openCasinoFromMenu()">
+                <span class="mi">🎰</span><span>CASINO</span>
+            </button>
+
             <button id="casesButton" class="menuItem" role="menuitem" onclick="openCases()">
                 <span class="mi">📦</span><span>CASES</span>
             </button>
@@ -3136,7 +3147,7 @@ alt=""
                 <span class="mi">🏢</span><span>EMPIRE</span>
             </button>
 
-            <button id="backgroundButton" class="menuItem slim" role="menuitem" data-keep="1" onclick="changeBackground()">
+            <button id="backgroundButton" class="menuItem" role="menuitem" data-keep="1" onclick="changeBackground()">
                 <span class="mi">🖼️</span><span>BACKGROUND</span>
             </button>
 
@@ -10583,41 +10594,32 @@ updateClicker();
 <script>
 (function() {
 
-    const menu = document.getElementById("homeMenu");
-    const toggle = document.getElementById("homeToggle");
+    let casinoFromMenu = false;
 
-    function setOpen(open) {
-        menu.classList.toggle("open", open);
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    }
+    const openCasinoOriginal = window.openCasino;
+    const closeCasinoOriginal = window.closeCasino;
 
-    toggle.addEventListener("click", function(e) {
-        e.stopPropagation();
-        setOpen(!menu.classList.contains("open"));
-    });
+    window.openCasino = function() {
+        casinoFromMenu = false;
+        openCasinoOriginal();
+    };
 
-    menu.querySelectorAll(".menuItem").forEach(function(item) {
-        item.addEventListener("click", function() {
-            if (!item.hasAttribute("data-keep")) {
-                setOpen(false);
-            }
-        });
-    });
+    window.openCasinoFromMenu = function() {
 
-    document.addEventListener("click", function(e) {
-        if (!menu.contains(e.target)) {
-            setOpen(false);
-        }
-    });
+        openCasinoOriginal();
 
-    document.addEventListener("keydown", function(e) {
-        if (e.key === "Escape") {
-            setOpen(false);
-        }
-    });
+        casinoFromMenu =
+            document.getElementById("casinoScreen").style.display === "block";
+    };
 
-})();
-</script>
+    window.closeCasino = function() {
 
-</body>
-</html>
+        if (casinoFromMenu) {
+
+            casinoFromMenu = false;
+
+            document.getElementById("casinoScreen").style.display = "none";
+
+            updateClicker();
+
+            return;
