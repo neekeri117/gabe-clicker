@@ -3010,19 +3010,19 @@ input:focus-visible {
 #homeClock {
     position: fixed;
     left: 50%;
-    top: 50%;
-    z-index: 20;
+    top: 14px;
+    z-index: 10;
 
-    padding: 22px 42px 24px;
+    padding: 8px 24px 10px;
 
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 28px;
+    border-radius: 18px;
 
     background: rgba(8, 8, 12, 0.5);
 
     text-align: center;
 
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
 
     pointer-events: none;
     user-select: none;
@@ -3031,19 +3031,19 @@ input:focus-visible {
 #clockGreeting {
     color: #ffd84d;
 
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     text-transform: uppercase;
 }
 
 #clockTime {
-    margin: 6px 0 4px;
+    margin: 2px 0 2px;
 
-    font-size: clamp(54px, 9vw, 112px);
+    font-size: clamp(36px, 5vw, 64px);
     font-weight: 300;
     line-height: 1.05;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     font-variant-numeric: tabular-nums;
 
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
@@ -3064,7 +3064,7 @@ input:focus-visible {
 #clockDate {
     color: #cfcfdc;
 
-    font-size: clamp(14px, 1.6vw, 20px);
+    font-size: clamp(11px, 1.1vw, 15px);
     font-weight: 600;
     letter-spacing: 1px;
 }
@@ -3072,9 +3072,9 @@ input:focus-visible {
 @media (max-width: 800px) {
 
     #homeClock {
-        top: 34%;
+        top: 10px;
 
-        padding: 16px 24px 18px;
+        padding: 6px 16px 8px;
     }
 }
 
@@ -3171,6 +3171,503 @@ input:focus-visible {
     }
 }
 
+
+/* =========================================================
+   PART 1 ADDITIONS: combo, crits, effects, events,
+   achievements, statistics
+   ========================================================= */
+
+/* ---- menu buttons ---- */
+
+#achievementsButton {
+    background: linear-gradient(145deg, #5a4300, #f0b400);
+}
+
+#statsButton {
+    background: linear-gradient(145deg, #0a2f5c, #2f86e8);
+}
+
+
+/* ---- combo meter ---- */
+
+#comboBox {
+    width: min(360px, 90vw);
+    min-height: 46px;
+    margin: 12px auto 0;
+}
+
+#comboText {
+    color: #777;
+
+    font-size: 17px;
+    font-weight: 1000;
+    letter-spacing: 1px;
+
+    transition: color 0.15s ease;
+}
+
+#comboBox.active #comboText {
+    color: #ff9a3c;
+    text-shadow: 0 0 14px rgba(255, 140, 40, 0.5);
+}
+
+#comboBox.hot #comboText {
+    color: #ff4d4d;
+    text-shadow: 0 0 16px rgba(255, 60, 60, 0.6);
+}
+
+#comboBar {
+    height: 7px;
+    margin-top: 7px;
+
+    border-radius: 7px;
+
+    background: #23232d;
+    overflow: hidden;
+}
+
+#comboFill {
+    width: 0%;
+    height: 100%;
+
+    border-radius: 7px;
+
+    background: linear-gradient(90deg, #ff3d00, #ffd84d);
+
+    transition: width 0.1s linear;
+}
+
+
+/* ---- click popups (crits, blessing, combo lost) ---- */
+
+.moneyPopup.critPopup {
+    color: #ffb020;
+
+    font-size: 38px;
+
+    text-shadow:
+        0 0 16px rgba(255, 160, 0, 0.7),
+        0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+.moneyPopup.blessPopup {
+    color: #ffe14d;
+
+    font-size: 44px;
+
+    text-shadow:
+        0 0 24px rgba(255, 220, 0, 0.9),
+        0 3px 8px rgba(0, 0, 0, 0.9);
+
+    animation-duration: 1.5s;
+}
+
+.moneyPopup.lostPopup {
+    color: #ff5a5a;
+
+    font-size: 26px;
+
+    text-shadow:
+        0 0 12px rgba(255, 60, 60, 0.55),
+        0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+
+/* ---- lucky charm shop row ---- */
+
+#luckyBox .upgradeName {
+    color: #9dffb4;
+}
+
+
+/* ---- active effects bar ---- */
+
+#effectBar {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    z-index: 9300;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    max-width: calc(100vw - 40px);
+
+    transform: translateX(-50%);
+
+    pointer-events: none;
+}
+
+.effectChip {
+    padding: 8px 14px;
+
+    border: 1px solid rgba(255, 216, 77, 0.45);
+    border-radius: 999px;
+
+    background: rgba(20, 16, 4, 0.92);
+    color: #ffe9a0;
+
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+}
+
+
+/* ---- random event card ---- */
+
+.eventCard {
+    position: fixed;
+    top: 150px;
+    left: 50%;
+    z-index: 9850;
+
+    width: min(440px, calc(100vw - 24px));
+
+    padding: 14px 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: 5px solid var(--ec, #ffd84d);
+    border-radius: 16px;
+
+    background: #13131a;
+
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65);
+
+    cursor: pointer;
+
+    transform: translateX(-50%);
+
+    animation: eventIn 0.3s ease-out;
+}
+
+.eventCard.out {
+    opacity: 0;
+
+    transition: opacity 0.25s ease;
+}
+
+.eventKicker {
+    color: var(--ec, #ffd84d);
+
+    font-size: 15px;
+    font-weight: 1000;
+    letter-spacing: 2px;
+}
+
+.eventText {
+    margin-top: 6px;
+
+    color: #e4e4ee;
+
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.eventEffect {
+    margin-top: 8px;
+
+    color: #fff;
+
+    font-size: 16px;
+    font-weight: 1000;
+}
+
+@keyframes eventIn {
+
+    from {
+        opacity: 0;
+        transform: translate(-50%, -14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+
+/* ---- achievement popups ---- */
+
+#achHost {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 9900;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+
+    width: min(340px, calc(100vw - 24px));
+
+    pointer-events: none;
+}
+
+.achPopup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    padding: 12px 16px;
+
+    border: 1px solid rgba(255, 216, 77, 0.5);
+    border-radius: 16px;
+
+    background: linear-gradient(135deg, #2a2208, #14110a);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.6),
+        0 0 22px rgba(255, 200, 0, 0.2);
+
+    cursor: pointer;
+    pointer-events: auto;
+
+    animation: achIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.achPopup.out {
+    opacity: 0;
+    transform: translateX(30px);
+
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.achPopup .achIcon {
+    font-size: 30px;
+}
+
+.achKicker {
+    color: #ffd84d;
+
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.achName {
+    margin-top: 2px;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.achDesc {
+    margin-top: 2px;
+
+    color: #bbb;
+
+    font-size: 12px;
+}
+
+@keyframes achIn {
+
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+
+/* ---- achievements + statistics screens ---- */
+
+.gScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 760;
+
+    display: none;
+
+    overflow-y: auto;
+
+    padding: 35px 20px 60px;
+
+    background:
+        radial-gradient(circle at top, rgba(255, 190, 0, 0.12), transparent 45%),
+        rgba(4, 4, 6, 0.98);
+
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a46 transparent;
+}
+
+#statsScreen {
+    background:
+        radial-gradient(circle at top, rgba(47, 134, 232, 0.14), transparent 45%),
+        rgba(4, 4, 6, 0.98);
+}
+
+.gTitle {
+    margin: 10px 0 14px;
+
+    text-align: center;
+    font-size: clamp(30px, 6vw, 48px);
+    font-weight: 1000;
+    letter-spacing: 3px;
+
+    color: #fff;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
+}
+
+.gSummary {
+    width: fit-content;
+
+    margin: 0 auto 22px;
+    padding: 10px 22px;
+
+    border: 1px solid rgba(255, 216, 77, 0.4);
+    border-radius: 999px;
+
+    background: rgba(80, 60, 0, 0.3);
+
+    color: #ffd84d;
+
+    font-size: 18px;
+    font-weight: 1000;
+}
+
+.achGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 12px;
+
+    width: min(1000px, 96vw);
+    margin: 0 auto;
+}
+
+.achCard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 4px solid #2c2c36;
+    border-radius: 16px;
+
+    background: linear-gradient(160deg, #16161d, #0b0b0f);
+}
+
+.achCard.unlocked {
+    border-left-color: #ffd84d;
+}
+
+.achCard.locked {
+    opacity: 0.55;
+}
+
+.achCard .achIcon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    font-size: 28px;
+}
+
+.achStatus {
+    margin-top: 4px;
+
+    color: #777;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.achCard.unlocked .achStatus {
+    color: #5dff8a;
+}
+
+.statsPanel {
+    width: min(560px, 96vw);
+
+    margin: 0 auto;
+    padding: 8px 22px;
+
+    border: 1px solid var(--line);
+    border-radius: 22px;
+
+    background: var(--glass);
+
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.statRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid #23232d;
+
+    font-size: 15px;
+}
+
+.statRow:last-child {
+    border-bottom: none;
+}
+
+.statLabel {
+    color: #a5a5b3;
+}
+
+.statValue {
+    color: #ffd84d;
+
+    font-weight: 1000;
+    text-align: right;
+}
+
+.statValue.pos {
+    color: #5dff8a;
+}
+
+.statValue.neg {
+    color: #ff6b6b;
+}
+
+.gNote {
+    width: min(560px, 96vw);
+
+    margin: 14px auto 0;
+
+    color: #777;
+
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+
+    .eventCard {
+        top: 105px;
+    }
+
+    #effectBar {
+        bottom: 80px;
+    }
+}
+
+
 </style>
 
 </head>
@@ -3253,6 +3750,14 @@ alt=""
 
             <button id="backgroundButton" class="menuItem" role="menuitem" data-keep="1" onclick="changeBackground()">
                 <span class="mi">🖼️</span><span>BACKGROUND</span>
+            </button>
+
+            <button id="achievementsButton" class="menuItem" role="menuitem" onclick="openAchievements()">
+                <span class="mi">🏆</span><span>ACHIEVEMENTS</span>
+            </button>
+
+            <button id="statsButton" class="menuItem" role="menuitem" onclick="openStats()">
+                <span class="mi">📊</span><span>STATISTICS</span>
             </button>
 
             <button id="selfDestructButton" class="menuItem slim" role="menuitem" onclick="selfDestruct()">
@@ -3427,6 +3932,11 @@ onclick="gabeClick(event)"
     REBIRTHS: 0 · MULTIPLIER: 1.00×
 </div>
 
+<div id="comboBox">
+    <div id="comboText">COMBO — keep clicking!</div>
+    <div id="comboBar"><div id="comboFill"></div></div>
+</div>
+
 <div id="clickHint">
     CLICK GABE TO MAKE MONEY
 </div>
@@ -3566,6 +4076,31 @@ onclick="openCasino()"
     NOT ENOUGH MONEY
 </button>
 
+
+</div>
+
+<div class="upgrade" id="luckyBox">
+
+<div class="upgradeInfo">
+
+    <div class="upgradeName">
+        🍀 Lucky Charm
+    </div>
+
+    <div class="upgradeDescription" id="luckyDescription">
+        More critical clicks.
+    </div>
+
+    <div class="upgradeCost" id="luckyCost"></div>
+
+</div>
+
+<button
+    id="luckyButton"
+    onclick="buyLucky()"
+>
+    NOT ENOUGH MONEY
+</button>
 
 </div>
 
@@ -4367,6 +4902,42 @@ alt=""
 
 >
 
+<!-- =========================================================
+     ACHIEVEMENTS
+     ========================================================= -->
+
+<div id="achScreen" class="gScreen">
+
+    <button class="screenBack" onclick="closeAchievements()">← BACK</button>
+
+    <h1 class="gTitle">🏆 ACHIEVEMENTS</h1>
+
+    <div id="achSummary" class="gSummary"></div>
+
+    <div id="achList" class="achGrid"></div>
+
+</div>
+
+<!-- =========================================================
+     STATISTICS
+     ========================================================= -->
+
+<div id="statsScreen" class="gScreen">
+
+    <button class="screenBack" onclick="closeStats()">← BACK</button>
+
+    <h1 class="gTitle">📊 GABE STATISTICS</h1>
+
+    <div id="statsList" class="statsPanel"></div>
+
+    <div class="gNote">
+        Money earned and spent count every dollar that goes in or out of your balance,
+        including bets, trades and purchases.<br>
+        Total clicks only counts clicks on Gabe, not the Gabe Bot.
+    </div>
+
+</div>
+
 <!-- CASINO KICK OVERLAY -->
 <div id="casinoKickOverlay">
     <h1>🚫 SECURITY ALERT</h1>
@@ -4979,18 +5550,19 @@ function gabeClick(event) {
         event.preventDefault();
     }
 
-    const effectivePower =
-        clickPower * getRebirthMultiplier();
+    /* combo, critical clicks and Gabe events are worked out in the
+       "Part 1 additions" script at the bottom of the page */
+    const click = gabeComputeClick();
 
-    gabeClicks += effectivePower;
+    gabeClicks += click.amount;
 
-    showMoneyPopup(event, effectivePower);
+    showMoneyPopup(event, click.amount, click.label, click.cls);
 
     updateClicker();
 }
 
 /* Floating "+$X" text that rises from where you clicked. */
-function showMoneyPopup(event, amount) {
+function showMoneyPopup(event, amount, customText, extraClass) {
 
     let x;
     let y;
@@ -5017,9 +5589,9 @@ function showMoneyPopup(event, amount) {
 
     const popup = document.createElement("div");
 
-    popup.className = "moneyPopup";
+    popup.className = "moneyPopup" + (extraClass ? " " + extraClass : "");
 
-    popup.textContent = "+$" + formatMoney(amount);
+    popup.textContent = customText || ("+$" + formatMoney(amount));
 
     /* Small random sideways drift so fast clicking doesn't stack perfectly. */
     popup.style.left = (x + (Math.random() * 40 - 20)) + "px";
@@ -5226,6 +5798,7 @@ function doRebirth() {
         "• Your click upgrades will reset to $1 per click\n" +
         "• You keep your stocks & portfolio\n" +
         "• You keep your offline vault & its upgrades\n" +
+        "• You keep your Lucky Charm, achievements & statistics\n" +
         "• You keep your businesses, real estate & empire upgrades\n" +
         "• Permanent multiplier becomes " +
         (getRebirthMultiplier() + 0.25).toFixed(2) +
@@ -5619,6 +6192,13 @@ function spinRoulette() {
                 winningNumber +
                 " — " +
                 winningColor.toUpperCase();
+
+            gameResult(
+                "roulette",
+                bet,
+                winnings,
+                winnings > 0 && winningColor === "green"
+            );
 
             rouletteSpinning =
                 false;
@@ -6225,6 +6805,15 @@ function blackjackFinish(
     );
 
     updateBlackjackDisplay(
+        false
+    );
+
+    gameResult(
+        "blackjack",
+        blackjackBetAmount,
+        (result === "win" || result === "blackjack")
+            ? winnings
+            : (result === "tie" ? blackjackBetAmount : 0),
         false
     );
 
@@ -6836,6 +7425,13 @@ function finishPlinko() {
             formatNumber(winnings) +
             "!";
     }
+
+    gameResult(
+        "plinko",
+        plinkoBetAmount,
+        winnings,
+        multiplier >= 5
+    );
 
     /* Check the casino kick rule after every drop. */
     recordCasinoWin();
@@ -8596,6 +9192,8 @@ function buyStock() {
     ].totalCost +=
         cost;
 
+    stockBought();
+
 
     document.getElementById(
         "stockAmount"
@@ -8702,6 +9300,8 @@ function sellStock() {
 
     holding.shares -=
         amount;
+
+    stockSold(amount, value - averageBuyPrice * amount);
 
 
     if (
@@ -9649,6 +10249,13 @@ function openCase(caseKey) {
 
             gabeClicks += payout;
 
+            gameResult(
+                "case",
+                def.price,
+                payout,
+                drop.tier === "covert" || drop.tier === "contraband"
+            );
+
             const tier = CASE_TIERS[drop.tier];
 
             const profit = payout - def.price;
@@ -10285,6 +10892,9 @@ updateClicker();
         return bizBusinessIncome() + rentIncome() + botIncome();
     }
 
+    /* used by achievements and Gabe events */
+    window.getEmpireIncome = totalIncome;
+
     /* Housing market: slow smooth cycle (same for everyone, based on the clock). */
     function marketAt(t) {
         const min = t / 60000;
@@ -10453,7 +11063,8 @@ updateClicker();
 
         lastTick = now;
 
-        const inc = totalIncome();
+        /* Gabe Rush event doubles income for a minute */
+        const inc = totalIncome() * (window.gabeIncomeMult ? window.gabeIncomeMult() : 1);
 
         if (inc <= 0 || dt <= 0) { return 0; }
 
@@ -11132,6 +11743,1254 @@ updateClicker();
 
         closeCasinoOriginal();
     };
+
+})();
+
+</script>
+
+<script>
+/* =========================================================
+   PART 1 ADDITIONS
+   Statistics, achievements, combo + critical clicks,
+   Lucky Charm upgrade and random Gabe events.
+
+   Hooks into the rest of the game through a few small
+   calls (gameResult, stockBought, stockSold, gabeComputeClick)
+   and by wrapping updateClicker / saveGame / reset / rebirth.
+   ========================================================= */
+
+(function() {
+
+    "use strict";
+
+    /* ---------- helpers ---------- */
+
+    function $(id) {
+        return document.getElementById(id);
+    }
+
+    function el(tag, cls, text) {
+
+        const e = document.createElement(tag);
+
+        if (cls) {
+            e.className = cls;
+        }
+
+        if (text !== undefined) {
+            e.textContent = text;
+        }
+
+        return e;
+    }
+
+    function dismiss(node) {
+
+        if (!node || !node.parentNode) {
+            return;
+        }
+
+        node.classList.add("out");
+
+        setTimeout(function() {
+            if (node.parentNode) {
+                node.parentNode.removeChild(node);
+            }
+        }, 280);
+    }
+
+    function loadingDone() {
+
+        const loading = $("loadingScreen");
+
+        return !loading || loading.style.display === "none";
+    }
+
+    function fmtSigned(n) {
+        return (n < 0 ? "-" : "") + "$" + formatNumber(Math.abs(n));
+    }
+
+    function fmtPlayTime(ms) {
+
+        const total = Math.floor(ms / 1000);
+
+        const h = Math.floor(total / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const s = total % 60;
+
+        if (h > 0) {
+            return h + "h " + m + "m";
+        }
+
+        if (m > 0) {
+            return m + "m " + s + "s";
+        }
+
+        return s + "s";
+    }
+
+    function empireIncome() {
+        return window.getEmpireIncome ? window.getEmpireIncome() : 0;
+    }
+
+    let destructed = false;
+
+
+    /* =========================================================
+       STATISTICS
+       ========================================================= */
+
+    const STAT_DEFAULTS = {
+        totalClicks: 0,
+        moneyEarned: 0,
+        moneySpent: 0,
+        rebirths: 0,
+        casesOpened: 0,
+        jackpots: 0,
+        casinoWins: 0,
+        casinoLosses: 0,
+        stocksTraded: 0,
+        stockBuys: 0,
+        stockProfit: 0,
+        bigWin: 0,
+        bigLoss: 0,
+        playTime: 0,
+        crits: 0,
+        ultraCrits: 0,
+        bestCombo: 0,
+        events: 0,
+        maxMoney: 0,
+        maxClickPower: 0,
+        gamblingLoss: 0,
+        lossStreak: 0,
+        bestLossStreak: 0
+    };
+
+    function freshStats() {
+
+        const s = {};
+
+        for (const key in STAT_DEFAULTS) {
+            s[key] = STAT_DEFAULTS[key];
+        }
+
+        return s;
+    }
+
+    function loadStats() {
+
+        const s = freshStats();
+
+        try {
+
+            const saved = JSON.parse(localStorage.getItem("gabeStats"));
+
+            if (saved && typeof saved === "object") {
+
+                for (const key in s) {
+                    if (typeof saved[key] === "number" && isFinite(saved[key])) {
+                        s[key] = saved[key];
+                    }
+                }
+            }
+
+        } catch (e) {}
+
+        return s;
+    }
+
+    let stats = loadStats();
+
+    let unlocked = {};
+
+    try {
+
+        const savedAch = JSON.parse(localStorage.getItem("gabeAch"));
+
+        if (savedAch && typeof savedAch === "object") {
+            unlocked = savedAch;
+        }
+
+    } catch (e) {}
+
+    /* Lucky Charm (extra critical-click chance), kept through rebirths. */
+    const LUCK_MAX = 10;
+
+    let luckLevel = Math.min(
+        LUCK_MAX,
+        parseInt(localStorage.getItem("luckLevel"), 10) || 0
+    );
+
+    function saveStats() {
+
+        try {
+            localStorage.setItem("gabeStats", JSON.stringify(stats));
+            localStorage.setItem("gabeAch", JSON.stringify(unlocked));
+            localStorage.setItem("luckLevel", String(luckLevel));
+        } catch (e) {}
+    }
+
+    /* Money earned / spent: every change to the balance is counted once,
+       whichever system caused it (clicks, income, bets, trades, shop...). */
+    let statsLast = gabeClicks;
+    let statsSuspend = false;
+
+    function trackMoney() {
+
+        if (statsSuspend) {
+            return;
+        }
+
+        const d = gabeClicks - statsLast;
+
+        if (d > 0) {
+            stats.moneyEarned += d;
+        } else if (d < 0) {
+            stats.moneySpent += -d;
+        }
+
+        statsLast = gabeClicks;
+
+        if (gabeClicks > stats.maxMoney) {
+            stats.maxMoney = gabeClicks;
+        }
+    }
+
+
+    /* =========================================================
+       ACHIEVEMENTS
+       ========================================================= */
+
+    const ACHIEVEMENTS = [
+
+        { id: "firstDollar", icon: "💵", name: "First Dollar", desc: "Earn your first $1",
+          test: function(s) { return s.moneyEarned >= 1; } },
+
+        { id: "warmUp", icon: "👆", name: "Warming Up", desc: "Click Gabe 1,000 times",
+          test: function(s) { return s.totalClicks >= 1000; } },
+
+        { id: "carpal", icon: "🖱️", name: "Carpal Tunnel", desc: "Click Gabe 100,000 times",
+          test: function(s) { return s.totalClicks >= 100000; } },
+
+        { id: "crit", icon: "💥", name: "Critical Hit", desc: "Land a critical click",
+          test: function(s) { return s.crits >= 1; } },
+
+        { id: "blessed", icon: "👑", name: "Blessed", desc: "Get blessed by Gaben himself", secret: true,
+          test: function(s) { return s.ultraCrits >= 1; } },
+
+        { id: "combo25", icon: "🔥", name: "On Fire", desc: "Reach a x25 combo",
+          test: function(s) { return s.bestCombo >= 25; } },
+
+        { id: "combo100", icon: "💀", name: "Unstoppable", desc: "Reach a x100 combo",
+          test: function(s) { return s.bestCombo >= 100; } },
+
+        { id: "investor", icon: "📈", name: "Gabe Investor", desc: "Buy your first stock",
+          test: function(s) { return s.stockBuys >= 1; } },
+
+        { id: "wallStreet", icon: "🏦", name: "Wall Street", desc: "Make $100,000 profit from stocks",
+          test: function(s) { return s.stockProfit >= 100000; } },
+
+        { id: "caseOpener", icon: "📦", name: "Unboxing", desc: "Open 10 cases",
+          test: function(s) { return s.casesOpened >= 10; } },
+
+        { id: "caseAddict", icon: "🎁", name: "Case Addict", desc: "Open 100 cases",
+          test: function(s) { return s.casesOpened >= 100; } },
+
+        { id: "jackpot", icon: "🎉", name: "Jackpot!", desc: "Hit a jackpot",
+          test: function(s) { return s.jackpots >= 1; } },
+
+        { id: "degenerate", icon: "🎰", name: "Degenerate", desc: "Lose $10,000 gambling", secret: true,
+          test: function(s) { return s.gamblingLoss >= 10000; } },
+
+        { id: "houseWins", icon: "🏠", name: "House Always Wins", desc: "Lose 10 casino games in a row", secret: true,
+          test: function(s) { return s.bestLossStreak >= 10; } },
+
+        { id: "rebirth", icon: "🔥", name: "Born Again", desc: "Rebirth for the first time",
+          test: function(s) { return s.rebirths >= 1; } },
+
+        { id: "news", icon: "📰", name: "Breaking News", desc: "Live through 5 Gabe events",
+          test: function(s) { return s.events >= 5; } },
+
+        { id: "passive", icon: "🏢", name: "Passive Income", desc: "Earn $100 per second from your empire",
+          test: function() { return empireIncome() >= 100; } },
+
+        { id: "mogul", icon: "🏰", name: "Mogul", desc: "Earn $100,000 per second from your empire",
+          test: function() { return empireIncome() >= 100000; } },
+
+        { id: "grass", icon: "🌱", name: "Touch Grass", desc: "Play for 1 hour", secret: true,
+          test: function(s) { return s.playTime >= 3600000; } },
+
+        { id: "loaded", icon: "💰", name: "Absolutely Loaded", desc: "Reach $1,000,000",
+          test: function(s) { return s.maxMoney >= 1000000; } },
+
+        { id: "billion", icon: "🤯", name: "How Did We Get Here?", desc: "Reach $1 billion", secret: true,
+          test: function(s) { return s.maxMoney >= 1000000000; } },
+
+        { id: "gaben", icon: "🎮", name: "Gaben Himself", desc: "Reach 100,000 click power",
+          test: function(s) { return s.maxClickPower >= 100000; } }
+
+    ];
+
+    const achQueue = [];
+
+    const achHost = el("div");
+    achHost.id = "achHost";
+    document.body.appendChild(achHost);
+
+    function showAchPopup(a) {
+
+        const popup = el("div", "achPopup");
+
+        popup.appendChild(el("div", "achIcon", a.icon));
+
+        const box = el("div");
+
+        box.appendChild(el("div", "achKicker", "ACHIEVEMENT UNLOCKED"));
+        box.appendChild(el("div", "achName", a.name));
+        box.appendChild(el("div", "achDesc", a.desc));
+
+        popup.appendChild(box);
+
+        popup.addEventListener("click", function() {
+            dismiss(popup);
+        });
+
+        achHost.appendChild(popup);
+
+        while (achHost.children.length > 4) {
+            achHost.removeChild(achHost.firstChild);
+        }
+
+        setTimeout(function() {
+            dismiss(popup);
+        }, 5500);
+    }
+
+    /* Popups wait until the loading screen is gone and appear one by one. */
+    function flushAchQueue() {
+
+        if (destructed || !loadingDone()) {
+            return;
+        }
+
+        const a = achQueue.shift();
+
+        if (a) {
+            showAchPopup(a);
+        }
+    }
+
+    function checkAchievements() {
+
+        let any = false;
+
+        for (let i = 0; i < ACHIEVEMENTS.length; i++) {
+
+            const a = ACHIEVEMENTS[i];
+
+            if (unlocked[a.id]) {
+                continue;
+            }
+
+            let ok = false;
+
+            try {
+                ok = a.test(stats);
+            } catch (e) {}
+
+            if (ok) {
+                unlocked[a.id] = Date.now();
+                achQueue.push(a);
+                any = true;
+            }
+        }
+
+        if (any) {
+
+            saveStats();
+
+            flushAchQueue();
+
+            if ($("achScreen").style.display === "block") {
+                renderAchievements();
+            }
+        }
+    }
+
+    function unlockedCount() {
+
+        let n = 0;
+
+        ACHIEVEMENTS.forEach(function(a) {
+            if (unlocked[a.id]) { n++; }
+        });
+
+        return n;
+    }
+
+    function renderAchievements() {
+
+        const grid = $("achList");
+
+        grid.textContent = "";
+
+        $("achSummary").textContent =
+            "🏆 " + unlockedCount() + " / " + ACHIEVEMENTS.length + " UNLOCKED";
+
+        ACHIEVEMENTS.forEach(function(a) {
+
+            const done = !!unlocked[a.id];
+
+            const hidden = !done && a.secret;
+
+            const card = el("div", "achCard " + (done ? "unlocked" : "locked"));
+
+            card.appendChild(el("div", "achIcon", hidden ? "🔒" : a.icon));
+
+            const box = el("div");
+
+            box.appendChild(el("div", "achName", hidden ? "???" : a.name));
+            box.appendChild(el("div", "achDesc", hidden ? "Hidden achievement" : a.desc));
+
+            let status = "Locked";
+
+            if (done) {
+                try {
+                    status = "Unlocked " + new Date(unlocked[a.id]).toLocaleDateString();
+                } catch (e) {
+                    status = "Unlocked";
+                }
+            }
+
+            box.appendChild(el("div", "achStatus", status));
+
+            card.appendChild(box);
+
+            grid.appendChild(card);
+        });
+    }
+
+    window.openAchievements = function() {
+
+        renderAchievements();
+
+        $("achScreen").style.display = "block";
+    };
+
+    window.closeAchievements = function() {
+        $("achScreen").style.display = "none";
+    };
+
+
+    /* =========================================================
+       STATISTICS SCREEN
+       ========================================================= */
+
+    const STAT_ROWS = [
+
+        { label: "Total clicks", get: function(s) { return formatNumber(s.totalClicks); } },
+        { label: "Money earned", get: function(s) { return "$" + formatNumber(s.moneyEarned); } },
+        { label: "Money spent", get: function(s) { return "$" + formatNumber(s.moneySpent); } },
+        { label: "Times rebirthed", get: function(s) { return formatNumber(s.rebirths); } },
+        { label: "Cases opened", get: function(s) { return formatNumber(s.casesOpened); } },
+        { label: "Jackpots", get: function(s) { return formatNumber(s.jackpots); } },
+        { label: "Casino wins", get: function(s) { return formatNumber(s.casinoWins); } },
+        { label: "Casino losses", get: function(s) { return formatNumber(s.casinoLosses); } },
+        { label: "Stocks traded", get: function(s) { return formatNumber(s.stocksTraded); } },
+        { label: "Biggest profit", get: function(s) { return "$" + formatNumber(s.bigWin); }, tone: function() { return "pos"; } },
+        { label: "Biggest loss", get: function(s) { return "$" + formatNumber(s.bigLoss); }, tone: function() { return "neg"; } },
+        { label: "Play time", get: function(s) { return fmtPlayTime(s.playTime); } },
+
+        { label: "Stock profit (realized)", get: function(s) { return fmtSigned(s.stockProfit); },
+          tone: function(s) { return s.stockProfit > 0 ? "pos" : s.stockProfit < 0 ? "neg" : ""; } },
+        { label: "Critical clicks", get: function(s) { return formatNumber(s.crits); } },
+        { label: "Best combo", get: function(s) { return "x" + formatNumber(s.bestCombo); } },
+        { label: "Highest balance", get: function(s) { return "$" + formatNumber(s.maxMoney); } },
+        { label: "Gabe events seen", get: function(s) { return formatNumber(s.events); } },
+        { label: "Achievements", get: function() { return unlockedCount() + " / " + ACHIEVEMENTS.length; } }
+
+    ];
+
+    let statEls = null;
+
+    function buildStatsRows() {
+
+        const box = $("statsList");
+
+        box.textContent = "";
+
+        statEls = [];
+
+        STAT_ROWS.forEach(function(row) {
+
+            const line = el("div", "statRow");
+
+            line.appendChild(el("div", "statLabel", row.label));
+
+            const value = el("div", "statValue", "");
+
+            line.appendChild(value);
+
+            box.appendChild(line);
+
+            statEls.push(value);
+        });
+    }
+
+    function renderStats() {
+
+        if (!statEls) {
+            buildStatsRows();
+        }
+
+        STAT_ROWS.forEach(function(row, i) {
+
+            const node = statEls[i];
+
+            const text = row.get(stats);
+
+            if (node.textContent !== text) {
+                node.textContent = text;
+            }
+
+            const tone = row.tone ? row.tone(stats) : "";
+
+            node.className = "statValue" + (tone ? " " + tone : "");
+        });
+    }
+
+    window.openStats = function() {
+
+        renderStats();
+
+        $("statsScreen").style.display = "block";
+    };
+
+    window.closeStats = function() {
+        $("statsScreen").style.display = "none";
+    };
+
+
+    /* =========================================================
+       ACTIVE EFFECTS (from Gabe events)
+       ========================================================= */
+
+    const effects = {
+        casino: 0,
+        income: 0,
+        frenzy: 0
+    };
+
+    /* The empire script multiplies its income by this. */
+    window.gabeIncomeMult = function() {
+        return Date.now() < effects.income ? 2 : 1;
+    };
+
+    const effectBar = el("div");
+    effectBar.id = "effectBar";
+    document.body.appendChild(effectBar);
+
+    function updateEffectBar() {
+
+        const now = Date.now();
+
+        const list = [
+            ["🚨", "CASINO PAYOUTS ×2", effects.casino],
+            ["⚡", "EMPIRE INCOME ×2", effects.income],
+            ["🖱️", "CLICKS ×3", effects.frenzy]
+        ];
+
+        effectBar.textContent = "";
+
+        list.forEach(function(item) {
+
+            if (now < item[2]) {
+
+                effectBar.appendChild(el(
+                    "div",
+                    "effectChip",
+                    item[0] + " " + item[1] + " · " + Math.ceil((item[2] - now) / 1000) + "s"
+                ));
+            }
+        });
+    }
+
+
+    /* =========================================================
+       RESULT HOOKS (called from the casino, cases and stocks)
+       ========================================================= */
+
+    /* kind: "roulette" | "blackjack" | "plinko" | "case"
+       bet: what was risked, payout: what came back (stake included). */
+    window.gameResult = function(kind, bet, payout, jackpot) {
+
+        const isCasino = kind !== "case";
+
+        let net = payout - bet;
+
+        /* SECURITY BREACH event: winning payouts are doubled. */
+        if (net > 0 && Date.now() < effects.casino) {
+
+            gabeClicks += payout;
+
+            net += payout;
+
+            showToast("🚨 2× PAYOUT!\nBonus +$" + formatNumber(payout));
+
+            updateClicker();
+        }
+
+        if (kind === "case") {
+            stats.casesOpened++;
+        }
+
+        if (net > 0) {
+
+            if (isCasino) {
+                stats.casinoWins++;
+                stats.lossStreak = 0;
+            }
+
+            if (net > stats.bigWin) {
+                stats.bigWin = net;
+            }
+
+        } else if (net < 0) {
+
+            if (isCasino) {
+
+                stats.casinoLosses++;
+                stats.lossStreak++;
+
+                if (stats.lossStreak > stats.bestLossStreak) {
+                    stats.bestLossStreak = stats.lossStreak;
+                }
+            }
+
+            stats.gamblingLoss += -net;
+
+            if (-net > stats.bigLoss) {
+                stats.bigLoss = -net;
+            }
+        }
+
+        if (jackpot) {
+            stats.jackpots++;
+        }
+    };
+
+    window.stockBought = function() {
+        stats.stocksTraded++;
+        stats.stockBuys++;
+    };
+
+    window.stockSold = function(amount, profit) {
+
+        stats.stocksTraded++;
+        stats.stockProfit += profit;
+
+        if (profit > stats.bigWin) {
+            stats.bigWin = profit;
+        }
+
+        if (-profit > stats.bigLoss) {
+            stats.bigLoss = -profit;
+        }
+    };
+
+
+    /* =========================================================
+       COMBO + CRITICAL CLICKS
+       ========================================================= */
+
+    const COMBO_TIMEOUT = 2000;
+
+    /* Highest tier first. */
+    const COMBO_TIERS = [
+        { at: 200, mult: 5,    icon: "💀" },
+        { at: 100, mult: 3,    icon: "🔥🔥🔥" },
+        { at: 50,  mult: 2,    icon: "🔥🔥" },
+        { at: 25,  mult: 1.5,  icon: "🔥" },
+        { at: 10,  mult: 1.25, icon: "🔥" }
+    ];
+
+    const CRIT_BASE_CHANCE = 0.03;
+    const CRIT_PER_LEVEL = 0.015;
+    const CRIT_MULT = 10;
+    const ULTRA_CHANCE = 0.000125;
+    const ULTRA_MIN_BONUS = 10000;
+
+    let comboCount = 0;
+    let comboLast = 0;
+
+    function comboTier(c) {
+
+        for (let i = 0; i < COMBO_TIERS.length; i++) {
+            if (c >= COMBO_TIERS[i].at) {
+                return COMBO_TIERS[i];
+            }
+        }
+
+        return null;
+    }
+
+    function critChance() {
+        return CRIT_BASE_CHANCE + CRIT_PER_LEVEL * luckLevel;
+    }
+
+    let comboKey = "";
+
+    function updateComboUI() {
+
+        const box = $("comboBox");
+
+        if (!box) {
+            return;
+        }
+
+        let text;
+        let cls = "";
+        let width = 0;
+
+        if (comboCount < 2) {
+
+            text = "COMBO — keep clicking!";
+
+        } else {
+
+            const tier = comboTier(comboCount);
+
+            text =
+                "COMBO x" + comboCount +
+                (tier ? " " + tier.icon + " (clicks ×" + tier.mult + ")" : "");
+
+            cls = comboCount >= 100 ? "active hot" : "active";
+
+            width = Math.max(
+                0,
+                Math.min(100, (1 - (Date.now() - comboLast) / COMBO_TIMEOUT) * 100)
+            );
+        }
+
+        const key = text + "|" + cls + "|" + Math.round(width);
+
+        if (key === comboKey) {
+            return;
+        }
+
+        comboKey = key;
+
+        $("comboText").textContent = text;
+
+        box.className = cls;
+
+        $("comboFill").style.width = width + "%";
+    }
+
+    function loseCombo() {
+
+        const had = comboCount;
+
+        comboCount = 0;
+
+        if (had >= 10 && $("clickerScreen").style.display === "block") {
+            showMoneyPopup(null, 0, "COMBO LOST", "lostPopup");
+        }
+
+        updateComboUI();
+    }
+
+    setInterval(function() {
+
+        if (comboCount > 0 && Date.now() - comboLast > COMBO_TIMEOUT) {
+            loseCombo();
+        } else {
+            updateComboUI();
+        }
+
+    }, 100);
+
+    /* Called by gabeClick(): returns what this click pays. */
+    window.gabeComputeClick = function() {
+
+        const now = Date.now();
+
+        if (comboCount > 0 && now - comboLast > COMBO_TIMEOUT) {
+            loseCombo();
+        }
+
+        comboCount++;
+        comboLast = now;
+
+        if (comboCount > stats.bestCombo) {
+            stats.bestCombo = comboCount;
+        }
+
+        const base = clickPower * getRebirthMultiplier();
+
+        let amount = base;
+
+        const tier = comboTier(comboCount);
+
+        if (tier) {
+            amount *= tier.mult;
+        }
+
+        if (now < effects.frenzy) {
+            amount *= 3;
+        }
+
+        let label = null;
+        let cls = "";
+
+        const roll = Math.random();
+
+        if (roll < ULTRA_CHANCE) {
+
+            amount += Math.max(ULTRA_MIN_BONUS, Math.round(base * 200));
+
+            label = "👑 GABEN BLESSES YOU +$" + formatMoney(amount);
+            cls = "blessPopup";
+
+            stats.crits++;
+            stats.ultraCrits++;
+
+        } else if (roll < ULTRA_CHANCE + critChance()) {
+
+            amount *= CRIT_MULT;
+
+            label = "💥 CRITICAL! +$" + formatMoney(amount);
+            cls = "critPopup";
+
+            stats.crits++;
+        }
+
+        stats.totalClicks++;
+
+        if (base > stats.maxClickPower) {
+            stats.maxClickPower = base;
+        }
+
+        updateComboUI();
+
+        return { amount: amount, label: label, cls: cls };
+    };
+
+
+    /* =========================================================
+       LUCKY CHARM (shop upgrade: more critical clicks)
+       ========================================================= */
+
+    function luckCost(level) {
+        return Math.round(2000 * Math.pow(2.2, level));
+    }
+
+    function updateLuckyUI() {
+
+        const desc = $("luckyDescription");
+
+        if (!desc) {
+            return;
+        }
+
+        desc.textContent =
+            "Critical click chance: " + (critChance() * 100).toFixed(1) +
+            "% (critical clicks pay ×" + CRIT_MULT + ")";
+
+        const cost = $("luckyCost");
+        const button = $("luckyButton");
+
+        if (luckLevel >= LUCK_MAX) {
+
+            cost.textContent = "Fully upgraded!";
+
+            button.disabled = true;
+            button.textContent = "MAX LEVEL";
+
+        } else {
+
+            const c = luckCost(luckLevel);
+
+            cost.textContent =
+                "Level " + luckLevel + "/" + LUCK_MAX +
+                " — next: +" + (CRIT_PER_LEVEL * 100) + "% — Cost: $" + formatNumber(c);
+
+            button.disabled = gabeClicks < c;
+
+            button.textContent = gabeClicks >= c ? "BUY" : "NOT ENOUGH MONEY";
+        }
+    }
+
+    window.buyLucky = function() {
+
+        if (luckLevel >= LUCK_MAX) {
+            return;
+        }
+
+        const c = luckCost(luckLevel);
+
+        if (gabeClicks < c) {
+            showToast("You don't have enough money!");
+            return;
+        }
+
+        gabeClicks -= c;
+
+        luckLevel++;
+
+        updateClicker();
+
+        saveGame();
+
+        showToast("🍀 LUCKY CHARM UPGRADED!\nCritical chance is now " + (critChance() * 100).toFixed(1) + "%.");
+    };
+
+
+    /* =========================================================
+       GABE EVENTS
+       ========================================================= */
+
+    function moveStocks(tickers, move, news) {
+
+        tickers.forEach(function(ticker) {
+
+            const stock = stockMarket[ticker];
+
+            if (!stock) {
+                return;
+            }
+
+            stock.previousPrice = stock.price;
+
+            stock.price = Math.max(1, stock.price * (1 + move));
+
+            stock.history.push({
+                price: stock.price,
+                time: Date.now()
+            });
+
+            if (stock.history.length > 500) {
+                stock.history.shift();
+            }
+        });
+
+        stockMarketNews = news;
+
+        saveStockGame();
+
+        updateStockUI();
+    }
+
+    const GOOD = "#38d878";
+    const BAD = "#ff4d4d";
+    const INFO = "#ffd84d";
+
+    const EVENTS = [
+
+        {
+            icon: "📰", title: "BREAKING NEWS", color: GOOD,
+            text: "Gabe has accidentally purchased the entire stock market.",
+            run: function() {
+                moveStocks(Object.keys(stockMarket), 0.18, "📰 BREAKING: Gabe accidentally purchased the entire stock market. All stocks +18%.");
+                return "All stocks +18%";
+            }
+        },
+
+        {
+            icon: "💀", title: "MARKET CRASH", color: BAD,
+            text: "Someone sold 14 billion GabeCoins.",
+            run: function() {
+                moveStocks(Object.keys(stockMarket), -0.12, "💀 CRASH: Someone sold 14 billion GabeCoins. All stocks -12%.");
+                return "All stocks -12%";
+            }
+        },
+
+        {
+            icon: "💰", title: "GABEN'S BLESSING", color: GOOD,
+            text: "Gabe has thrown money out of a window.",
+            run: function() {
+                gabeClicks += 25000;
+                return "+$25,000";
+            }
+        },
+
+        {
+            icon: "🚨", title: "SECURITY BREACH", color: INFO,
+            text: "The casino has been compromised.",
+            run: function() {
+                effects.casino = Date.now() + 30000;
+                return "All winning bets pay 2× for 30 seconds";
+            }
+        },
+
+        {
+            icon: "🏢", title: "SURPRISE DIVIDEND", color: GOOD,
+            text: "Gabe Corp has paid out a dividend to everyone.",
+            run: function() {
+
+                const bonus = Math.max(5000, Math.floor(empireIncome() * 600));
+
+                gabeClicks += bonus;
+
+                return "+$" + formatNumber(bonus) + " (10 minutes of empire income)";
+            }
+        },
+
+        {
+            icon: "⚡", title: "GABE RUSH", color: GOOD,
+            text: "Your whole empire is working overtime.",
+            run: function() {
+                effects.income = Date.now() + 60000;
+                return "Empire income ×2 for 60 seconds";
+            }
+        },
+
+        {
+            icon: "🖱️", title: "CLICK FRENZY", color: GOOD,
+            text: "Gabe's keyboard is on fire.",
+            run: function() {
+                effects.frenzy = Date.now() + 20000;
+                return "Every click pays ×3 for 20 seconds";
+            }
+        },
+
+        {
+            icon: "🚀", title: "HYPE TRAIN", color: INFO,
+            text: "Everyone on the internet suddenly wants Tesla and Coinbase.",
+            run: function() {
+                moveStocks(["TSLA", "COIN"], 0.3, "🚀 HYPE: Tesla and Coinbase are skyrocketing. TSLA & COIN +30%.");
+                return "TSLA and COIN +30%";
+            }
+        }
+
+    ];
+
+    function showEventCard(ev, effectText) {
+
+        const old = $("eventCard");
+
+        if (old && old.parentNode) {
+            old.parentNode.removeChild(old);
+        }
+
+        const card = el("div", "eventCard");
+
+        card.id = "eventCard";
+
+        card.style.setProperty("--ec", ev.color);
+
+        card.appendChild(el("div", "eventKicker", ev.icon + " " + ev.title));
+        card.appendChild(el("div", "eventText", ev.text));
+        card.appendChild(el("div", "eventEffect", effectText));
+
+        card.addEventListener("click", function() {
+            dismiss(card);
+        });
+
+        document.body.appendChild(card);
+
+        setTimeout(function() {
+            dismiss(card);
+        }, 9000);
+    }
+
+    let lastEvent = -1;
+
+    function triggerEvent(index) {
+
+        if (typeof index !== "number") {
+
+            do {
+                index = Math.floor(Math.random() * EVENTS.length);
+            } while (index === lastEvent && EVENTS.length > 1);
+        }
+
+        lastEvent = index;
+
+        const ev = EVENTS[index];
+
+        const effectText = ev.run();
+
+        stats.events++;
+
+        showEventCard(ev, effectText);
+
+        updateClicker();
+
+        updateEffectBar();
+
+        saveGame();
+    }
+
+    /* Handy for testing from the browser console: triggerGabeEvent(0..7) */
+    window.triggerGabeEvent = triggerEvent;
+
+    function scheduleNextEvent() {
+        return Date.now() + 120000 + Math.random() * 180000;
+    }
+
+    let nextEventAt = scheduleNextEvent();
+
+    function maybeRunEvent(now) {
+
+        if (destructed || document.hidden || !loadingDone()) {
+            return;
+        }
+
+        if (now >= nextEventAt) {
+
+            nextEventAt = scheduleNextEvent();
+
+            triggerEvent();
+        }
+    }
+
+
+    /* =========================================================
+       WRAPPERS AROUND THE EXISTING GAME
+       ========================================================= */
+
+    const origUpdateClicker = window.updateClicker;
+
+    window.updateClicker = function() {
+
+        trackMoney();
+
+        origUpdateClicker.apply(this, arguments);
+
+        updateLuckyUI();
+
+        checkAchievements();
+    };
+
+    const origSaveGame = window.saveGame;
+
+    window.saveGame = function() {
+
+        origSaveGame.apply(this, arguments);
+
+        saveStats();
+    };
+
+    /* Rebirth sets money to 0 on purpose, so it is not counted as spending. */
+    const origRebirth = window.doRebirthConfirmed;
+
+    window.doRebirthConfirmed = function() {
+
+        statsSuspend = true;
+
+        origRebirth();
+
+        stats.rebirths++;
+
+        statsLast = gabeClicks;
+        statsSuspend = false;
+
+        updateClicker();
+
+        saveGame();
+    };
+
+    /* Reset game: also clears stats, achievements and the Lucky Charm. */
+    const origReset = window.performReset;
+
+    window.performReset = function() {
+
+        statsSuspend = true;
+
+        origReset();
+
+        stats = freshStats();
+        unlocked = {};
+        luckLevel = 0;
+
+        achQueue.length = 0;
+
+        comboCount = 0;
+
+        effects.casino = 0;
+        effects.income = 0;
+        effects.frenzy = 0;
+
+        nextEventAt = scheduleNextEvent();
+
+        statsLast = gabeClicks;
+        statsSuspend = false;
+
+        updateComboUI();
+        updateEffectBar();
+
+        updateClicker();
+
+        saveGame();
+
+        renderAchievements();
+        renderStats();
+    };
+
+    const origSelfDestruct = window.selfDestruct;
+
+    window.selfDestruct = function() {
+
+        destructed = true;
+
+        ["achScreen", "statsScreen", "eventCard", "effectBar", "achHost"].forEach(function(id) {
+
+            const node = $(id);
+
+            if (node) {
+                node.style.display = "none";
+            }
+        });
+
+        origSelfDestruct();
+    };
+
+
+    /* =========================================================
+       MAIN TICK (once per second)
+       ========================================================= */
+
+    let lastTick = Date.now();
+
+    setInterval(function() {
+
+        const now = Date.now();
+
+        const dt = now - lastTick;
+
+        lastTick = now;
+
+        /* only count time the page is actually open and visible */
+        if (!document.hidden && dt < 5000) {
+            stats.playTime += dt;
+        }
+
+        const power = clickPower * getRebirthMultiplier();
+
+        if (power > stats.maxClickPower) {
+            stats.maxClickPower = power;
+        }
+
+        trackMoney();
+
+        checkAchievements();
+
+        flushAchQueue();
+
+        updateEffectBar();
+
+        maybeRunEvent(now);
+
+        if ($("statsScreen").style.display === "block") {
+            renderStats();
+        }
+
+    }, 1000);
+
+    updateComboUI();
+
+    window.updateClicker();
 
 })();
 
