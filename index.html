@@ -3668,6 +3668,291 @@ input:focus-visible {
 }
 
 
+
+/* =========================================================
+   WINDOWS-STYLE CRASH DIALOG (after self destruct)
+   ========================================================= */
+
+#crashDialog {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 10001;
+
+    display: none;
+
+    width: min(430px, 92vw);
+
+    transform: translate(-50%, -50%);
+
+    border: 1px solid #1b3f8f;
+    border-radius: 8px 8px 0 0;
+
+    background: #f0f0f0;
+    color: #000;
+
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+
+    box-shadow: 6px 10px 30px rgba(0, 0, 0, 0.65);
+
+    user-select: none;
+}
+
+.crashTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 6px 6px 6px 10px;
+
+    border-radius: 7px 7px 0 0;
+
+    background: linear-gradient(#4a86e0, #1f56b8);
+    color: #fff;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.crashClose {
+    width: 36px;
+    height: 20px;
+
+    border: 1px solid #5a1010;
+    border-radius: 4px;
+
+    background: linear-gradient(#e9826f, #c0301b);
+    color: #fff;
+
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.crashBody {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    padding: 24px 22px 26px;
+
+    background: #fff;
+}
+
+.crashIcon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border: 2px solid #fff;
+    border-radius: 50%;
+
+    background: radial-gradient(circle at 35% 30%, #ff8a7a, #c4170a 70%);
+    color: #fff;
+
+    font-size: 24px;
+    font-weight: 900;
+
+    box-shadow: 0 0 0 1px #8a1208, 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.crashText {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.crashText b {
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-size: 15px;
+}
+
+.crashFooter {
+    padding: 12px 14px;
+
+    border-top: 1px solid #dfdfdf;
+
+    background: #f0f0f0;
+
+    text-align: right;
+}
+
+.crashOk {
+    min-width: 84px;
+    padding: 5px 18px;
+
+    border: 1px solid #2a5fb8;
+    border-radius: 3px;
+
+    background: linear-gradient(#f4f4f4, #dcdcdc);
+    color: #000;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.crashOk:hover {
+    background: linear-gradient(#eaf3fd, #cfe3f8);
+}
+
+
+/* =========================================================
+   WINDOWS-STYLE "WEBSITE HAS CRASHED" DIALOG
+   ========================================================= */
+
+#crashOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10100;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    padding: 16px;
+}
+
+#crashDialog {
+    width: min(430px, 100%);
+
+    border: 1px solid #1883d7;
+
+    background: #f0f0f0;
+    color: #000;
+
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    font-size: 14px;
+
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+#crashTitleBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 31px;
+    padding-left: 10px;
+
+    background: #fff;
+    color: #000;
+
+    font-size: 12px;
+
+    user-select: none;
+}
+
+#crashX {
+    width: 46px;
+    height: 31px;
+
+    border: none;
+    background: transparent;
+    color: #000;
+
+    font-size: 14px;
+    cursor: default;
+}
+
+#crashX:hover {
+    background: #e81123;
+    color: #fff;
+}
+
+#crashBody {
+    display: flex;
+    gap: 16px;
+
+    padding: 22px 20px 20px;
+
+    background: #fff;
+}
+
+#crashIcon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: radial-gradient(circle at 35% 30%, #ff6b6b, #d11a1a 70%);
+    color: #fff;
+
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#crashText {
+    line-height: 1.45;
+}
+
+.crashHead {
+    margin-bottom: 8px;
+
+    color: #003399;
+
+    font-size: 17px;
+}
+
+.crashCode {
+    margin-top: 10px;
+
+    color: #555;
+
+    font-size: 12px;
+}
+
+#crashFooter {
+    display: flex;
+    justify-content: flex-end;
+
+    padding: 12px 14px;
+
+    background: #f0f0f0;
+}
+
+#crashOk {
+    min-width: 88px;
+    padding: 5px 16px;
+
+    border: 1px solid #0078d7;
+
+    background: #e1e1e1;
+    color: #000;
+
+    font-family: inherit;
+    font-size: 13px;
+    cursor: default;
+}
+
+#crashOk:hover {
+    background: #e5f1fb;
+}
+
+#crashOk:active {
+    background: #cce4f7;
+}
+
+#crashOk:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+}
+
 </style>
 
 </head>
@@ -4934,6 +5219,65 @@ alt=""
         Money earned and spent count every dollar that goes in or out of your balance,
         including bets, trades and purchases.<br>
         Total clicks only counts clicks on Gabe, not the Gabe Bot.
+    </div>
+
+</div>
+
+<!-- WINDOWS-STYLE CRASH DIALOG -->
+<div id="crashDialog" role="alertdialog" aria-modal="true" aria-labelledby="crashHeading">
+    <div class="crashTitle">
+        <span>Hyvä Nettisivu</span>
+        <button class="crashClose" onclick="closeWebsite()" aria-label="Close">✕</button>
+    </div>
+    <div class="crashBody">
+        <div class="crashIcon">✕</div>
+        <div class="crashText">
+            <b id="crashHeading">The website has crashed.</b>
+            A fatal error occurred and Hyvä Nettisivu has stopped working.
+            The website will now be closed.
+        </div>
+    </div>
+    <div class="crashFooter">
+        <button class="crashOk" id="crashOkButton" onclick="closeWebsite()">OK</button>
+    </div>
+</div>
+
+<!-- =========================================================
+     WINDOWS-STYLE CRASH DIALOG (shown after the self destruct)
+     ========================================================= -->
+
+<div id="crashOverlay">
+
+    <div id="crashDialog" role="alertdialog" aria-modal="true" aria-labelledby="crashTitle">
+
+        <div id="crashTitleBar">
+            <span id="crashTitle">Hyvä Nettisivu</span>
+            <button id="crashX" aria-label="Close">✕</button>
+        </div>
+
+        <div id="crashBody">
+
+            <div id="crashIcon">✕</div>
+
+            <div id="crashText">
+
+                <div class="crashHead">Hyvä Nettisivu has stopped working</div>
+
+                <div>
+                    The website has crashed. A problem caused it to stop working
+                    correctly, and it will now be closed.
+                </div>
+
+                <div class="crashCode">Error code: 0x00000067 (SELF_DESTRUCT_COMPLETE)</div>
+
+            </div>
+
+        </div>
+
+        <div id="crashFooter">
+            <button id="crashOk">OK</button>
+        </div>
+
     </div>
 
 </div>
@@ -10422,6 +10766,10 @@ function selfDestruct() {
                         "finalImage"
                     ).style.display =
                         "block";
+
+                    showCrashDialog();
+
+                    showCrashDialog();
                 }
 
             },
@@ -12994,7 +13342,113 @@ updateClicker();
 
 })();
 
+/* =========================================================
+   CRASH DIALOG (shown when the self destruct countdown ends)
+   ========================================================= */
+
+function showCrashDialog() {
+
+    document.getElementById("crashDialog").style.display = "block";
+
+    document.getElementById("crashOkButton").focus();
+}
+
+function closeWebsite() {
+
+    /* window.close() only works for tabs opened by a script, so if the
+       browser refuses, leave the page by loading a blank one instead. */
+    try {
+        window.close();
+    } catch (e) {}
+
+    setTimeout(
+        function() {
+            window.location.replace("about:blank");
+        },
+        150
+    );
+}
+
+</script>
+
+<script>
+/* =========================================================
+   CRASH DIALOG: shown when the self destruct countdown ends.
+   Pressing OK (or X / Enter / Esc) closes the website.
+   ========================================================= */
+
+(function() {
+
+    let shown = false;
+
+    function winBeep() {
+
+        try {
+
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+
+            const ctx = new Ctx();
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = "sine";
+            osc.frequency.value = 660;
+            osc.frequency.setValueAtTime(440, ctx.currentTime + 0.14);
+
+            gain.gain.value = 0.08;
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.4);
+
+        } catch (e) {}
+    }
+
+    /* Browsers only let a script close tabs it opened itself, so if
+       window.close() is refused the page is replaced with a blank one. */
+    function closeWebsite() {
+
+        try {
+            window.open("", "_self");
+            window.close();
+        } catch (e) {}
+
+        setTimeout(function() {
+            window.location.replace("about:blank");
+        }, 150);
+    }
+
+    window.showCrashDialog = function() {
+
+        if (shown) {
+            return;
+        }
+
+        shown = true;
+
+        document.getElementById("crashOverlay").style.display = "flex";
+
+        winBeep();
+
+        document.getElementById("crashOk").focus();
+    };
+
+    document.getElementById("crashOk").addEventListener("click", closeWebsite);
+    document.getElementById("crashX").addEventListener("click", closeWebsite);
+
+    document.addEventListener("keydown", function(e) {
+
+        if (shown && (e.key === "Escape" || e.key === "Enter")) {
+            e.preventDefault();
+            closeWebsite();
+        }
+    });
+
+})();
 </script>
 
 </body>
-</
+</html>
