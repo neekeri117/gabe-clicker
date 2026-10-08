@@ -330,17 +330,24 @@ a:hover {
 
     min-height: 0;
     margin-top: 4px;
-    padding: 12px 4px;
+    padding: 12px 6px;
 
-    font-size: 10.5px;
-    letter-spacing: 0.3px;
+    font-size: 11px;
 }
 
 .menuItem.slim .mi {
     font-size: 18px;
 }
 
+#casinoMenuButton {
+    background: linear-gradient(145deg, #6e0a45, #e0338f);
+}
+
 #selfDestructButton {
+    grid-column: 1 / -1;
+
+    gap: 12px;
+
     border-color: rgba(255, 70, 70, 0.4);
 
     background: linear-gradient(145deg, #2b0000, #7d0000);
@@ -2928,6 +2935,34 @@ input:focus-visible {
     background: #1c1c24;
 }
 
+.empireSection {
+    margin: 14px 4px 2px;
+
+    color: #8b8b9b;
+
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.empireNote {
+    margin: 0 4px 2px;
+
+    color: #a5a5b3;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#botLine {
+    margin-top: 8px;
+
+    color: #5dff8a;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
 .empireFoot {
     width: min(900px, 96vw);
     margin: 18px auto 0;
@@ -2964,6 +2999,82 @@ input:focus-visible {
     .empireBtn {
         flex: 1;
         min-width: 0;
+    }
+}
+
+
+/* =========================================================
+   HOME CLOCK
+   ========================================================= */
+
+#homeClock {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 10;
+
+    padding: 22px 42px 24px;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
+
+    background: rgba(8, 8, 12, 0.5);
+
+    text-align: center;
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+    user-select: none;
+}
+
+#clockGreeting {
+    color: #ffd84d;
+
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+#clockTime {
+    margin: 6px 0 4px;
+
+    font-size: clamp(54px, 9vw, 112px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: 3px;
+    font-variant-numeric: tabular-nums;
+
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+.clockColon {
+    margin: 0 0.04em;
+
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.clockSecColon,
+#clockS {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.55em;
+}
+
+#clockDate {
+    color: #cfcfdc;
+
+    font-size: clamp(14px, 1.6vw, 20px);
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 800px) {
+
+    #homeClock {
+        top: 34%;
+
+        padding: 16px 24px 18px;
     }
 }
 
@@ -3124,6 +3235,10 @@ alt=""
                 <span class="mi">👆</span><span>GABE CLICKER</span>
             </button>
 
+            <button id="casinoMenuButton" class="menuItem" role="menuitem" onclick="openCasinoFromMenu()">
+                <span class="mi">🎰</span><span>CASINO</span>
+            </button>
+
             <button id="casesButton" class="menuItem" role="menuitem" onclick="openCases()">
                 <span class="mi">📦</span><span>CASES</span>
             </button>
@@ -3136,7 +3251,7 @@ alt=""
                 <span class="mi">🏢</span><span>EMPIRE</span>
             </button>
 
-            <button id="backgroundButton" class="menuItem slim" role="menuitem" data-keep="1" onclick="changeBackground()">
+            <button id="backgroundButton" class="menuItem" role="menuitem" data-keep="1" onclick="changeBackground()">
                 <span class="mi">🖼️</span><span>BACKGROUND</span>
             </button>
 
@@ -3155,6 +3270,121 @@ alt=""
     </button>
 
 </nav>
+
+<!-- =========================================================
+     HOME CLOCK
+     ========================================================= -->
+
+<div id="homeClock" aria-hidden="true">
+    <div id="clockGreeting"></div>
+    <div id="clockTime">
+        <span id="clockH">00</span><span class="clockColon">:</span><span id="clockM">00</span><span class="clockColon clockSecColon">:</span><span id="clockS">00</span>
+    </div>
+    <div id="clockDate"></div>
+</div>
+
+<script>
+/* Home menu: kept in its own script right after the markup so it works
+   even if another part of the page has a problem. */
+(function() {
+
+    const menu = document.getElementById("homeMenu");
+    const toggle = document.getElementById("homeToggle");
+
+    function setOpen(open) {
+        menu.classList.toggle("open", open);
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    toggle.addEventListener("click", function(e) {
+        e.stopPropagation();
+        setOpen(!menu.classList.contains("open"));
+    });
+
+    menu.querySelectorAll(".menuItem").forEach(function(item) {
+        item.addEventListener("click", function() {
+            if (!item.hasAttribute("data-keep")) {
+                setOpen(false);
+            }
+        });
+    });
+
+    document.addEventListener("click", function(e) {
+        if (!menu.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            setOpen(false);
+        }
+    });
+
+})();
+
+/* Digital clock on the main screen */
+(function() {
+
+    const timeParts = {
+        h: document.getElementById("clockH"),
+        m: document.getElementById("clockM"),
+        s: document.getElementById("clockS")
+    };
+
+    const greeting = document.getElementById("clockGreeting");
+    const dateEl = document.getElementById("clockDate");
+
+    function pad(n) {
+        return n < 10 ? "0" + n : String(n);
+    }
+
+    function set(el, value) {
+        if (el.textContent !== value) {
+            el.textContent = value;
+        }
+    }
+
+    function tick() {
+
+        const now = new Date();
+
+        const h = now.getHours();
+
+        set(timeParts.h, pad(h));
+        set(timeParts.m, pad(now.getMinutes()));
+        set(timeParts.s, pad(now.getSeconds()));
+
+        set(
+            greeting,
+            h < 5 ? "Good night" :
+            h < 12 ? "Good morning" :
+            h < 18 ? "Good afternoon" :
+            h < 22 ? "Good evening" : "Good night"
+        );
+
+        let dateText;
+
+        try {
+            dateText = now.toLocaleDateString(undefined, {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+        } catch (e) {
+            dateText = now.toDateString();
+        }
+
+        set(dateEl, dateText);
+    }
+
+    tick();
+
+    setInterval(tick, 1000);
+
+})();
+</script>
 
 <!-- =========================================================
      CLICKER SCREEN
@@ -4076,6 +4306,7 @@ onclick="closeCases()"
         <div class="empireTabs">
             <button class="empireTab active" id="tabBiz" onclick="empireSetTab('biz')">🏪 BUSINESSES</button>
             <button class="empireTab" id="tabProp" onclick="empireSetTab('prop')">🏘️ REAL ESTATE</button>
+            <button class="empireTab" id="tabUpg" onclick="empireSetTab('upg')">⚡ UPGRADES</button>
         </div>
 
         <div class="empireModes" id="empireModes">
@@ -4099,6 +4330,8 @@ onclick="closeCases()"
     <div class="empireList" id="empireBizList"></div>
 
     <div class="empireList" id="empirePropList" style="display:none"></div>
+
+    <div class="empireList" id="empireUpgList" style="display:none"></div>
 
     <div class="empireFoot" id="empireFoot"></div>
 
@@ -4993,7 +5226,7 @@ function doRebirth() {
         "• Your click upgrades will reset to $1 per click\n" +
         "• You keep your stocks & portfolio\n" +
         "• You keep your offline vault & its upgrades\n" +
-        "• You keep your businesses & real estate\n" +
+        "• You keep your businesses, real estate & empire upgrades\n" +
         "• Permanent multiplier becomes " +
         (getRebirthMultiplier() + 0.25).toFixed(2) +
         "×\n\n" +
@@ -9819,7 +10052,20 @@ updateClicker();
     const SYNERGY_PER_PROPERTY = 0.01;   /* +1% business income per property owned */
     const SYNERGY_MAX = 2;               /* ...up to +200% */
 
-    const OFFLINE_CAP_MS = 4 * 60 * 60 * 1000;   /* earn while away, max 4 hours */
+    /* Offline earnings (upgradeable): how long you earn for, and what % of your income. */
+    const OFFLINE_HOURS = [4, 6, 8, 12, 24, 48, 72];
+    const OFFLINE_HOURS_COST = [10000, 60000, 400000, 3000000, 25000000, 200000000];
+    const OFFLINE_EFF = [25, 40, 55, 70, 85, 100, 125, 150];   /* percent */
+    const OFFLINE_EFF_COST = [5000, 25000, 150000, 1000000, 8000000, 60000000, 500000000];
+    const AWAY_AFTER_MS = 120000;   /* a gap longer than 2 minutes counts as "away" */
+
+    /* Gabe Bot: clicks Gabe for you */
+    const BOT_UNLOCK_COST = 1000;
+    const BOT_SPEED_MAX = 20;       /* clicks per second = 1 + 0.5 * level */
+    const BOT_POWER_MAX = 15;       /* power = 10% + 10% * level of a normal click */
+
+    function botSpeedCost(lvl) { return Math.ceil(800 * Math.pow(1.45, lvl)); }
+    function botPowerCost(lvl) { return Math.ceil(2000 * Math.pow(1.6, lvl)); }
 
     /* ---------- definitions ---------- */
 
@@ -9889,6 +10135,8 @@ updateClicker();
 
     let bizLevel = {};
     let propOwned = {};
+    let offState = {};
+    let botState = {};
     let carry = 0;
     let lastTick = Date.now();
     let buyMode = "1";
@@ -9905,11 +10153,15 @@ updateClicker();
 
     bizLevel = loadJSON("empireBiz");
     propOwned = loadJSON("empireProps");
+    offState = loadJSON("empireOffline");
+    botState = loadJSON("empireBot");
 
     function saveEmpire() {
         try {
             localStorage.setItem("empireBiz", JSON.stringify(bizLevel));
             localStorage.setItem("empireProps", JSON.stringify(propOwned));
+            localStorage.setItem("empireOffline", JSON.stringify(offState));
+            localStorage.setItem("empireBot", JSON.stringify(botState));
             localStorage.setItem("empireLast", String(Date.now()));
         } catch (e) {}
     }
@@ -9917,6 +10169,8 @@ updateClicker();
     window.resetEmpire = function() {
         bizLevel = {};
         propOwned = {};
+        offState = {};
+        botState = {};
         carry = 0;
         lastTick = Date.now();
         saveEmpire();
@@ -10001,8 +10255,34 @@ updateClicker();
         return sum;
     }
 
+    /* ---- Gabe Bot ---- */
+
+    function botOwned() { return (botState.owned || 0) > 0; }
+
+    function botCps() { return botOwned() ? 1 + 0.5 * (botState.speed || 0) : 0; }
+
+    function botPower() { return 0.1 + 0.1 * (botState.power || 0); }
+
+    function perClick() { return clickPower * getRebirthMultiplier(); }
+
+    /* every auto-click is worth a share of a normal click, but at least $1 */
+    function botIncome() {
+        if (!botOwned()) { return 0; }
+        return botCps() * Math.max(1, perClick() * botPower());
+    }
+
+    /* ---- offline settings ---- */
+
+    function offlineCapMs() {
+        return OFFLINE_HOURS[Math.min(OFFLINE_HOURS.length - 1, offState.dur || 0)] * 3600000;
+    }
+
+    function offlineEff() {
+        return OFFLINE_EFF[Math.min(OFFLINE_EFF.length - 1, offState.eff || 0)] / 100;
+    }
+
     function totalIncome() {
-        return bizBusinessIncome() + rentIncome();
+        return bizBusinessIncome() + rentIncome() + botIncome();
     }
 
     /* Housing market: slow smooth cycle (same for everyone, based on the clock). */
@@ -10121,6 +10401,48 @@ updateClicker();
 
     /* ---------- passive income tick ---------- */
 
+    function fmtDuration(ms) {
+
+        const mins = Math.floor(ms / 60000);
+
+        if (mins < 60) { return mins + " min"; }
+
+        const h = Math.floor(mins / 60);
+
+        if (h < 48) { return h + " h " + (mins % 60) + " min"; }
+
+        return Math.floor(h / 24) + " days " + (h % 24) + " h";
+    }
+
+    /* Show the "welcome back" message once the loading screen is gone. */
+    function announceAway(earned, awayMs) {
+
+        const hours = offlineCapMs() / 3600000;
+
+        const msg =
+            "💼 Welcome back!\nYou were away " + fmtDuration(awayMs) + ". Your empire earned " +
+            money(earned) + " (" + Math.round(offlineEff() * 100) + "% of your income, " + hours + " h limit).";
+
+        let tries = 0;
+
+        const wait = setInterval(function() {
+
+            const loading = document.getElementById("loadingScreen");
+
+            tries++;
+
+            if (!loading || loading.style.display === "none" || tries > 60) {
+
+                clearInterval(wait);
+
+                showToast(msg);
+
+                updateClicker();
+            }
+
+        }, 500);
+    }
+
     function accrue() {
 
         const now = Date.now();
@@ -10128,7 +10450,6 @@ updateClicker();
         let dt = now - lastTick;
 
         if (dt < 0) { dt = 0; }
-        if (dt > OFFLINE_CAP_MS) { dt = OFFLINE_CAP_MS; }
 
         lastTick = now;
 
@@ -10136,7 +10457,21 @@ updateClicker();
 
         if (inc <= 0 || dt <= 0) { return 0; }
 
-        carry += inc * dt / 1000;
+        let earned;
+
+        if (dt > AWAY_AFTER_MS) {
+
+            /* the page was closed (or the computer slept): offline rules apply */
+            earned = inc * Math.min(dt, offlineCapMs()) / 1000 * offlineEff();
+
+            announceAway(Math.floor(earned), dt);
+
+        } else {
+
+            earned = inc * dt / 1000;
+        }
+
+        carry += earned;
 
         const whole = Math.floor(carry);
 
@@ -10157,13 +10492,19 @@ updateClicker();
         saveEmpire();
     };
 
+    let lastShownCash = -1;
+
     setInterval(function() {
 
-        const earned = accrue();
+        accrue();
 
-        if (earned > 0) {
+        /* refresh balances whenever the money changed (also by the save timer) */
+        if (gabeClicks !== lastShownCash) {
+            lastShownCash = gabeClicks;
             updateClicker();
         }
+
+        updateBotLine();
 
         updateUI(false);
 
@@ -10174,6 +10515,8 @@ updateClicker();
 
     const bizRows = {};
     const propRows = {};
+    const upgRows = {};
+    let offSummary = null;
 
     function setText(el, value) {
         if (el._v !== value) {
@@ -10275,6 +10618,182 @@ updateClicker();
             propRows[p.id] = parts;
             propList.appendChild(parts.row);
         });
+
+        const upgList = document.getElementById("empireUpgList");
+
+        UPGS.forEach(function(u) {
+
+            if (u.section) {
+
+                upgList.appendChild(el("div", "empireSection", u.section));
+
+                if (u.id === "dur") {
+                    offSummary = el("div", "empireNote");
+                    upgList.appendChild(offSummary);
+                }
+            }
+
+            const parts = buildRow(u, "upg");
+            parts.buy.addEventListener("click", function() { buyUpg(u.id); });
+            upgRows[u.id] = parts;
+            upgList.appendChild(parts.row);
+        });
+    }
+
+    const UPGS = [
+        { id: "bot",   icon: "🤖", name: "Gabe Bot",           section: "🤖 AUTO CLICKER" },
+        { id: "speed", icon: "⚡", name: "Bot Speed" },
+        { id: "power", icon: "💪", name: "Bot Power" },
+        { id: "dur",   icon: "⏳", name: "Offline Duration",   section: "🌙 OFFLINE EARNINGS" },
+        { id: "eff",   icon: "📊", name: "Offline Efficiency" }
+    ];
+
+    function fmtRate(n) {
+        return String(Math.round(n * 10) / 10);
+    }
+
+    /* everything the UI and the buy button need to know about one upgrade */
+    function upgInfo(id) {
+
+        const o = { active: false, meta: "", label: "UPGRADE", sub: "", cost: 0, disabled: false };
+
+        function maxed(text) {
+            o.active = true;
+            o.meta = text;
+            o.label = "MAXED";
+            o.sub = "";
+            o.disabled = true;
+        }
+
+        if (id === "bot") {
+
+            if (botOwned()) {
+
+                o.active = true;
+                o.meta = "Active · " + fmtRate(botCps()) + " clicks/s · " + Math.round(botPower() * 100) +
+                    "% power · earns " + money(botIncome()) + "/s";
+                o.label = "ACTIVE";
+                o.disabled = true;
+
+            } else {
+
+                o.meta = "Clicks Gabe for you, even while you're away. Starts at 1 click/s with 10% of a normal click (at least $1 per click).";
+                o.label = "UNLOCK";
+                o.cost = BOT_UNLOCK_COST;
+                o.sub = money(o.cost);
+            }
+
+        } else if (id === "speed") {
+
+            const lvl = botState.speed || 0;
+
+            if (lvl >= BOT_SPEED_MAX) {
+                maxed("Level " + lvl + "/" + BOT_SPEED_MAX + " · " + fmtRate(1 + 0.5 * lvl) + " clicks/s");
+            } else {
+                o.cost = botSpeedCost(lvl);
+                o.meta = "Level " + lvl + "/" + BOT_SPEED_MAX + " · " + fmtRate(1 + 0.5 * lvl) + " → " + fmtRate(1 + 0.5 * (lvl + 1)) + " clicks/s";
+                o.sub = botOwned() ? money(o.cost) : "needs Gabe Bot";
+                o.disabled = !botOwned();
+            }
+
+        } else if (id === "power") {
+
+            const lvl = botState.power || 0;
+
+            if (lvl >= BOT_POWER_MAX) {
+                maxed("Level " + lvl + "/" + BOT_POWER_MAX + " · " + Math.round((0.1 + 0.1 * lvl) * 100) + "% of a click");
+            } else {
+                o.cost = botPowerCost(lvl);
+                o.meta = "Level " + lvl + "/" + BOT_POWER_MAX + " · " + Math.round((0.1 + 0.1 * lvl) * 100) + "% → " +
+                    Math.round((0.1 + 0.1 * (lvl + 1)) * 100) + "% of a click (your click: " + money(perClick()) + ")";
+                o.sub = botOwned() ? money(o.cost) : "needs Gabe Bot";
+                o.disabled = !botOwned();
+            }
+
+        } else if (id === "dur") {
+
+            const lvl = Math.min(OFFLINE_HOURS.length - 1, offState.dur || 0);
+
+            if (lvl >= OFFLINE_HOURS.length - 1) {
+                maxed("Level " + lvl + "/" + (OFFLINE_HOURS.length - 1) + " · earn for up to " + OFFLINE_HOURS[lvl] + " h");
+            } else {
+                o.cost = OFFLINE_HOURS_COST[lvl];
+                o.meta = "Level " + lvl + "/" + (OFFLINE_HOURS.length - 1) + " · up to " + OFFLINE_HOURS[lvl] + " h → " + OFFLINE_HOURS[lvl + 1] + " h away";
+                o.sub = money(o.cost);
+            }
+
+        } else {
+
+            const lvl = Math.min(OFFLINE_EFF.length - 1, offState.eff || 0);
+
+            if (lvl >= OFFLINE_EFF.length - 1) {
+                maxed("Level " + lvl + "/" + (OFFLINE_EFF.length - 1) + " · " + OFFLINE_EFF[lvl] + "% of your income while away");
+            } else {
+                o.cost = OFFLINE_EFF_COST[lvl];
+                o.meta = "Level " + lvl + "/" + (OFFLINE_EFF.length - 1) + " · " + OFFLINE_EFF[lvl] + "% → " + OFFLINE_EFF[lvl + 1] + "% of your income while away";
+                o.sub = money(o.cost);
+            }
+        }
+
+        return o;
+    }
+
+    function buyUpg(id) {
+
+        const info = upgInfo(id);
+
+        if (info.disabled) { return; }
+
+        if (gabeClicks < info.cost) {
+            notEnough();
+            return;
+        }
+
+        gabeClicks -= info.cost;
+
+        if (id === "bot") {
+            botState.owned = 1;
+            showToast("🤖 Gabe Bot online!\nIt now clicks Gabe for you, even while you're away.");
+        } else if (id === "speed") {
+            botState.speed = (botState.speed || 0) + 1;
+        } else if (id === "power") {
+            botState.power = (botState.power || 0) + 1;
+        } else if (id === "dur") {
+            offState.dur = (offState.dur || 0) + 1;
+        } else {
+            offState.eff = (offState.eff || 0) + 1;
+        }
+
+        saveGame();
+        updateClicker();
+        updateUI(true);
+        updateBotLine();
+    }
+
+    /* line under Gabe on the clicker screen */
+    let botLineEl = null;
+
+    function updateBotLine() {
+
+        if (!botLineEl) {
+
+            const hint = document.getElementById("clickHint");
+
+            if (!hint) { return; }
+
+            botLineEl = document.createElement("div");
+
+            botLineEl.id = "botLine";
+
+            hint.parentNode.insertBefore(botLineEl, hint.nextSibling);
+        }
+
+        setText(
+            botLineEl,
+            botOwned()
+                ? "🤖 Gabe Bot: " + fmtRate(botCps()) + " clicks/s · +" + money(botIncome()) + "/s"
+                : "🤖 Gabe Bot not unlocked yet (Empire → Upgrades)"
+        );
     }
 
     function screenOpen() {
@@ -10295,7 +10814,7 @@ updateClicker();
 
         setText(
             document.getElementById("empIncomeSub"),
-            "businesses " + money(bizBusinessIncome()) + " · rent " + money(rentIncome())
+            "biz " + money(bizBusinessIncome()) + " · rent " + money(rentIncome()) + " · bot " + money(botIncome())
         );
 
         if (tab === "biz") {
@@ -10348,7 +10867,7 @@ updateClicker();
                 }
             });
 
-        } else {
+        } else if (tab === "prop") {
 
             const m = market();
 
@@ -10399,15 +10918,42 @@ updateClicker();
 
                 setDisabled(r.sell, have <= 0);
             });
+
+        } else {
+
+            UPGS.forEach(function(u) {
+
+                const r = upgRows[u.id];
+                const info = upgInfo(u.id);
+
+                r.row.classList.toggle("owned", info.active);
+
+                setText(r.meta, info.meta);
+                setText(r.buyTop, info.label);
+                setText(r.buySub, info.sub);
+
+                setDisabled(r.buy, info.disabled || gabeClicks < info.cost);
+            });
+
+            const capH = offlineCapMs() / 3600000;
+            const effP = Math.round(offlineEff() * 100);
+
+            setText(
+                offSummary,
+                "While you're away you earn " + effP + "% of your income for up to " + capH + " h. " +
+                "Right now that is up to " + money(totalIncome() * capH * 3600 * offlineEff()) + " per trip."
+            );
         }
 
         setText(
             document.getElementById("empireFoot"),
             tab === "biz"
                 ? "Property synergy: +" + Math.round((syn - 1) * 100) + "% business income (+1% per property owned, max +200%). " +
-                  "Your empire keeps earning while you're away for up to 4 hours."
-                : "Selling returns " + Math.round(SELL_RATE * 100) + "% of market value. Rent isn't affected by the market, only buy and sell prices. " +
-                  "Every property owned boosts your business income by 1%."
+                  "Businesses, rent and the Gabe Bot all keep earning while you're away, at your offline rate (see Upgrades)."
+                : tab === "prop"
+                    ? "Selling returns " + Math.round(SELL_RATE * 100) + "% of market value. Rent isn't affected by the market, only buy and sell prices. " +
+                      "Every property owned boosts your business income by 1%."
+                    : "The Gabe Bot's income depends on your click power, which resets on rebirth. The bot and your offline upgrades are kept."
         );
     }
 
@@ -10491,9 +11037,13 @@ updateClicker();
         document.getElementById("tabBiz").classList.toggle("active", t === "biz");
         document.getElementById("tabProp").classList.toggle("active", t === "prop");
 
+        document.getElementById("tabUpg").classList.toggle("active", t === "upg");
+
         document.getElementById("empireBizList").style.display = t === "biz" ? "flex" : "none";
         document.getElementById("empirePropList").style.display = t === "prop" ? "flex" : "none";
+        document.getElementById("empireUpgList").style.display = t === "upg" ? "flex" : "none";
         document.getElementById("empireMarket").style.display = t === "prop" ? "block" : "none";
+        document.getElementById("empireModes").style.display = t === "upg" ? "none" : "flex";
 
         updateUI(true);
     };
@@ -10529,51 +11079,17 @@ updateClicker();
 
     buildUI();
 
-    /* Offline earnings from the last time the game was saved. */
+    /* Offline earnings: lastTick starts at the last save, so the first accrue()
+       pays out the time you were away at your offline rate. */
     (function() {
 
-        const now = Date.now();
         const last = parseInt(localStorage.getItem("empireLast"), 10) || 0;
 
-        lastTick = now;
+        lastTick = last > 0 ? last : Date.now();
 
-        if (last <= 0) { return; }
-
-        const away = now - last;
-
-        const inc = totalIncome();
-
-        if (away < 30000 || inc <= 0) { return; }
-
-        const credited = Math.min(away, OFFLINE_CAP_MS);
-
-        const earned = Math.floor(inc * credited / 1000);
-
-        gabeClicks += earned;
-
-        /* wait until the loading screen is gone so the message can be seen */
-        let tries = 0;
-
-        const wait = setInterval(function() {
-
-            const loading = document.getElementById("loadingScreen");
-
-            tries++;
-
-            if (!loading || loading.style.display === "none" || tries > 60) {
-
-                clearInterval(wait);
-
-                showToast(
-                    "💼 Welcome back!\nYour empire earned " + money(earned) + " while you were away" +
-                    (away > OFFLINE_CAP_MS ? " (4 hour limit)." : ".")
-                );
-
-                updateClicker();
-            }
-
-        }, 500);
     })();
+
+    updateBotLine();
 
     updateUI(true);
 
@@ -10583,40 +11099,42 @@ updateClicker();
 <script>
 (function() {
 
-    const menu = document.getElementById("homeMenu");
-    const toggle = document.getElementById("homeToggle");
+    let casinoFromMenu = false;
 
-    function setOpen(open) {
-        menu.classList.toggle("open", open);
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    }
+    const openCasinoOriginal = window.openCasino;
+    const closeCasinoOriginal = window.closeCasino;
 
-    toggle.addEventListener("click", function(e) {
-        e.stopPropagation();
-        setOpen(!menu.classList.contains("open"));
-    });
+    window.openCasino = function() {
+        casinoFromMenu = false;
+        openCasinoOriginal();
+    };
 
-    menu.querySelectorAll(".menuItem").forEach(function(item) {
-        item.addEventListener("click", function() {
-            if (!item.hasAttribute("data-keep")) {
-                setOpen(false);
-            }
-        });
-    });
+    window.openCasinoFromMenu = function() {
 
-    document.addEventListener("click", function(e) {
-        if (!menu.contains(e.target)) {
-            setOpen(false);
+        openCasinoOriginal();
+
+        casinoFromMenu =
+            document.getElementById("casinoScreen").style.display === "block";
+    };
+
+    window.closeCasino = function() {
+
+        if (casinoFromMenu) {
+
+            casinoFromMenu = false;
+
+            document.getElementById("casinoScreen").style.display = "none";
+
+            updateClicker();
+
+            return;
         }
-    });
 
-    document.addEventListener("keydown", function(e) {
-        if (e.key === "Escape") {
-            setOpen(false);
-        }
-    });
+        closeCasinoOriginal();
+    };
 
 })();
+
 </script>
 
 </body>
