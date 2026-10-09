@@ -13448,6 +13448,350 @@ function closeWebsite() {
     });
 
 })();
+    <!-- =========================================================
+     PUBLIC CHAT (top-left)
+     Paste this whole block right before </body> in your page.
+     ========================================================= -->
+
+<style>
+#pubChat {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 50;
+
+    width: 310px;
+    max-width: calc(100vw - 28px);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+
+    background: linear-gradient(160deg, rgba(26, 26, 34, 0.92), rgba(9, 9, 13, 0.94));
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    overflow: hidden;
+}
+
+#pubChatHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 14px;
+
+    cursor: pointer;
+    user-select: none;
+
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffd84d;
+}
+
+#pubChatHeader small {
+    color: #8b8b9b;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+#pubChatBody { display: block; }
+#pubChat.collapsed #pubChatBody { display: none; }
+
+#pubChatMessages {
+    height: 240px;
+    overflow-y: auto;
+
+    padding: 6px 12px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a46 transparent;
+}
+
+.pcMsg {
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 13px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+}
+
+.pcMeta { display: flex; justify-content: space-between; gap: 8px; }
+.pcName { font-weight: 900; color: #7ec8ff; }
+.pcTime { color: #777; font-size: 11px; white-space: nowrap; }
+.pcText { color: #e4e4ee; margin-top: 2px; }
+
+#pubChatStatus {
+    padding: 6px 12px;
+    font-size: 11px;
+    color: #8b8b9b;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#pubChatForm {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px 12px;
+}
+
+#pubChatForm input {
+    width: 100%;
+    padding: 9px 11px;
+
+    border: 1px solid #3a3a46;
+    border-radius: 10px;
+
+    background: rgba(6, 6, 9, 0.9);
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+
+#pubChatForm input:focus { border-color: #d7a900; }
+
+#pubChatRow { display: flex; gap: 6px; }
+#pubChatRow input { flex: 1; }
+
+#pubChatSend {
+    padding: 9px 14px;
+
+    border: 1px solid rgba(255, 216, 77, 0.4);
+    border-radius: 10px;
+
+    background: linear-gradient(135deg, #5a3d00, #b68900);
+    color: #fff;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+@media (max-width: 800px) {
+    #pubChat { width: 250px; }
+    #pubChatMessages { height: 170px; }
+}
+</style>
+
+<div id="pubChat">
+    <div id="pubChatHeader">
+        <span>💬 PUBLIC CHAT</span>
+        <small id="pubChatToggle">hide ▲</small>
+    </div>
+    <div id="pubChatBody">
+        <div id="pubChatMessages"></div>
+        <div id="pubChatStatus"></div>
+        <form id="pubChatForm" autocomplete="off">
+            <input id="pubChatName" type="text" maxlength="20" placeholder="Your name">
+            <div id="pubChatRow">
+                <input id="pubChatInput" type="text" maxlength="300" placeholder="Write a message...">
+                <button id="pubChatSend" type="submit">SEND</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function() {
+
+    "use strict";
+
+    /* ---------------------------------------------------------
+       SETUP: paste your Firebase Realtime Database URL here, e.g.
+       "https://my-gabe-chat-default-rtdb.europe-west1.firebasedatabase.app"
+       (no trailing slash). While this is empty, the chat only
+       works on YOUR browser (localStorage) - nobody else sees it.
+       --------------------------------------------------------- */
+    const FIREBASE_URL = "https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app/";
+
+    const POLL_MS = 3000;
+    const MAX_NAME = 20;
+    const MAX_TEXT = 300;
+    const SEND_COOLDOWN_MS = 1500;
+
+    const box = document.getElementById("pubChatMessages");
+    const status = document.getElementById("pubChatStatus");
+    const nameInput = document.getElementById("pubChatName");
+    const textInput = document.getElementById("pubChatInput");
+    const chat = document.getElementById("pubChat");
+
+    const online = FIREBASE_URL.trim() !== "";
+    const base = FIREBASE_URL.replace(/\/+$/, "");
+
+    const seen = {};
+    let lastKey = null;
+    let lastSend = 0;
+
+    try { nameInput.value = localStorage.getItem("pubChatName") || ""; } catch (e) {}
+
+    /* collapse / expand */
+    document.getElementById("pubChatHeader").addEventListener("click", function() {
+        const c = chat.classList.toggle("collapsed");
+        document.getElementById("pubChatToggle").textContent = c ? "show ▼" : "hide ▲";
+    });
+
+    function fmtTime(ts) {
+        const d = new Date(ts);
+        try {
+            return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) +
+                   " " + d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        } catch (e) {
+            return d.toString();
+        }
+    }
+
+    function addMessage(key, m) {
+
+        if (seen[key] || !m || typeof m.text !== "string") { return; }
+
+        seen[key] = true;
+
+        const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+
+        const row = document.createElement("div");
+        row.className = "pcMsg";
+
+        const meta = document.createElement("div");
+        meta.className = "pcMeta";
+
+        const name = document.createElement("span");
+        name.className = "pcName";
+        name.textContent = String(m.name || "Anonymous").slice(0, MAX_NAME);
+
+        const time = document.createElement("span");
+        time.className = "pcTime";
+        time.textContent = fmtTime(Number(m.ts) || Date.now());
+
+        meta.appendChild(name);
+        meta.appendChild(time);
+
+        const text = document.createElement("div");
+        text.className = "pcText";
+        text.textContent = m.text.slice(0, MAX_TEXT);   /* textContent = no HTML injection */
+
+        row.appendChild(meta);
+        row.appendChild(text);
+        box.appendChild(row);
+
+        if (nearBottom) { box.scrollTop = box.scrollHeight; }
+    }
+
+    function setStatus(t) { status.textContent = t; }
+
+    /* ---------- online mode (Firebase REST) ---------- */
+
+    async function poll() {
+
+        try {
+
+            let url = base + "/messages.json";
+
+            if (lastKey) {
+                url += '?orderBy="$key"&startAt=' + encodeURIComponent('"' + lastKey + '"');
+            }
+
+            const res = await fetch(url);
+
+            if (!res.ok) { throw new Error("HTTP " + res.status); }
+
+            const data = await res.json();
+
+            if (data) {
+                Object.keys(data).sort().forEach(function(k) {
+                    addMessage(k, data[k]);
+                    lastKey = k;
+                });
+            }
+
+            setStatus("🟢 Live · messages are permanent");
+
+        } catch (e) {
+            setStatus("🔴 Can't reach chat server");
+        }
+    }
+
+    async function sendOnline(m) {
+
+        const res = await fetch(base + "/messages.json", {
+            method: "POST",
+            body: JSON.stringify({
+                name: m.name,
+                text: m.text,
+                ts: { ".sv": "timestamp" }     /* server time, can't be faked */
+            })
+        });
+
+        if (!res.ok) { throw new Error("HTTP " + res.status); }
+    }
+
+    /* ---------- local fallback ---------- */
+
+    function loadLocal() {
+        try {
+            const list = JSON.parse(localStorage.getItem("pubChatLocal")) || [];
+            list.forEach(function(m, i) { addMessage("L" + i, m); });
+        } catch (e) {}
+        setStatus("⚠️ Local only (nobody else can see this). Set FIREBASE_URL to make it public.");
+    }
+
+    function sendLocal(m) {
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem("pubChatLocal")) || []; } catch (e) {}
+        m.ts = Date.now();
+        list.push(m);
+        try { localStorage.setItem("pubChatLocal", JSON.stringify(list)); } catch (e) {}
+        addMessage("L" + (list.length - 1), m);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    /* ---------- sending ---------- */
+
+    document.getElementById("pubChatForm").addEventListener("submit", async function(e) {
+
+        e.preventDefault();
+
+        const text = textInput.value.trim().slice(0, MAX_TEXT);
+        const name = (nameInput.value.trim() || "Anonymous").slice(0, MAX_NAME);
+
+        if (!text) { return; }
+
+        if (Date.now() - lastSend < SEND_COOLDOWN_MS) {
+            setStatus("Slow down a little...");
+            return;
+        }
+
+        lastSend = Date.now();
+
+        try { localStorage.setItem("pubChatName", name === "Anonymous" ? "" : name); } catch (err) {}
+
+        textInput.value = "";
+
+        try {
+            if (online) {
+                await sendOnline({ name: name, text: text });
+                await poll();
+                box.scrollTop = box.scrollHeight;
+            } else {
+                sendLocal({ name: name, text: text });
+            }
+        } catch (err) {
+            setStatus("🔴 Message failed to send");
+            textInput.value = text;
+        }
+    });
+
+    /* ---------- start ---------- */
+
+    if (online) {
+        poll().then(function() { box.scrollTop = box.scrollHeight; });
+        setInterval(function() { if (!document.hidden) { poll(); } }, POLL_MS);
+    } else {
+        loadLocal();
+    }
+
+})();
+
+
 </script>
 
 </body>
