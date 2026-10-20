@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 5.0 — PUBLIC POKER MATCHMAKING -->
+<!-- OUTER/GABE CLICKER SITE VERSION 6.0 — POKER LOBBY UPDATES -->
 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hyvä Nettisivu — V5 Public Poker Matchmaking</title>
+<title>Hyvä Nettisivu — V6 Poker Lobby Updates</title>
 
 <style>
 
@@ -4695,7 +4695,7 @@ onclick="closeCasino()"
 </div>
 
 
-<!-- POKER — VERSION 5: PUBLIC MATCHMAKING + SOLO/BOT FALLBACK -->
+<!-- POKER — VERSION 6: PUBLIC MATCHMAKING + LOBBY LEAVE + JOIN INDICATORS -->
 <div class="casinoPanel" id="pokerPanel">
   <h2>♠ TEXAS HOLD'EM POKER</h2>
   <div class="pokerModes">
@@ -4727,6 +4727,11 @@ onclick="closeCasino()"
         <button id="pokerFallbackBots" onclick="pokerFallbackStart('bots')" style="display:none">START WITH BOTS</button>
       </div>
     </div>
+    <div class="pokerRoomControls" id="pokerLobbyControls" style="display:none">
+      <button id="pokerLeaveLobby" onclick="pokerLeaveLobby()" style="background:#4a1820;border-color:#a84652">LEAVE LOBBY</button>
+      <span id="pokerLobbyMemberCount" class="pokerNote" style="align-self:center">0 players in lobby</span>
+    </div>
+    <div id="pokerJoinNotice" class="pokerNote" role="status" aria-live="polite" style="display:none;border:1px solid #24535b;border-radius:8px;padding:8px;background:#061317"></div>
     <div id="pokerRoomStatus" class="pokerNote">Online multiplayer uses play chips, not your Gabe Click balance. Create a room and share its code.</div>
   </div>
   <div class="pokerTable">
@@ -14622,6 +14627,7 @@ const DB='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
 const SUITS=['♠','♥','♦','♣'], RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 const RVAL=Object.fromEntries(RANKS.map((r,i)=>[r,i+2]));
 let mode='bots', deck=[], hand=null, roomCode='', room=null, polling=null, busy=false;
+let pokerSeenPlayerIds=new Set(), pokerLastNoticeAt=0, pokerLeaving=false;
 let pid=''; try { pid=localStorage.getItem('gabePlayerId') || (localStorage.setItem('gabePlayerId','p'+Math.random().toString(36).slice(2,12)),localStorage.getItem('gabePlayerId')); } catch(e) {pid='p'+Math.random().toString(36).slice(2,12)}
 let playerLabel='Player'; try{playerLabel=localStorage.getItem('gabePlayerName')||localStorage.getItem('pubChatName')||'Player'}catch(e){}
 function shuffle(){deck=[];for(const s of SUITS)for(const r of RANKS)deck.push({s,r});for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
@@ -14652,6 +14658,10 @@ function drawCards(el,cards,hidden){el.textContent='';(cards||[]).forEach(c=>el.
 function render(){
  const seats=document.getElementById('pokerSeats'),community=document.getElementById('pokerCommunity'); seats.textContent='';
  const state=mode==='multi'?(room&&room.game):hand;
+ const lobbyControls=document.getElementById('pokerLobbyControls');
+ if(lobbyControls)lobbyControls.style.display=(mode==='multi'&&room&&!room.localBots)?'flex':'none';
+ const memberCount=document.getElementById('pokerLobbyMemberCount');
+ if(memberCount)memberCount.textContent=((room&&room.players)||[]).length+' player'+((((room&&room.players)||[]).length===1)?'':'s')+' in lobby';
  if(!state){community.textContent='';document.getElementById('pokerPot').textContent='0';document.getElementById('pokerStreet').textContent='WAITING TO DEAL';return}
  drawCards(community,state.board||[]);
  document.getElementById('pokerPot').textContent=String(state.pot||0);document.getElementById('pokerStreet').textContent=String(state.street||'SHOWDOWN').toUpperCase();
@@ -14671,9 +14681,48 @@ function advance(state){const streets=['preflop','flop','turn','river','showdown
 window.pokerPlayerAction=function(action){if(mode==='multi'){pokerMultiAction(action);return}if(!hand||hand.street==='showdown')return;const me=hand.players[0];if(action==='fold'){me.folded=true;hand.street='showdown';hand.status='You folded. Start a new hand to play again.';render();return}if(action==='raise'){const raise=Math.max(1,Math.floor(getBet()/2));if(gabeClicks<raise){hand.status='Not enough clicks to raise.';render();return}gabeClicks-=raise;hand.pot+=raise;hand.players[0].bet+=raise;hand.status='You raised. The bots respond...';updateCasinoBalance();updateClickDisplay();saveGame()}for(let i=1;i<hand.players.length;i++){const p=hand.players[i];if(Math.random()<0.13&&hand.street!=='river')p.folded=true}if(hand.players.filter(p=>!p.folded).length===1){hand.street='showdown';hand.status='Everyone else folded — you win '+hand.pot+' clicks!';gabeClicks+=hand.pot;updateCasinoBalance();updateClickDisplay();saveGame()}else advance(hand);render()};
 async function api(path,method='GET',data){const r=await fetch(DB+'/'+path+'.json',{method,headers:{'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});if(!r.ok)throw Error('Database HTTP '+r.status);return r.json()}
 function newCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
-window.pokerCreateRoom=async function(){mode='multi';showMode();try{roomCode=newCode();room={code:roomCode,host:pid,players:[{id:pid,name:playerLabel,stack:1000,cards:[],folded:false}],game:null,updated:Date.now()};await api('pokerRooms/'+roomCode,'PUT',room);document.getElementById('pokerRoomCode').value=roomCode;document.getElementById('pokerRoomStatus').textContent='Room '+roomCode+' created. Share the code with friends.';startPoll();render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not create room: '+e.message+' (check Firebase database rules).'}};
-window.pokerJoinRoom=async function(){mode='multi';showMode();const code=(document.getElementById('pokerRoomCode').value||'').trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){document.getElementById('pokerRoomStatus').textContent='Enter a 6-character room code.';return}try{const r=await api('pokerRooms/'+code);if(!r)throw Error('Room not found');if(!(r.players||[]).some(p=>p.id===pid)){if(r.players.length>=6)throw Error('Room is full (6 players max)');r.players.push({id:pid,name:playerLabel,stack:1000,cards:[],folded:false});await api('pokerRooms/'+code,'PUT',r)}roomCode=code;room=r;document.getElementById('pokerRoomStatus').textContent='Joined room '+code+'. Everyone starts with 1,000 virtual chips.';startPoll();render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not join: '+e.message}}
-function startPoll(){if(polling)clearInterval(polling);polling=setInterval(async()=>{if(mode!=='multi'||!roomCode)return;try{const latest=await api('pokerRooms/'+roomCode);if(latest){room=latest;render()}}catch(e){}},1500)}
+function pokerNotifyJoin(name, message){
+ const el=document.getElementById('pokerJoinNotice');if(!el)return;
+ el.textContent=message||('👋 '+name+' joined the poker lobby');el.style.display='block';
+ pokerLastNoticeAt=Date.now();
+}
+function pokerObserveRoomPlayers(nextRoom){
+ if(!nextRoom||!Array.isArray(nextRoom.players))return;
+ const current=new Set(nextRoom.players.map(p=>p.id));
+ if(pokerSeenPlayerIds.size){
+  for(const p of nextRoom.players){if(!pokerSeenPlayerIds.has(p.id)&&p.id!==pid)pokerNotifyJoin(p.name||'A player','👋 '+(p.name||'A player')+' joined the poker lobby');}
+ }
+ pokerSeenPlayerIds=current;
+}
+window.pokerLeaveLobby=async function(){
+ if(pokerLeaving)return;pokerLeaving=true;
+ const leavingCode=roomCode, leavingRoom=room, wasSearching=matchSearching;
+ matchSearching=false;if(matchSearchTimer)clearInterval(matchSearchTimer);matchSearchTimer=null;
+ if(polling)clearInterval(polling);polling=null;
+ try{await api('pokerMatchmakingQueue/'+pid,'DELETE')}catch(e){}
+ if(leavingCode&&leavingRoom&&!leavingRoom.localBots){
+  try{
+   const latest=await api('pokerRooms/'+leavingCode);
+   if(latest&&Array.isArray(latest.players)){
+    latest.players=latest.players.filter(p=>p.id!==pid);
+    if(latest.host===pid&&latest.players.length)latest.host=latest.players[0].id;
+    if(!latest.players.length){await api('pokerRooms/'+leavingCode,'DELETE')}
+    else {if(latest.game&&Array.isArray(latest.game.players)){latest.game.players=latest.game.players.filter(p=>p.id!==pid);if(latest.game.turn>=latest.game.players.length)latest.game.turn=0;}await api('pokerRooms/'+leavingCode,'PUT',latest)}
+   }
+  }catch(e){document.getElementById('pokerRoomStatus').textContent='Left this browser lobby, but Firebase could not update the room: '+e.message;}
+ }
+ roomCode='';room=null;hand=null;pokerSeenPlayerIds=new Set();
+ document.getElementById('pokerRoomCode').value='';
+ document.getElementById('pokerLobbyControls').style.display='none';
+ document.getElementById('pokerJoinNotice').style.display='none';
+ document.getElementById('pokerRoomStatus').textContent='You left the poker lobby.';
+ matchUi(false,wasSearching?'Search cancelled. You left the lobby.':'Not in a lobby.');
+ render();pokerLeaving=false;
+};
+
+window.pokerCreateRoom=async function(){mode='multi';showMode();try{roomCode=newCode();room={code:roomCode,host:pid,players:[{id:pid,name:playerLabel,stack:1000,cards:[],folded:false}],game:null,updated:Date.now()};await api('pokerRooms/'+roomCode,'PUT',room);document.getElementById('pokerRoomCode').value=roomCode;document.getElementById('pokerRoomStatus').textContent='Room '+roomCode+' created. Share the code with friends.';pokerSeenPlayerIds=new Set((room.players||[]).map(p=>p.id));document.getElementById('pokerJoinNotice').style.display='none';startPoll();render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not create room: '+e.message+' (check Firebase database rules).'}};
+window.pokerJoinRoom=async function(){mode='multi';showMode();const code=(document.getElementById('pokerRoomCode').value||'').trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){document.getElementById('pokerRoomStatus').textContent='Enter a 6-character room code.';return}try{const r=await api('pokerRooms/'+code);if(!r)throw Error('Room not found');if(!(r.players||[]).some(p=>p.id===pid)){if(r.players.length>=6)throw Error('Room is full (6 players max)');r.players.push({id:pid,name:playerLabel,stack:1000,cards:[],folded:false});await api('pokerRooms/'+code,'PUT',r)}roomCode=code;room=r;document.getElementById('pokerRoomStatus').textContent='Joined room '+code+'. Everyone starts with 1,000 virtual chips.';pokerSeenPlayerIds=new Set((room.players||[]).map(p=>p.id));document.getElementById('pokerJoinNotice').style.display='none';startPoll();render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not join: '+e.message}}
+function startPoll(){if(polling)clearInterval(polling);polling=setInterval(async()=>{if(mode!=='multi'||!roomCode)return;try{const latest=await api('pokerRooms/'+roomCode);if(latest){pokerObserveRoomPlayers(latest);room=latest;render()}}catch(e){}},1500)}
 window.pokerMultiStart=async function(){if(!room||room.host!==pid||busy)return;busy=true;try{let r=room;if(!r.localBots){r=await api('pokerRooms/'+roomCode);if(!r||r.host!==pid)throw Error('Only the host can start a hand')}const players=(r.players||[]).map(p=>({...p,cards:[],folded:false,bet:50,result:''}));if(players.length<2){document.getElementById('pokerRoomStatus').textContent='A real public/friend table needs another player. Use solo practice or add bots.';return}shuffle();for(const p of players){if(p.stack<50)p.stack=1000;p.stack-=50;p.cards=[draw(),draw()]}r.game={street:'preflop',pot:players.length*50,players,board:[],deck:deck.slice(),turn:0,bet:50,status:'Hand started. Player turns follow the room list.'};r.updated=Date.now();if(!r.localBots)await api('pokerRooms/'+roomCode,'PUT',r);room=r;render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not start: '+e.message}finally{busy=false}};
 async function pokerMultiAction(action){if(!room||!room.game||busy)return;busy=true;try{const r=(room&&room.localBots)?room:await api('pokerRooms/'+roomCode);const g=r&&r.game;if(!g||g.street==='showdown'||!g.players[g.turn]||g.players[g.turn].id!==pid){document.getElementById('pokerRoomStatus').textContent='It is not your turn.';return}const p=g.players[g.turn];if(action==='fold'){p.folded=true;p.result='FOLDED'}else if(action==='raise'){const raise=50;if(p.stack<raise){g.status='Not enough virtual chips to raise.'}else{p.stack-=raise;g.pot+=raise;g.status=p.name+' raised.'}}else g.status=p.name+' checked/called.';const active=g.players.filter(x=>!x.folded);if(active.length===1){g.street='showdown';active[0].stack+=g.pot;g.status=active[0].name+' wins the pot.'}else{g.turn=(g.turn+1)%g.players.length;let tries=0;while(g.players[g.turn].folded&&tries++<g.players.length)g.turn=(g.turn+1)%g.players.length;const streets=['preflop','flop','turn','river','showdown'];if(r.localBots){let safety=0;while(g.street!=='showdown'&&g.players[g.turn]&&g.players[g.turn].isBot&&safety++<g.players.length){const bot=g.players[g.turn];if(Math.random()<0.12&&g.street!=='river')bot.folded=true;else if(Math.random()<0.10&&bot.stack>=50){bot.stack-=50;g.pot+=50}g.turn=(g.turn+1)%g.players.length;let skip=0;while(g.players[g.turn].folded&&skip++<g.players.length)g.turn=(g.turn+1)%g.players.length;if(g.turn===0){const ix=streets.indexOf(g.street);if(ix===0){g.board.push(g.deck.pop(),g.deck.pop(),g.deck.pop());g.street='flop'}else if(ix===1){g.board.push(g.deck.pop());g.street='turn'}else if(ix===2){g.board.push(g.deck.pop());g.street='river'}else{g.street='showdown';let winner=null;for(const x of g.players.filter(z=>!z.folded)){x.result=bestOf(x.cards.concat(g.board)).name;if(!winner||compare(bestOf(x.cards.concat(g.board)),bestOf(winner.cards.concat(g.board)))>0)winner=x}if(winner){winner.stack+=g.pot;g.status=winner.name+' wins with '+winner.result+'.'}}}}}else if(g.turn===0){const ix=streets.indexOf(g.street);if(ix===0){g.board.push(g.deck.pop(),g.deck.pop(),g.deck.pop());g.street='flop'}else if(ix===1){g.board.push(g.deck.pop());g.street='turn'}else if(ix===2){g.board.push(g.deck.pop());g.street='river'}else{g.street='showdown';let winner=null;for(const x of active){x.result=bestOf(x.cards.concat(g.board)).name;if(!winner||compare(bestOf(x.cards.concat(g.board)),bestOf(winner.cards.concat(g.board)))>0)winner=x}if(winner){winner.stack+=g.pot;g.status=winner.name+' wins with '+winner.result+'.'}}}g.status+=' Turn: '+g.players[g.turn].name+'.'}r.game=g;r.updated=Date.now();if(!r.localBots)await api('pokerRooms/'+roomCode,'PUT',r);room=r;render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Action failed: '+e.message}finally{busy=false}}
 // Public matchmaking (Firebase REST queue; no room code required).
@@ -14703,7 +14752,7 @@ async function publicMatchTick(){
   const mine=await api('pokerMatchmakingQueue/'+pid);
   if(mine&&mine.status==='matched'&&mine.roomCode){
    matchSearching=false;clearInterval(matchSearchTimer);matchSearchTimer=null;
-   roomCode=mine.roomCode;room=await api('pokerRooms/'+roomCode);document.getElementById('pokerRoomCode').value=roomCode;
+   roomCode=mine.roomCode;room=await api('pokerRooms/'+roomCode);pokerSeenPlayerIds=new Set((room.players||[]).map(p=>p.id));document.getElementById('pokerRoomCode').value=roomCode;
    document.getElementById('pokerRoomStatus').textContent='Matched into public table '+roomCode+'. You can play using virtual chips.';
    matchUi(false,'Match found! Joined public table '+roomCode+'.');startPoll();render();return;
   }
@@ -14718,7 +14767,7 @@ async function publicMatchTick(){
    for(const [id,t] of group)await api('pokerMatchmakingQueue/'+id,'PUT',{...t,status:'matched',roomCode:code,matchedAt:Date.now()});
    // The coordinator joins immediately; all other clients will detect their ticket on next poll.
    matchSearching=false;clearInterval(matchSearchTimer);matchSearchTimer=null;roomCode=code;room=newRoom;
-   document.getElementById('pokerRoomCode').value=code;document.getElementById('pokerRoomStatus').textContent='Public table created. '+players.length+' player(s) matched; host can start the hand.';
+   document.getElementById('pokerRoomCode').value=code;pokerSeenPlayerIds=new Set(players.map(p=>p.id));document.getElementById('pokerJoinNotice').style.display='none';document.getElementById('pokerRoomStatus').textContent='Public table created. '+players.length+' player(s) matched; host can start the hand.';
    matchUi(false,'Match found! '+players.length+' players joined. Starting with fewer players is okay.');startPoll();render();return;
   }
   if(elapsed>=MATCH_WAIT_MS){matchUi(true,'Still searching… You can wait longer, start solo without bots, or start against bots.',true)}
