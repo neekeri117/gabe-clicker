@@ -10120,6 +10120,7 @@ const CASE_TIERS = {
     classified: { name: "CLASSIFIED",       color: "#d32ce6" },
     covert:     { name: "COVERT",           color: "#eb4b4b" },
     contraband: { name: "CONTRABAND",       color: "#ffd700" },
+    special:    { name: "RARE SPECIAL ITEM", color: "#ffd700" },
     stickerHigh:{ name: "HIGH GRADE · PAPER", color: "#b0c3d9" },
     stickerHolo:{ name: "REMARKABLE · HOLO", color: "#8847ff" },
     stickerFoil:{ name: "EXOTIC · FOIL",     color: "#ffd700" }
@@ -10170,13 +10171,13 @@ const CASE_TYPES = {
         name: "CS:GO WEAPON CASE",
         price: 148.59,
         marketSource: "https://steamcommunity.com/market/listings/730/G18A11F3004?appid=730",
-        blurb: "Classic CS:GO case · simulated payouts; Steam listing price, key not included.",
+        blurb: "Classic CS:GO case · weapon rarities plus its rare knife pool; Steam listing price.",
         drops: [
             { tier: "milspec", chance: 79.92, mult: 0.5 },
             { tier: "restricted", chance: 15.98, mult: 1.1 },
             { tier: "classified", chance: 3.20, mult: 4 },
             { tier: "covert", chance: 0.64, mult: 15 },
-            { tier: "contraband", chance: 0.26, mult: 40 }
+            { tier: "special", chance: 0.26, mult: 40 }
         ]
     },
 
@@ -10186,14 +10187,14 @@ const CASE_TYPES = {
         price: 0.19,
         marketSource: "https://steamcommunity.com/market/listings/730/Kilowatt%20Case",
 
-        blurb: "Real CS2 case · simulated drop table; Steam listing price, key not included.",
+        blurb: "Real CS2 case · includes the Kukri Knife special-item pool; Steam listing price.",
 
         drops: [
             { tier: "milspec",    chance: 79.92, mult: 0.35 },
             { tier: "restricted", chance: 15.98, mult: 1.2  },
             { tier: "classified", chance: 3.20,  mult: 4    },
             { tier: "covert",     chance: 0.64,  mult: 20   },
-            { tier: "contraband", chance: 0.26,  mult: 75   }
+            { tier: "special",    chance: 0.26,  mult: 75   }
         ]
     },
 
@@ -10204,15 +10205,14 @@ const CASE_TYPES = {
         price: 491.63,
         marketSource: "https://steamcommunity.com/market/listings/730/G18B61F3004",
 
-        blurb: "Real 2014 Dust II souvenir package · simulated drops; Steam listing price.",
+        blurb: "2014 Dust II souvenir package · drops Consumer through Classified; no Covert tier.",
 
         drops: [
-            { tier: "consumer",   chance: 38, mult: 0.2 },
-            { tier: "industrial", chance: 30, mult: 0.5 },
-            { tier: "milspec",    chance: 20, mult: 0.9 },
-            { tier: "restricted", chance: 8,  mult: 2   },
-            { tier: "classified", chance: 3,  mult: 6   },
-            { tier: "covert",     chance: 1,  mult: 20  }
+            { tier: "consumer",   chance: 80.026, mult: 0.2 },
+            { tier: "industrial", chance: 16.005, mult: 0.5 },
+            { tier: "milspec",    chance: 3.201,  mult: 0.9 },
+            { tier: "restricted", chance: 0.640,  mult: 2   },
+            { tier: "classified", chance: 0.128,  mult: 6   }
         ]
     },
 
@@ -10220,13 +10220,12 @@ const CASE_TYPES = {
         name: "ESL ONE COLOGNE 2014 NUKE SOUVENIR PACKAGE",
         price: 958.00,
         marketSource: "https://steamcommunity.com/market/listings/730/G18B91F3004",
-        blurb: "Real 2014 Nuke souvenir package · simulated drops; Steam listing price.",
+        blurb: "2014 Nuke souvenir package · drops Consumer through Restricted; no higher tiers.",
         drops: [
-            { tier: "milspec", chance: 45, mult: 0.3 },
-            { tier: "restricted", chance: 35, mult: 0.8 },
-            { tier: "classified", chance: 16, mult: 2.5 },
-            { tier: "covert", chance: 3.5, mult: 10 },
-            { tier: "contraband", chance: 0.5, mult: 40 }
+            { tier: "consumer", chance: 80.128, mult: 0.2 },
+            { tier: "industrial", chance: 16.026, mult: 0.5 },
+            { tier: "milspec", chance: 3.205, mult: 0.9 },
+            { tier: "restricted", chance: 0.641, mult: 2 }
         ]
     },
 
