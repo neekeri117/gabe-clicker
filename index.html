@@ -3983,6 +3983,9 @@ input:focus-visible {
 
 /* Editable player-facing changelog */
 #changeLogToggle{position:fixed;right:22px;bottom:22px;z-index:9500;padding:12px 17px;border:1px solid #6d5b26;border-radius:999px;background:linear-gradient(135deg,#22202a,#665000);color:#fff;font-weight:900;cursor:pointer;box-shadow:0 8px 25px #0009}
+#changeLogToggle{position:fixed;}
+#changeLogNew{display:none;position:absolute;top:-7px;right:-7px;width:23px;height:23px;border:2px solid #111;border-radius:50%;background:#ed3434;color:#fff;font-size:15px;line-height:19px;text-align:center;box-shadow:0 2px 10px #000b}
+#changeLogNew.visible{display:block}
 #changeLogOverlay{display:none;position:fixed;inset:0;z-index:9600;background:#000b;align-items:center;justify-content:center;padding:18px}
 #changeLogOverlay.open{display:flex}
 #changeLogPanel{width:min(650px,96vw);max-height:85vh;overflow:auto;padding:22px;border:1px solid #444;border-radius:18px;background:linear-gradient(150deg,#191922,#08080c);box-shadow:0 20px 60px #000c}
@@ -13155,7 +13158,7 @@ function closeWebsite() {
 
 
 
-<button id="changeLogToggle" type="button" onclick="toggleChangeLog(true)">📋 CHANGELOG</button>
+<button id="changeLogToggle" type="button" onclick="toggleChangeLog(true)">📋 CHANGELOG<span id="changeLogNew" aria-label="New update">!</span></button>
 <div id="changeLogOverlay" role="dialog" aria-modal="true" aria-labelledby="changeLogHeading" onclick="if(event.target===this)toggleChangeLog(false)">
   <section id="changeLogPanel">
     <button id="changeLogClose" type="button" onclick="toggleChangeLog(false)">CLOSE ✕</button>
@@ -13207,12 +13210,27 @@ function renderChangeLog() {
     target.appendChild(article);
   });
 }
+const CHANGELOG_SEEN_KEY = "gabeChangeLogSeen";
+const CHANGELOG_VERSION = CHANGELOG_ENTRIES[0]
+  ? `${CHANGELOG_ENTRIES[0].date || ""}:${CHANGELOG_ENTRIES[0].title || ""}`
+  : "empty";
+function updateChangeLogBadge() {
+  let seenVersion = "";
+  try { seenVersion = localStorage.getItem(CHANGELOG_SEEN_KEY) || ""; } catch (e) {}
+  const badge = document.getElementById("changeLogNew");
+  if (badge) badge.classList.toggle("visible", seenVersion !== CHANGELOG_VERSION);
+}
 function toggleChangeLog(open) {
   const overlay = document.getElementById("changeLogOverlay");
   if (!overlay) return;
   overlay.classList.toggle("open", !!open);
+  if (open) {
+    try { localStorage.setItem(CHANGELOG_SEEN_KEY, CHANGELOG_VERSION); } catch (e) {}
+    updateChangeLogBadge();
+  }
 }
 renderChangeLog();
+updateChangeLogBadge();
 </script>
 
 
@@ -14872,21 +14890,4 @@ window.pokerFallbackStart=function(kind){
  if(kind==='solo'){
   mode='solo';showMode();pokerDealSolo();document.getElementById('pokerMatchStatus').textContent='Started solo practice — no bots, no wager.';
  }else{
-  // A bot table uses the same money-backed room logic as multiplayer.
-  mode='multi';showMode();const code=newCode();const players=[{id:pid,name:playerLabel,stack:currentPokerMoney(),cards:[],folded:false}];
-  for(let i=0;i<3;i++)players.push({id:'bot-'+i,name:['Gabe Bot','Clicker AI','The House'][i],stack:currentPokerMoney(),cards:[],folded:false,isBot:true});
-  roomCode=code;room={code,host:pid,players,game:null,updated:Date.now(),localBots:true};pokerLastAppliedStack=currentPokerMoney();
-  document.getElementById('pokerRoomStatus').textContent='Started a local table using your in-game money.';
-  document.getElementById('pokerMatchStatus').textContent='Started against bots. No public match or room code required.';
-  render();pokerMultiStart();
- }
- matchUi(false,document.getElementById('pokerMatchStatus').textContent);
-};
-window.addEventListener('beforeunload',()=>{if(polling)clearInterval(polling);if(matchSearchTimer)clearInterval(matchSearchTimer)});
-showMode();
-})();
-</script>
-
-</body>
-</html>
-
+  // A bot table uses the
