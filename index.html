@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 6.8 — MOBILE + PLINKO UPDATES -->
+<!-- OUTER/GABE CLICKER SITE VERSION 6.9 — ADMIN TOOLS -->
 
 <html lang="en">
 <head>
@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.8 · NEON EDITION</div>
+  <div class="sidebarFoot">V6.9 · NEON EDITION</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4171,7 +4171,7 @@ alt=""
   <section id="socialChangePanel" class="socialChatPanel socialChangePanel" style="display:none"><div class="socialChangeIntro">Recent site updates</div><div id="socialChangeHost"></div></section>
 </main>
 <div id="siteSettings" class="siteSettings" role="dialog" aria-modal="true" aria-labelledby="siteSettingsTitle"><section><button class="settingsClose" onclick="closeSiteSettings()">✕</button><div class="eyebrow">PREFERENCES</div><h2 id="siteSettingsTitle">Settings</h2><p>Adjust your site view.</p><button id="lowGraphicsButton" type="button" aria-pressed="false" onclick="toggleLowGraphics()">Low graphics: Off</button><div class="settingsHint">Reduces visual effects and eases Plinko rendering.</div><button type="button" onclick="openAdminMarket()">Admin commands</button><button onclick="openNameChange()">Change display name</button><button onclick="toggleChangeLog(true);closeSiteSettings()">View changelog</button><div class="saveTransfer"><label for="saveExport">SAVE EXPORT</label><textarea id="saveExport" readonly placeholder="Generate a code to copy your save."></textarea><button type="button" onclick="exportSaveCode()">COPY CODE</button><label for="saveImport">IMPORT SAVE</label><textarea id="saveImport" placeholder="Paste save code here"></textarea><button type="button" onclick="importSaveCode()">IMPORT</button><div id="saveTransferStatus" role="status" aria-live="polite"></div></div></section></div>
-<div id="adminMarketModal" class="adminMarketModal" role="dialog" aria-modal="true" aria-labelledby="adminMarketTitle" aria-hidden="true"><section class="adminMarketCard"><button class="settingsClose" type="button" onclick="closeAdminMarket()">✕</button><div class="eyebrow">OWNER CONTROLS</div><h2 id="adminMarketTitle">Admin commands</h2><p class="adminMarketNote">Controls the shared stock market. The Firebase rules must authorize your account UID. Keep this page open for the shared market simulation to keep running.</p><div id="adminMarketLogin"><label for="adminFirebaseApiKey">Firebase Web API key</label><input id="adminFirebaseApiKey" type="text" autocomplete="off" placeholder="From Firebase Project settings → General"><label for="adminFirebaseEmail">Owner email</label><input id="adminFirebaseEmail" type="email" autocomplete="username" placeholder="Firebase Authentication email"><label for="adminFirebasePassword">Password</label><input id="adminFirebasePassword" type="password" autocomplete="current-password" placeholder="Firebase Authentication password"><button type="button" class="adminPrimary" onclick="adminMarketSignIn()">Sign in</button></div><div id="adminMarketControls" hidden><label for="adminTicker">Stock</label><select id="adminTicker"></select><label for="adminPrice">Set exact price</label><div class="adminControlRow"><input id="adminPrice" type="number" min="1" step="0.01" placeholder="Price"><button type="button" onclick="adminSetStockPrice()">Set price</button></div><label for="adminMovePercent">Apply percent change</label><div class="adminControlRow"><input id="adminMovePercent" type="number" min="-99" max="1000" step="0.1" placeholder="e.g. 12.5 or -8"><button type="button" onclick="adminMoveStocks()">Apply</button></div><label for="adminMarketNews">Market headline</label><div class="adminControlRow"><input id="adminMarketNews" type="text" maxlength="160" placeholder="Optional headline"><button type="button" onclick="adminPublishNews()">Publish</button></div><button id="adminPauseButton" type="button" class="adminPrimary" onclick="adminToggleMarketPause()">Pause shared market</button><div class="adminControlRow"><button id="adminUndoButton" type="button" onclick="adminUndoLastAction()" disabled>Undo last admin action</button><button type="button" onclick="adminResetStockPrices()">Reset selected/all prices</button></div><button type="button" onclick="adminClearNews()">Clear market headline</button><p class="adminMarketNote">Undo keeps the last 20 admin changes in this browser.</p><button type="button" onclick="adminMarketSignOut()">Sign out</button></div><div id="adminMarketStatus" role="status" aria-live="polite"></div></section></div>
+<div id="adminMarketModal" class="adminMarketModal" role="dialog" aria-modal="true" aria-labelledby="adminMarketTitle" aria-hidden="true"><section class="adminMarketCard"><button class="settingsClose" type="button" onclick="closeAdminMarket()">✕</button><div class="eyebrow">OWNER CONTROLS</div><h2 id="adminMarketTitle">Admin commands</h2><p class="adminMarketNote">Controls the shared stock market. The Firebase rules must authorize your account UID. Keep this page open for the shared market simulation to keep running.</p><div id="adminMarketLogin"><label for="adminFirebaseApiKey">Firebase Web API key</label><input id="adminFirebaseApiKey" type="text" autocomplete="off" placeholder="From Firebase Project settings → General"><label for="adminFirebaseEmail">Owner email</label><input id="adminFirebaseEmail" type="email" autocomplete="username" placeholder="Firebase Authentication email"><label for="adminFirebasePassword">Password</label><input id="adminFirebasePassword" type="password" autocomplete="current-password" placeholder="Firebase Authentication password"><button type="button" class="adminPrimary" onclick="adminMarketSignIn()">Sign in</button></div><div id="adminMarketControls" hidden><div class="adminSocialTools"><h3>Players</h3><label for="adminBroadcastMessage">Message for everyone</label><textarea id="adminBroadcastMessage" maxlength="300" rows="3" placeholder="Write a short announcement"></textarea><button type="button" class="adminPrimary" onclick="adminSendBroadcast()">Broadcast message</button><label for="adminMoneyTarget">Player name or player ID</label><input id="adminMoneyTarget" type="text" maxlength="80" placeholder="Exact display name or player ID"><label for="adminMoneyAmount">Amount</label><input id="adminMoneyAmount" type="number" min="0" step="1" placeholder="Money amount"><div class="adminControlRow"><button type="button" onclick="adminGivePlayerMoney()">Give money</button><button type="button" onclick="adminSetPlayerBalance()">Set balance</button></div><p class="adminMarketNote">Broadcasts appear while players have the game open. Money changes are delivered the next time that player opens the game. Add the adminBroadcast and adminMoneyGrants rules to Firebase.</p></div><label for="adminTicker">Stock</label><select id="adminTicker"></select><label for="adminPrice">Set exact price</label><div class="adminControlRow"><input id="adminPrice" type="number" min="1" step="0.01" placeholder="Price"><button type="button" onclick="adminSetStockPrice()">Set price</button></div><label for="adminMovePercent">Apply percent change</label><div class="adminControlRow"><input id="adminMovePercent" type="number" min="-99" max="1000" step="0.1" placeholder="e.g. 12.5 or -8"><button type="button" onclick="adminMoveStocks()">Apply</button></div><label for="adminMarketNews">Market headline</label><div class="adminControlRow"><input id="adminMarketNews" type="text" maxlength="160" placeholder="Optional headline"><button type="button" onclick="adminPublishNews()">Publish</button></div><button id="adminPauseButton" type="button" class="adminPrimary" onclick="adminToggleMarketPause()">Pause shared market</button><div class="adminControlRow"><button id="adminUndoButton" type="button" onclick="adminUndoLastAction()" disabled>Undo last admin action</button><button type="button" onclick="adminResetStockPrices()">Reset selected/all prices</button></div><button type="button" onclick="adminClearNews()">Clear market headline</button><p class="adminMarketNote">Undo keeps the last 20 admin changes in this browser.</p><button type="button" onclick="adminMarketSignOut()">Sign out</button></div><div id="adminMarketStatus" role="status" aria-live="polite"></div></section></div>
 <script>
 /* Home menu: kept in its own script right after the markup so it works
    even if another part of the page has a problem. */
@@ -13506,9 +13506,7 @@ const CHANGELOG_ENTRIES = [
     title: "Visual Rehaul",
     changes: [
       "Completely redesigned the site's visuals and loading screen.",
-      "Added save file transfering by using the code you can get in settings.",
       "Added the EMS Katowice 2014 Legends and Challengers sticker capsules.",
-      "Added a low graphics toggle in the settings.",
       "Renamed several Empire businesses."
     ]
   },
@@ -15556,7 +15554,7 @@ html.lowGraphics #caseReelTrack{transition:transform 5.2s cubic-bezier(.35,.1,.4
   window.openAdminMarket=function(){fillTickers();const modal=el("adminMarketModal");modal.classList.add("open");modal.setAttribute("aria-hidden","false");try{el("adminFirebaseApiKey").value=localStorage.getItem("gabeFirebaseWebApiKey")||""}catch(e){}}
   window.closeAdminMarket=function(){const modal=el("adminMarketModal");modal.classList.remove("open");modal.setAttribute("aria-hidden","true")}
   async function authToken(){if(!s.token)throw Error("Sign in to the owner Firebase account first.");if(Date.now()<s.expiresAt-60000)return s.token;const response=await fetch("https://securetoken.googleapis.com/v1/token?key="+encodeURIComponent(s.apiKey),{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"refresh_token",refresh_token:s.refreshToken})});const data=await response.json();if(!response.ok)throw Error(data.error&&data.error.message||"Firebase sign-in expired; sign in again.");s.token=data.id_token;s.refreshToken=data.refresh_token;s.expiresAt=Date.now()+Number(data.expires_in||3600)*1000;return s.token}
-  async function database(path,method,data){const token=await authToken();const response=await fetch(DB+"/"+path+".json?auth="+encodeURIComponent(token),{method:method||"GET",headers:{"Content-Type":"application/json"},body:data===undefined?undefined:JSON.stringify(data)});const result=await response.json().catch(()=>null);if(!response.ok)throw Error(result&&result.error||"Realtime Database rejected the request (HTTP "+response.status+"). Check the adminMarket rule and your Firebase UID.");return result}
+  async function database(path,method,data){const token=await authToken();const response=await fetch(DB+"/"+path+".json?auth="+encodeURIComponent(token),{method:method||"GET",headers:{"Content-Type":"application/json"},body:data===undefined?undefined:JSON.stringify(data)});const result=await response.json().catch(()=>null);if(!response.ok)throw Error(result&&result.error||"Realtime Database rejected the request (HTTP "+response.status+"). Check the Firebase rules for this path and that your owner UID is authorized.");return result}
   function addHistory(stock){stock.history=Array.isArray(stock.history)?stock.history:[];stock.history.push({price:stock.price,time:Date.now()});if(stock.history.length>500)stock.history.splice(0,stock.history.length-500);stock.lastUpdate=Date.now()}
   function snapshot(){const stocks={};Object.keys(stockDefinitions).forEach(t=>{const stock=stockMarket[t];if(stock)stocks[t]={price:stock.price,previousPrice:stock.previousPrice,history:(stock.history||[]).slice(-240),lastUpdate:stock.lastUpdate||Date.now()}});return{stocks:stocks,news:String(stockMarketNews||""),paused:!!window.gabeSharedMarketPaused,updatedAt:Date.now(),heartbeatAt:Date.now()}}
   window.gabePublishSharedMarket=async function(force){if(!window.gabeSharedMarketLeader||s.busy)return false;if(!force&&Date.now()-s.publishAt<18000)return false;s.busy=true;try{const data=snapshot();await database("adminMarket","PUT",data);s.publishAt=data.heartbeatAt;s.appliedAt=data.updatedAt;window.gabeSharedMarketEnabled=true;status("Shared market published.");return true}finally{s.busy=false}}
@@ -15572,6 +15570,79 @@ html.lowGraphics #caseReelTrack{transition:transform 5.2s cubic-bezier(.35,.1,.4
   window.adminResetStockPrices=function(){const ticker=el("adminTicker").value,targets=ticker==="*"?Object.keys(stockDefinitions):[ticker];if(!window.confirm("Reset "+(ticker==="*"?"all stock prices":"$"+ticker)+" to their starting prices? This changes the shared market for everyone."))return;rememberUndo();targets.forEach(t=>{const stock=stockMarket[t],definition=stockDefinitions[t];if(!stock||!definition)return;stock.previousPrice=stock.price;stock.price=definition.start;addHistory(stock)});publishAction((ticker==="*"?"All stock prices":"$"+ticker+" price")+" reset to starting values.")}
   window.adminUndoLastAction=async function(){if(!s.token){status("Sign in to undo admin changes.",true);return}if(!undoStack.length){status("There are no saved admin changes to undo in this browser.",true);updateUndoButton();return}const previous=undoStack.pop(),current=JSON.parse(JSON.stringify(snapshot()));applySnapshot(previous,true);saveUndoStack();const published=await publishAction("Last admin action reverted.");if(!published){undoStack.push(previous);applySnapshot(current,true);saveUndoStack()}}
   window.adminToggleMarketPause=function(){rememberUndo();window.gabeSharedMarketPaused=!window.gabeSharedMarketPaused;el("adminPauseButton").textContent=window.gabeSharedMarketPaused?"Resume shared market":"Pause shared market";publishAction(window.gabeSharedMarketPaused?"Shared market paused.":"Shared market resumed.")}
+  const broadcastSeenKey="gabeAdminBroadcastSeenV1", moneyGrantSeenKey="gabeAdminMoneyGrantsSeenV1";
+  let lastBroadcastSeen="", moneyGrantSeen={lastAt:0,ids:[]}, moneyGrantPollBusy=false, broadcastPollBusy=false;
+  try{lastBroadcastSeen=localStorage.getItem(broadcastSeenKey)||""}catch(e){}
+  try{const parsed=JSON.parse(localStorage.getItem(moneyGrantSeenKey)||"null");if(parsed&&typeof parsed==="object")moneyGrantSeen={lastAt:Number(parsed.lastAt)||0,ids:Array.isArray(parsed.ids)?parsed.ids.map(String):[]}}catch(e){}
+  window.adminSendBroadcast=async function(){
+    const message=el("adminBroadcastMessage").value.trim();
+    if(!message){status("Write a message before broadcasting.",true);return}
+    if(message.length>300){status("Messages can be up to 300 characters.",true);return}
+    const payload={id:Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8),message:message,ts:Date.now()};
+    status("Sending message to players…");
+    try{await database("adminBroadcast","PUT",payload);try{localStorage.setItem(broadcastSeenKey,payload.id);lastBroadcastSeen=payload.id}catch(e){};el("adminBroadcastMessage").value="";status("Message sent. Players online within the next day will see it.")}
+    catch(error){status("Could not send the message: "+error.message,true)}
+  };
+  function resolveAdminPlayer(target,leaderboard){
+    const exactId=leaderboard&&Object.prototype.hasOwnProperty.call(leaderboard,target)?target:"";
+    if(exactId)return{ id:exactId, name:String(leaderboard[exactId].name||exactId) };
+    const matches=Object.keys(leaderboard||{}).filter(id=>String(leaderboard[id]&&leaderboard[id].name||"").trim().toLowerCase()===target.toLowerCase());
+    if(matches.length===1)return{id:matches[0],name:String(leaderboard[matches[0]].name||matches[0])};
+    if(matches.length>1)throw Error("More than one player has that name. Enter their player ID instead.");
+    if(/^[A-Za-z0-9_-]{1,64}$/.test(target))return{id:target,name:target};
+    throw Error("No player matched that name. Use their exact leaderboard name or player ID.");
+  }
+  async function postPlayerMoneyCommand(operation){
+    if(!s.token){status("Sign in to the owner Firebase account first.",true);return}
+    const target=el("adminMoneyTarget").value.trim(),amountInput=el("adminMoneyAmount").value.trim(),amount=Math.floor(Number(amountInput));
+    if(!target){status("Enter a player name or player ID.",true);return}
+    if(!amountInput||!Number.isFinite(amount)||amount<0||amount>1e100||(operation==="add"&&amount<1)){status(operation==="add"?"Enter a positive amount of money.":"Enter a balance from 0 and up.",true);return}
+    try{
+      status("Finding player…");
+      const board=await database("leaderboard","GET");
+      const player=resolveAdminPlayer(target,board);
+      if(operation==="set"&&!window.confirm("Set "+player.name+"'s balance to $"+formatNumber(amount)+"?"))return;
+      const grant={operation:operation,amount:amount,createdAt:Date.now()};
+      await database("adminMoneyGrants/"+encodeURIComponent(player.id),"POST",grant);
+      status((operation==="add"?"+$":"Balance set to $")+formatNumber(amount)+(operation==="add"?" sent to ":" for ")+player.name+". They will receive it when their game checks in.");
+    }catch(error){status("Could not change the balance: "+error.message,true)}
+  }
+  window.adminGivePlayerMoney=function(){return postPlayerMoneyCommand("add")};
+  window.adminSetPlayerBalance=function(){return postPlayerMoneyCommand("set")};
+  async function pollPlayerMoneyGrants(){
+    if(moneyGrantPollBusy)return;moneyGrantPollBusy=true;
+    try{
+      const playerId=String(window.gabePlayerId||localStorage.getItem("gabePlayerId")||"");
+      if(!/^[A-Za-z0-9_-]{1,64}$/.test(playerId))return;
+      const response=await fetch(DB+"/adminMoneyGrants/"+encodeURIComponent(playerId)+".json",{cache:"no-store"});if(!response.ok)return;
+      const grants=await response.json();if(!grants||typeof grants!=="object")return;
+      const items=Object.keys(grants).map(id=>({id:id,...grants[id]})).filter(g=>g&&Number.isFinite(Number(g.createdAt))&&Number.isFinite(Number(g.amount))).sort((a,b)=>Number(a.createdAt)-Number(b.createdAt));
+      for(const grant of items){
+        const createdAt=Number(grant.createdAt),id=String(grant.id);
+        if(createdAt<moneyGrantSeen.lastAt||(createdAt===moneyGrantSeen.lastAt&&moneyGrantSeen.ids.includes(id)))continue;
+        const amount=Math.max(0,Number(grant.amount));
+        if(!Number.isFinite(amount)||!Number.isFinite(gabeClicks+amount))continue;
+        if(grant.operation==="set")gabeClicks=amount;else if(grant.operation==="add")gabeClicks+=amount;else continue;
+        updateClicker();saveGame();
+        if(createdAt>moneyGrantSeen.lastAt){moneyGrantSeen.lastAt=createdAt;moneyGrantSeen.ids=[]}
+        moneyGrantSeen.ids.push(id);if(moneyGrantSeen.ids.length>100)moneyGrantSeen.ids=moneyGrantSeen.ids.slice(-100);
+        try{localStorage.setItem(moneyGrantSeenKey,JSON.stringify(moneyGrantSeen))}catch(e){}
+        if(typeof showToast==="function")showToast(grant.operation==="set"?"💰 Your balance was updated by the site owner.\nNew balance: $"+formatNumber(amount):"🎁 Money received from the site owner\n+$"+formatNumber(amount));
+      }
+    }catch(e){}finally{moneyGrantPollBusy=false}
+  }
+  async function pollPublicAdminBroadcast(){
+    if(broadcastPollBusy)return;broadcastPollBusy=true;
+    try{
+      const response=await fetch(DB+"/adminBroadcast.json",{cache:"no-store"});if(!response.ok)return;
+      const data=await response.json();if(!data||!data.id||!data.message||!Number.isFinite(Number(data.ts)))return;
+      if(Date.now()-Number(data.ts)>24*60*60*1000||data.id===lastBroadcastSeen)return;
+      lastBroadcastSeen=String(data.id);try{localStorage.setItem(broadcastSeenKey,lastBroadcastSeen)}catch(e){}
+      if(typeof showToast==="function")showToast("📢 MESSAGE FROM THE SITE\n"+String(data.message).slice(0,300));
+    }catch(e){}finally{broadcastPollBusy=false}
+  }
+  pollPlayerMoneyGrants();pollPublicAdminBroadcast();
+  setInterval(pollPlayerMoneyGrants,7000);setInterval(pollPublicAdminBroadcast,7000);
   el("adminMarketModal").addEventListener("click",function(e){if(e.target===this)closeAdminMarket()});
   pollSharedMarket();setInterval(pollSharedMarket,6000);
 })();
@@ -15641,7 +15712,9 @@ html,body{max-width:100%;overflow-x:hidden}
   #clickerScreen[style*="block"]{overflow-y:auto!important}
 }
 </style>
-</body>
+<style id="admin-social-tools-style">
+.adminSocialTools{margin:18px 0;padding:15px;border:1px solid #343b48;border-radius:12px;background:#10141b}.adminSocialTools h3{margin:0 0 7px;color:#edf1f7;font-size:15px}.adminSocialTools textarea{display:block;width:100%;min-height:76px;resize:vertical;padding:10px;border:1px solid #343b48;border-radius:9px;background:#0d1118;color:#eef1f5;box-sizing:border-box;font:inherit}.adminSocialTools .adminControlRow button{flex:1;min-width:0}.adminSocialTools .adminMarketNote{margin:10px 0 2px;font-size:11px}
+</style></body>
 </html>
 
 
