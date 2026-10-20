@@ -4005,6 +4005,26 @@ input:focus-visible {
 @media(max-width:600px){#changeLogToggle{right:12px;bottom:12px;padding:10px 13px;font-size:12px}}
 
 </style>
+<style id="first-paint-loading-theme">
+#loadingScreen{background:radial-gradient(ellipse at 50% 42%,#173746 0,rgba(12,22,36,.9) 38%,#070a11 78%)!important;padding:18px;box-sizing:border-box}
+#loadingScreen::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(79,211,224,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(79,211,224,.045) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(to bottom,transparent,#000 25%,#000 80%,transparent);opacity:.55}
+.loadingCard{position:relative;z-index:1;width:min(440px,100%);padding:30px clamp(20px,6vw,38px) 25px;border:1px solid rgba(74,218,232,.24);border-radius:24px;background:linear-gradient(150deg,rgba(22,33,50,.97),rgba(10,15,24,.98));box-shadow:0 24px 90px #0009,0 0 50px #28d5e51c,inset 0 1px #ffffff0c;text-align:center;animation:loadingCardIn .45s cubic-bezier(.2,.8,.2,1) both}
+.loadingCard::before{content:"";position:absolute;top:0;left:14%;right:14%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#31dce6,#6379ff,transparent);box-shadow:0 0 18px #38e1e888}
+.loadingEmblem{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 17px;border:1px solid #66e6ed77;border-radius:18px;background:linear-gradient(145deg,#174c59,#252d55);color:#7df5f0;font-size:31px;font-weight:1000;box-shadow:0 0 30px #38e1e833,inset 0 1px #ffffff25;transform:rotate(-5deg)}
+#loadingText{margin:0;color:#f2f7ff;background:none;-webkit-text-fill-color:currentColor;font-size:clamp(22px,6vw,30px);font-weight:950;letter-spacing:.11em;text-shadow:0 4px 24px #0009}
+.loadingSubtitle{margin-top:7px;color:#8294ac;font-size:10px;font-weight:850;letter-spacing:.18em}
+.loadingMeta{display:flex;justify-content:space-between;align-items:center;margin:31px 2px 9px;color:#94a6bc;font-size:10px;font-weight:850;letter-spacing:.11em}
+#loadingPercent{margin:0;color:#75ebed;font:800 13px ui-monospace,monospace;letter-spacing:0}
+#loadingBar{width:100%;height:9px;padding:0;border:1px solid #ffffff16;border-radius:99px;background:#080d16;overflow:hidden;box-shadow:inset 0 2px 5px #0008}
+#loadingProgress{border-radius:99px;background:linear-gradient(90deg,#20c9dc,#557dff 58%,#a16aff);box-shadow:0 0 18px #49d7ee99;transition:width .18s ease}
+.loadingCaption{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;color:#73859d;font-size:9px;font-weight:800;letter-spacing:.12em}
+.loadingPulseDot{width:6px;height:6px;border-radius:50%;background:#4de3d9;box-shadow:0 0 10px #4de3d9;animation:loadingPulse 1.25s ease-in-out infinite}
+@keyframes loadingCardIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes loadingPulse{50%{opacity:.35;transform:scale(.72)}}
+@media(max-width:480px){.loadingCard{padding:26px 20px 22px;border-radius:20px}}
+@media(max-height:420px){.loadingCard{padding-top:15px;padding-bottom:14px}.loadingEmblem{width:42px;height:42px;margin-bottom:8px;font-size:23px;border-radius:13px}.loadingMeta{margin-top:14px}.loadingCaption{margin-top:10px}}
+@media(prefers-reduced-motion:reduce){.loadingCard,.loadingPulseDot{animation:none!important}}
+</style>
 
 </head>
 
@@ -4015,21 +4035,14 @@ input:focus-visible {
      ========================================================= -->
 
 <div id="loadingScreen">
-
-
-<div id="loadingText">
-    LOADING WEBSITE...
-</div>
-
-<div id="loadingPercent">
-    41%
-</div>
-
-<div id="loadingBar">
-    <div id="loadingProgress"></div>
-</div>
-
-
+    <div class="loadingCard">
+        <div class="loadingEmblem" aria-hidden="true">G</div>
+        <div id="loadingText">GABE CLICKER</div>
+        <div class="loadingSubtitle">YOUR ARCADE IS GETTING READY</div>
+        <div class="loadingMeta"><span>LOADING YOUR SAVE</span><span id="loadingPercent">41%</span></div>
+        <div id="loadingBar"><div id="loadingProgress"></div></div>
+        <div class="loadingCaption"><span class="loadingPulseDot"></span> STARTING UP THE GAME...</div>
+    </div>
 </div>
 
 <!-- =========================================================
@@ -4124,6 +4137,40 @@ alt=""
     <div id="clockDate"></div>
 </div>
 
+<header class="siteTopbar" aria-label="Site header">
+  <a class="siteBrand" href="#home" onclick="showSiteHome();return false">GABE <b>CLICKER</b> <small>V2.0</small></a>
+  <div class="topbarRight"><div class="balancePill"><strong id="siteBalance">$0</strong><small id="siteIncome">+$0.00/s</small></div><button class="topbarButton" onclick="toggleChangeLog(true)">Changelog<span id="siteChangeNew">!</span></button><button class="topbarButton" onclick="openSiteSettings()">Settings</button></div>
+</header>
+<nav class="siteNav" aria-label="Site sections">
+  <button class="siteNavLink active" data-page="home" onclick="showSiteHome()">HOME</button><button class="siteNavLink" data-page="clicker" onclick="openClicker()">CLICKER</button><button class="siteNavLink" data-page="casino" onclick="openCasinoFromMenu()">CASINO</button><button class="siteNavLink" data-page="stocks" onclick="openStockMarket()">STOCKS</button><button class="siteNavLink" data-page="cases" onclick="openCases()">CASES</button><button class="siteNavLink" data-page="empire" onclick="openEmpire()">EMPIRE</button><button class="siteNavLink" data-page="achievements" onclick="openAchievements()">ACHIEVEMENTS</button><button class="siteNavLink" data-page="statistics" onclick="openStats()">STATISTICS</button><button class="siteNavLink" data-page="chat" onclick="document.getElementById('pubChat').scrollIntoView({behavior:'smooth',block:'end'})">CHAT</button><button class="siteNavLink" data-page="leaderboard" onclick="openLeaderboard()">LEADERBOARD</button>
+</nav>
+<aside class="siteSidebar" aria-label="Game navigation">
+  <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
+  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
+  <div class="sidebarFoot">V6.0 · NEON EDITION</div>
+</aside>
+<main id="siteHome" class="siteHome">
+  <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
+  <section class="homeCards" aria-label="Game sections">
+    <button class="homeCard cardClicker" onclick="openClicker()"><span class="cardIcon">💰</span><strong>CLICKER</strong><p>Click the coin. Drink coffee. Combo for glory.</p><small id="siteClickPower">+$1.00/click</small></button>
+    <button class="homeCard cardCasino" onclick="openCasinoFromMenu()"><span class="cardIcon">🎰</span><strong>CASINO</strong><p>Roulette · Blackjack · Poker · Plinko. The house occasionally loses.</p><small>Wagered: $0.00</small></button>
+    <button class="homeCard cardStocks" onclick="openStockMarket()"><span class="cardIcon">📈</span><strong>STOCKS</strong><p>Buy low, sell high, cry at the HL3 ticker.</p><small>Portfolio: $0.00</small></button>
+    <button class="homeCard cardCases" onclick="openCases()"><span class="cardIcon">📦</span><strong>CASES</strong><p>CS2-grade unboxing. Knives are real, probably.</p><small>Open a case to test your luck</small></button>
+    <button class="homeCard cardEmpire" onclick="openEmpire()"><span class="cardIcon">🏢</span><strong>EMPIRE</strong><p>From kebab kiosk to space program.</p><small>Income: +$0.00/s</small></button>
+    <button class="homeCard cardAchievements" onclick="openAchievements()"><span class="cardIcon">🏆</span><strong>ACHIEVEMENTS</strong><p>Proof you have too much free time.</p><small>Milestones and rewards</small></button>
+    <button class="homeCard cardStatistics" onclick="openStats()"><span class="cardIcon">📊</span><strong>STATISTICS</strong><p>Numbers that judge your lifestyle.</p><small id="siteClicks">Clicks: 0</small></button>
+    <button class="homeCard cardChat" onclick="document.getElementById('pubChat').scrollIntoView({behavior:'smooth',block:'end'})"><span class="cardIcon">💬</span><strong>CHAT</strong><p>The friend group. Unmoderated, as intended.</p><small>Public room</small></button>
+    <button class="homeCard cardLeaderboard" onclick="openLeaderboard()"><span class="cardIcon">🥇</span><strong>LEADERBOARD</strong><p>Who is the biggest degenerate this week?</p><small>See the rankings</small></button>
+  </section>
+</main>
+<main id="socialScreen" class="socialScreen" aria-label="Social workspace">
+  <nav class="socialTabs" aria-label="Social tools"><button class="socialTab active" data-social-tab="chat" onclick="openSocial('chat')">➤ &nbsp;Chat</button><button class="socialTab" data-social-tab="leaderboard" onclick="openSocial('leaderboard')">♜ &nbsp;Leaderboard</button><button class="socialTab" data-social-tab="achievements" onclick="openSocial('achievements')">♙ &nbsp;Achievements</button><button class="socialTab" data-social-tab="stats" onclick="openSocial('stats')">▥ &nbsp;Stats</button><button class="socialTab" data-social-tab="changelog" onclick="openSocial('changelog')">▤ &nbsp;Changelog</button></nav>
+  <section id="socialNameBar" class="socialNameBar"><label for="socialNameInput">Name:</label><input id="socialNameInput" type="text" maxlength="20" placeholder="Enter player name"><button type="button" onclick="socialSaveName()">Save</button></section>
+  <section id="socialChatPanel" class="socialChatPanel"><div id="socialChatHost"></div></section>
+  <section id="socialAppPanel" class="socialAppPanel" style="display:none"><div id="socialDynamicHost"></div></section>
+  <section id="socialChangePanel" class="socialChatPanel socialChangePanel" style="display:none"><div class="socialChangeIntro">Recent site updates</div><div id="socialChangeHost"></div></section>
+</main>
+<div id="siteSettings" class="siteSettings" role="dialog" aria-modal="true" aria-labelledby="siteSettingsTitle"><section><button class="settingsClose" onclick="closeSiteSettings()">✕</button><div class="eyebrow">PREFERENCES</div><h2 id="siteSettingsTitle">Settings</h2><p>Adjust your site view.</p><button onclick="changeBackground()">Change background</button><button onclick="openNameChange()">Change display name</button><button onclick="toggleChangeLog(true);closeSiteSettings()">View changelog</button><div class="saveTransfer"><label for="saveExport">SAVE EXPORT (COPY TO MOVE SAVES ANYWHERE)</label><textarea id="saveExport" readonly placeholder="Generate an export code to copy your save."></textarea><button type="button" onclick="exportSaveCode()">GENERATE / COPY CODE</button><label for="saveImport">IMPORT SAVE (PASTE + LOAD)</label><textarea id="saveImport" placeholder="Paste exported save code here"></textarea><button type="button" onclick="importSaveCode()">IMPORT SAVE</button><div id="saveTransferStatus" role="status" aria-live="polite"></div></div></section></div>
 <script>
 /* Home menu: kept in its own script right after the markup so it works
    even if another part of the page has a problem. */
@@ -9537,7 +9584,7 @@ function drawStockChart() {
     if (selectedStockRange === "3M") points = 400;
 
     const history = stock.history
-        .filter(point => point && typeof point.price === "number")
+        .filter(point => point && Number.isFinite(point.price) && point.price > 0)
         .slice(-points);
 
     if (history.length < 2) return;
@@ -9551,20 +9598,35 @@ function drawStockChart() {
 
 function getChartBounds(prices) {
 
-    let min = Math.min(...prices);
-    let max = Math.max(...prices);
+    const safe = prices.filter(function(price) {
+        return Number.isFinite(price) && price > 0;
+    });
+    if (!safe.length) return { min: 0, max: 1, scale: 1, logarithmic: false, transform: function() { return 0; } };
 
+    const low = Math.min(...safe);
+    const high = Math.max(...safe);
+    /* Use a log axis when one large move would flatten the rest of the candles. */
+    const logarithmic = low > 0 && high / low >= 40;
+    const scale = logarithmic ? 1 : Math.max(Math.abs(low), Math.abs(high), 1);
+    const transform = logarithmic
+        ? function(price) { return Math.log(price); }
+        : function(price) { return price / scale; };
+    const values = safe.map(transform);
+    let min = Math.min(...values);
+    let max = Math.max(...values);
     let range = max - min;
-    if (range === 0) range = Math.max(1, max * 0.01);
-
+    if (!Number.isFinite(range) || range <= 0) range = Math.max(0.01, Math.abs(max) * 0.01);
     const padding = range * 0.12;
     min -= padding;
     max += padding;
 
-    return { min, max };
+    return { min, max, scale, logarithmic, transform };
 }
 
-function drawChartGrid(ctx, width, height, min, max) {
+function drawChartGrid(ctx, width, height, bounds) {
+
+    const min = bounds.min;
+    const max = bounds.max;
 
     ctx.strokeStyle = "#1b1b1b";
     ctx.lineWidth = 1;
@@ -9583,9 +9645,12 @@ function drawChartGrid(ctx, width, height, min, max) {
     ctx.textAlign = "left";
 
     for (let i = 0; i < 5; i++) {
-        const price = max - (i / 4) * (max - min);
+        const axisValue = max - (i / 4) * (max - min);
+        const price = bounds.logarithmic ? Math.exp(axisValue) : axisValue * bounds.scale;
         const y = 20 + (i / 4) * (height - 55);
-        ctx.fillText("$" + price.toFixed(2), 8, y);
+        const label = !Number.isFinite(price) ? (axisValue > 0 ? ">$1e308" : "$0") :
+            "$" + (price >= 1e9 || price < 0.01 ? price.toExponential(2) : price.toLocaleString("en-US", { maximumFractionDigits: 2 }));
+        ctx.fillText(label, 8, y);
     }
 }
 
@@ -9600,12 +9665,14 @@ function drawCandleChart(history) {
     if (!candles.length) return;
 
     const prices = candles.flatMap(c => [c.high, c.low]);
-    const { min, max } = getChartBounds(prices);
+    const bounds = getChartBounds(prices);
 
-    drawChartGrid(ctx, width, height, min, max);
+    drawChartGrid(ctx, width, height, bounds);
 
     function priceToY(price) {
-        return 20 + ((max - price) / (max - min)) * (height - 55);
+        const value = bounds.transform(price);
+        const ratio = (bounds.max - value) / (bounds.max - bounds.min);
+        return Math.max(22, Math.min(height - 35, 20 + ratio * (height - 55)));
     }
 
     const chartLeft = 35;
@@ -9652,9 +9719,9 @@ function drawLineChart(history) {
     const height = canvas.height;
 
     const prices = history.map(point => point.price);
-    const { min, max } = getChartBounds(prices);
+    const bounds = getChartBounds(prices);
 
-    drawChartGrid(ctx, width, height, min, max);
+    drawChartGrid(ctx, width, height, bounds);
 
     const first = prices[0];
     const last = prices[prices.length - 1];
@@ -9662,7 +9729,9 @@ function drawLineChart(history) {
     const lineColor = isUp ? "#35d47a" : "#ff4d4d";
 
     function priceToY(price) {
-        return 20 + ((max - price) / (max - min)) * (height - 55);
+        const value = bounds.transform(price);
+        const ratio = (bounds.max - value) / (bounds.max - bounds.min);
+        return Math.max(22, Math.min(height - 35, 20 + ratio * (height - 55)));
     }
 
     ctx.strokeStyle = lineColor;
@@ -9980,20 +10049,55 @@ const CASE_TIERS = {
     restricted: { name: "RESTRICTED",       color: "#8847ff" },
     classified: { name: "CLASSIFIED",       color: "#d32ce6" },
     covert:     { name: "COVERT",           color: "#eb4b4b" },
-    contraband: { name: "CONTRABAND",       color: "#ffd700" }
+    contraband: { name: "CONTRABAND",       color: "#ffd700" },
+    stickerHigh:{ name: "HIGH GRADE · PAPER", color: "#b0c3d9" },
+    stickerHolo:{ name: "REMARKABLE · HOLO", color: "#8847ff" },
+    stickerFoil:{ name: "EXOTIC · FOIL",     color: "#ffd700" }
 
 };
 
 /*
-    chance = % chance to roll that colour
-    mult   = payout as a multiple of the case price
-             (each drop is also randomised by about +/-15%,
-              like different skin prices)
+    Case-tier rewards use a small payout variation. Capsule stickers use
+    their listed reference prices directly and use Valve's published tier odds.
 */
+function makeKatowiceStickerDrops(teams, foilName, foilPrice, foilImage) {
+    const drops = [];
+    teams.forEach(function(team) {
+        drops.push({tier:"stickerHigh",chance:80.68/8,itemName:"Sticker | "+team.name+" | Katowice 2014",price:team.paper,image:team.paperImage || ""});
+    });
+    teams.forEach(function(team) {
+        drops.push({tier:"stickerHolo",chance:16.10/8,itemName:"Sticker | "+team.name+" (Holo) | Katowice 2014",price:team.holo,image:team.holoImage || ""});
+    });
+    drops.push({tier:"stickerFoil",chance:3.22,itemName:"Sticker | "+foilName+" (Foil) | Katowice 2014",price:foilPrice,image:foilImage || ""});
+    return drops;
+}
+
+const KATOWICE_LEGENDS_DROPS = makeKatowiceStickerDrops([
+    {name:"compLexity Gaming",paper:527.98,holo:1964.56,paperImage:"assets/katowice-2014-legends/complexity-paper.png",holoImage:"assets/katowice-2014-legends/complexity-holo.png"},
+    {name:"Fnatic",paper:470.58,holo:1135.76,paperImage:"assets/katowice-2014-legends/fnatic-paper.png",holoImage:"assets/katowice-2014-legends/fnatic-holo.png"},
+    {name:"HellRaisers",paper:540.25,holo:7574.39,paperImage:"assets/katowice-2014-legends/hellraisers-paper.png",holoImage:"assets/katowice-2014-legends/hellraisers-holo.png"},
+    {name:"LGB eSports",paper:892.86,holo:3719.90,paperImage:"assets/katowice-2014-legends/lgb-paper.png",holoImage:"assets/katowice-2014-legends/lgb-holo.png"},
+    {name:"Ninjas in Pyjamas",paper:632.04,holo:3622.16,paperImage:"assets/katowice-2014-legends/nip-paper.png",holoImage:"assets/katowice-2014-legends/nip-holo.png"},
+    {name:"Team Dignitas",paper:845.29,holo:24579.46,paperImage:"assets/katowice-2014-legends/dignitas-paper.png",holoImage:"assets/katowice-2014-legends/dignitas-holo.png"},
+    {name:"Team LDLC.com",paper:1152.30,holo:21067.87,paperImage:"assets/katowice-2014-legends/ldlc-paper.png",holoImage:"assets/katowice-2014-legends/ldlc-holo.png"},
+    {name:"Titan",paper:3417.10,holo:95772.44,paperImage:"assets/katowice-2014-legends/titan-paper.png",holoImage:"assets/katowice-2014-legends/titan-holo.png"}
+],"ESL Skull",389.95,"assets/katowice-2014-legends/esl-skull-foil.png");
+
+const KATOWICE_CHALLENGERS_DROPS = makeKatowiceStickerDrops([
+    {name:"3DMAX",paper:538.10,holo:1800.00,paperImage:"assets/katowice-2014-challengers/3dmax-paper.png",holoImage:"assets/katowice-2014-challengers/3dmax-holo.png"},
+    {name:"Clan-Mystik",paper:675.32,holo:4557.97,paperImage:"assets/katowice-2014-challengers/clan-mystik-paper.png",holoImage:"assets/katowice-2014-challengers/clan-mystik-holo.png"},
+    {name:"iBUYPOWER",paper:4424.72,holo:69933.87,paperImage:"assets/katowice-2014-challengers/ibuypower-paper.png",holoImage:"assets/katowice-2014-challengers/ibuypower-holo.png"},
+    {name:"mousesports",paper:547.03,holo:4604.44,paperImage:"assets/katowice-2014-challengers/mousesports-paper.png",holoImage:"assets/katowice-2014-challengers/mousesports-holo.png"},
+    {name:"Natus Vincere",paper:676.34,holo:12000.00,paperImage:"assets/katowice-2014-challengers/natus-vincere-paper.png",holoImage:"assets/katowice-2014-challengers/natus-vincere-holo.png"},
+    {name:"Reason Gaming",paper:5769.62,holo:45215.95,paperImage:"assets/katowice-2014-challengers/reason-gaming-paper.png",holoImage:"assets/katowice-2014-challengers/reason-gaming-holo.png"},
+    {name:"Virtus.Pro",paper:591.12,holo:4375.19,paperImage:"assets/katowice-2014-challengers/virtus-pro-paper.png",holoImage:"assets/katowice-2014-challengers/virtus-pro-holo.png"},
+    {name:"Vox Eminor",paper:718.72,holo:20095.95,paperImage:"assets/katowice-2014-challengers/vox-eminor-paper.png",holoImage:"assets/katowice-2014-challengers/vox-eminor-holo.png"}
+],"ESL Wolf",569.99,"assets/katowice-2014-challengers/esl-wolf-foil.png");
+
 const CASE_TYPES = {
 
     starter: {
-        name: "GABE STARTER CASE",
+        name: "REVOLUTION CASE",
         price: 500,
         blurb: "An affordable case with a fair shot at upgraded drops.",
         drops: [
@@ -10005,7 +10109,7 @@ const CASE_TYPES = {
     },
 
     weapon: {
-        name: "GABE WEAPON CASE",
+        name: "KILOWATT CASE",
 
         price: 1000,
 
@@ -10022,7 +10126,7 @@ const CASE_TYPES = {
 
     scrap: {
 
-        name: "GABE SCRAP CASE",
+        name: "FEVER CASE",
 
         price: 100,
 
@@ -10039,7 +10143,7 @@ const CASE_TYPES = {
     },
 
     neon: {
-        name: "GABE NEON CASE",
+        name: "GALLERY CASE",
         price: 5000,
         blurb: "Bright drops, with a rare contraband jackpot.",
         drops: [
@@ -10052,14 +10156,21 @@ const CASE_TYPES = {
     },
 
     jackpot: {
-        name: "GABE JACKPOT CASE",
-        price: 25000,
-        blurb: "A high-stakes case with big payouts and very rare top drops.",
-        drops: [
-            { tier: "classified", chance: 76, mult: 0.4 },
-            { tier: "covert", chance: 22, mult: 2 },
-            { tier: "contraband", chance: 2, mult: 25 }
-        ]
+        name: "EMS KATOWICE 2014 LEGENDS CAPSULE",
+        price: 22447.98,
+        stickerCapsule: true,
+        marketSource: "https://www.csgodatabase.com/sticker-capsules/ems-katowice-2014-legends/",
+        blurb: "17 Legends stickers · lowest tracked listing $22,447.98 (Oct 2026).",
+        drops: KATOWICE_LEGENDS_DROPS
+    },
+
+    katowiceChallengers: {
+        name: "EMS KATOWICE 2014 CHALLENGERS CAPSULE",
+        price: 20612.55,
+        stickerCapsule: true,
+        marketSource: "https://www.csgodatabase.com/sticker-capsules/ems-katowice-2014-challengers/",
+        blurb: "17 Challengers stickers · lowest tracked listing $20,612.55 (Oct 2026).",
+        drops: KATOWICE_CHALLENGERS_DROPS
     }
 };
 
@@ -10067,6 +10178,10 @@ const CASE_CARD_WIDTH = 104;
 const CASE_CARD_GAP = 8;
 const CASE_REEL_CARDS = 64;
 const CASE_SPIN_MS = 5200;
+
+function formatCaseMoney(value) {
+    return Number(value).toLocaleString("en-US", {minimumFractionDigits:Number.isInteger(Number(value))?0:2,maximumFractionDigits:2});
+}
 
 /* Case opening sound. The mp3 is cut so the ticking runs for exactly
    CASE_SPIN_MS and the reveal sting hits as the reel stops. If you
@@ -10216,33 +10331,39 @@ function renderCasePanels() {
 
         const panel = document.createElement("div");
 
-        panel.className = "casinoPanel";
+        panel.className = "casinoPanel caseStorePanel";
 
         let html =
             "<h2>" + def.name + "</h2>" +
-            '<div class="casePrice">$' + formatNumber(def.price) + "</div>" +
-            '<div class="caseBlurb">' + def.blurb + "</div>" +
-            '<div class="caseOddsRow caseOddsHeader">' +
-                "<div></div><div>COLOUR</div><div>CHANCE</div><div>PAYOUT</div>" +
-            "</div>";
+            '<div class="casePrice">$' + formatCaseMoney(def.price) + "</div>" +
+            '<div class="caseBlurb">' + def.blurb + "</div>";
 
-        def.drops.forEach(function(drop) {
-
-            const tier = CASE_TIERS[drop.tier];
-
-            html +=
-                '<div class="caseOddsRow">' +
-                    '<div class="caseOddsDot" style="background:' + tier.color + '"></div>' +
-                    '<div style="color:' + tier.color + '">' + tier.name + "</div>" +
-                    "<div>" + drop.chance + "%</div>" +
-                    "<div>" + drop.mult + "×</div>" +
-                "</div>";
-        });
+        if (def.stickerCapsule) {
+            html += '<div class="caseMarketNote">Reference asks from low-volume marketplaces; prices can move. <a href="'+def.marketSource+'" target="_blank" rel="noopener">Price source</a></div>';
+            html += '<div class="caseOddsRow caseOddsHeader"><div></div><div>RARITY</div><div>ODDS</div><div>ITEMS</div></div>' +
+                '<div class="caseOddsRow"><div class="caseOddsDot" style="background:'+CASE_TIERS.stickerHigh.color+'"></div><div style="color:'+CASE_TIERS.stickerHigh.color+'">PAPER</div><div>80.68%</div><div>8</div></div>' +
+                '<div class="caseOddsRow"><div class="caseOddsDot" style="background:'+CASE_TIERS.stickerHolo.color+'"></div><div style="color:'+CASE_TIERS.stickerHolo.color+'">HOLO</div><div>16.10%</div><div>8</div></div>' +
+                '<div class="caseOddsRow"><div class="caseOddsDot" style="background:'+CASE_TIERS.stickerFoil.color+'"></div><div style="color:'+CASE_TIERS.stickerFoil.color+'">FOIL</div><div>3.22%</div><div>1</div></div>' +
+                '<details class="caseStickerContents"><summary>View all 17 stickers and prices</summary><div class="caseStickerList">';
+            def.drops.forEach(function(drop) {
+                const tier = CASE_TIERS[drop.tier];
+                const stickerId = drop.itemName.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+                const photo = drop.image ? '<img class="caseStickerPhoto" data-sticker-id="'+stickerId+'" src="'+drop.image+'" alt="">' : '<div class="caseStickerPhoto" data-sticker-id="'+stickerId+'">PHOTO</div>';
+                html += '<div class="caseStickerRow">'+photo+'<div class="caseStickerName" title="'+drop.itemName+'">'+drop.itemName+'</div><div class="caseStickerPrice" style="color:'+tier.color+'">$'+formatCaseMoney(drop.price)+'</div></div>';
+            });
+            html += '</div></details>';
+        } else {
+            html += '<div class="caseOddsRow caseOddsHeader"><div></div><div>COLOUR</div><div>CHANCE</div><div>PAYOUT</div></div>';
+            def.drops.forEach(function(drop) {
+                const tier = CASE_TIERS[drop.tier];
+                html += '<div class="caseOddsRow"><div class="caseOddsDot" style="background:'+tier.color+'"></div><div style="color:'+tier.color+'">'+tier.name+'</div><div>'+drop.chance+'%</div><div>'+drop.mult+'×</div></div>';
+            });
+        }
 
         html +=
             '<button class="caseOpenButton" id="openCase_' + key + '" ' +
             'onclick="openCase(\'' + key + '\')">' +
-            "OPEN CASE — $" + formatNumber(def.price) +
+            "OPEN CASE — $" + formatCaseMoney(def.price) +
             "</button>";
 
         panel.innerHTML = html;
@@ -10290,13 +10411,13 @@ function renderCaseInventory() {
     summary.textContent = caseInventory.length ? caseInventory.length + " drop" + (caseInventory.length === 1 ? "" : "s") + " collected" : "No drops collected yet.";
     const groups = new Map();
     caseInventory.forEach(item => {
-        const key = (item.caseName || "Case") + "|" + item.tier;
-        const group = groups.get(key) || {caseName: item.caseName || "Case", tier: item.tier, count: 0, lastPayout: 0};
+        const key = (item.caseName || "Case") + "|" + item.tier + "|" + (item.itemName || "");
+        const group = groups.get(key) || {caseName: item.caseName || "Case", itemName: item.itemName || "", tier: item.tier, count: 0, lastPayout: 0};
         group.count++;
         if (!group.lastPayout) group.lastPayout = item.payout || 0;
         groups.set(key, group);
     });
-    const rarityOrder = ["consumer", "industrial", "milspec", "restricted", "classified", "covert", "contraband"];
+    const rarityOrder = ["consumer", "industrial", "milspec", "restricted", "classified", "covert", "contraband", "stickerHigh", "stickerHolo", "stickerFoil"];
     const orderedGroups = Array.from(groups.values()).sort((a, b) => rarityOrder.indexOf(a.tier) - rarityOrder.indexOf(b.tier) || a.caseName.localeCompare(b.caseName));
     for (const group of orderedGroups) {
         const tier = CASE_TIERS[group.tier];
@@ -10306,10 +10427,10 @@ function renderCaseInventory() {
         const name = document.createElement("div");
         name.className = "caseInventoryName";
         name.style.color = tier.color;
-        name.textContent = tier.name;
+        name.textContent = group.itemName || tier.name;
         const detail = document.createElement("div");
         detail.className = "caseInventoryDetail";
-        detail.textContent = group.caseName + " · x" + group.count + " collected · last payout $" + formatNumber(group.lastPayout);
+        detail.textContent = group.caseName + " · x" + group.count + " collected · market value $" + formatCaseMoney(group.lastPayout);
         card.append(name, detail);
         container.appendChild(card);
     }
@@ -10362,7 +10483,7 @@ function openCase(caseKey) {
 
     const jitter = 0.85 + Math.random() * 0.3;
 
-    const payout = Math.round(def.price * drop.mult * jitter);
+    const payout = drop.price !== undefined ? Math.round(drop.price * 100) / 100 : Math.round(def.price * drop.mult * jitter);
 
     caseOpening = true;
 
@@ -10401,25 +10522,25 @@ function openCase(caseKey) {
                 "case",
                 def.price,
                 payout,
-                drop.tier === "covert" || drop.tier === "contraband"
+                drop.tier === "covert" || drop.tier === "contraband" || drop.tier === "stickerHolo" || drop.tier === "stickerFoil"
             );
 
             const tier = CASE_TIERS[drop.tier];
 
             const profit = payout - def.price;
 
-            result.textContent = tier.name;
+            result.textContent = drop.itemName || tier.name;
 
             result.style.color = tier.color;
 
             document.getElementById("caseResultSub").textContent =
-                "+$" + formatNumber(payout) +
+                "+$" + formatCaseMoney(payout) +
                 " (" + (payout / def.price).toFixed(2) + "× — " +
                 (profit >= 0 ? "profit $" : "loss $") +
-                formatNumber(Math.abs(profit)) + ")";
+                formatCaseMoney(Math.abs(profit)) + ")";
 
             caseHistory.unshift({ tier: drop.tier, payout: payout });
-            caseInventory.unshift({ tier: drop.tier, caseName: def.name, payout: payout, date: Date.now() });
+            caseInventory.unshift({ tier: drop.tier, caseName: def.name, itemName: drop.itemName || "", payout: payout, date: Date.now() });
             if (caseInventory.length > 1000) caseInventory.pop();
             try { localStorage.setItem("caseInventory", JSON.stringify(caseInventory)); } catch (e) {}
 
@@ -10838,18 +10959,18 @@ updateClicker();
     }
 
     const BIZ_NAMES = [
-        ["🍋", "Lemonade Stand"],
-        ["📰", "Paper Route"],
-        ["🚗", "Car Wash"],
-        ["🍕", "Pizza Shop"],
+        ["🌾", "Rice Farm"],
+        ["🍗", "Fried Chicken Shack"],
+        ["🥙", "Kebab Shop"],
+        ["🧺", "Laundromat"],
+        ["🍕", "Pizza Palace"],
         ["🕹️", "Arcade"],
-        ["🏋️", "Gym Chain"],
-        ["☕", "Coffee Empire"],
-        ["💻", "Tech Startup"],
-        ["🎬", "Movie Studio"],
-        ["🛢️", "Oil Company"],
-        ["🚀", "Space Agency"],
-        ["👑", "Gabe Corp"]
+        ["🧋", "Bubble Tea Chain"],
+        ["☕", "Coffee Roastery"],
+        ["🎬", "B-Movie Studio"],
+        ["🛍️", "Mega Mall"],
+        ["🚀", "Space Tourism Company"],
+        ["🏨", "Moon Resort"]
     ];
 
     const BIZ = BIZ_NAMES.map(function(n, i) {
@@ -13279,15 +13400,22 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+    {
+  date: "2026-10-20",
+  title: "Visual Rehaul",
+  changes: [
+    "Completely redid the visuals of the entire site \(r.i.p to epstein.gif)\",
+    "Added the Katowice 2014 Legends and the Katowice 2014 Challengers sticker capsules.",
+    "Changed some of the Business' names."
+  ]
+},
   {
     date: "2026-10-20",
     title: "Poker + QoL + Names",
     changes: [
-       "Added Texas Hold'Em Poker. Unsure if everything works correctly, especially multiplayer.",
+      "Added Texas Hold'Em Poker. Unsure if everything works correctly, especially multiplayer.",
       "Added a new \"NAME\" system for chats and leaderboards. You can change your name if you are not happy with it.",
       "Added the previously mentioned leaderboard.",
-      "Added a new \"INVENTORY\" system for the cases.",
-      "Added a few more cases.",
       "Updated Plinko with a small nerf, the ability to drop multiple balls at once, and a new HIGH RISK mode.",
       "Added this changelog so players can see site updates."
     ]
@@ -13509,6 +13637,7 @@ updateChangeLogBadge();
     const seen = {};
     let lastKey = null;
     let lastSend = 0;
+    let initialLoadComplete = false;
 
     try { nameInput.value = localStorage.getItem("pubChatName") || ""; } catch (e) {}
 
@@ -13560,6 +13689,7 @@ updateChangeLogBadge();
         row.appendChild(meta);
         row.appendChild(text);
         box.appendChild(row);
+        window.dispatchEvent(new CustomEvent("gabe-chat-message", { detail: { pid: String(m.pid || ""), name: String(m.name || "Anonymous"), initial: !initialLoadComplete } }));
 
         if (nearBottom) { box.scrollTop = box.scrollHeight; }
     }
@@ -13571,6 +13701,7 @@ updateChangeLogBadge();
         box.textContent = "";
         Object.keys(seen).forEach(function(k) { delete seen[k]; });
         lastKey = null;
+        initialLoadComplete = false;
         return poll().then(function() { box.scrollTop = box.scrollHeight; });
     };
 
@@ -13598,6 +13729,8 @@ updateChangeLogBadge();
                     lastKey = k;
                 });
             }
+
+            initialLoadComplete = true;
 
             setStatus("🟢 Live · messages are permanent");
 
@@ -13627,6 +13760,7 @@ updateChangeLogBadge();
         try {
             const list = JSON.parse(localStorage.getItem("pubChatLocal")) || [];
             list.forEach(function(m, i) { addMessage("L" + i, m); });
+            initialLoadComplete = true;
         } catch (e) {}
         setStatus("⚠️ Local only (nobody else can see this). Set FIREBASE_URL to make it public.");
     }
@@ -15058,6 +15192,145 @@ showMode();
 })();
 </script>
 
+<style id="arcade-remake-theme">
+:root{color-scheme:dark;--bg:#080b14;--panel:#111827;--panel2:#151f32;--line:#26344c;--ink:#eef5ff;--muted:#91a0bb;--cyan:#38e1e8;--blue:#477bff;--lime:#c9ff5a;--gold:#ffca5c;--pink:#ff58b5;--radius:18px}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -15%,#20345a 0,transparent 44%),radial-gradient(ellipse at 100% 40%,#122b38 0,transparent 36%),#080b14!important;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.01em}body::before{background:linear-gradient(180deg,rgba(5,9,17,.28),rgba(5,9,17,.84));z-index:0}body>*{position:relative}#loadingScreen{background:radial-gradient(ellipse at center,#1a3154,#080b14 68%)}#loadingText,#clickerTitle,#casinoTitle,#casesTitle,#stockTitle,.gTitle,#empireTitle{font-family:Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 30px #38e1e855,0 5px 20px #000}
+button{font-family:inherit;border-radius:12px!important;border:1px solid #34435e!important;background:linear-gradient(145deg,#1a2740,#111827)!important;color:#e9f4ff!important;font-weight:850;box-shadow:0 7px 18px #0005,inset 0 1px #ffffff12;transition:transform .16s ease,border-color .16s ease,filter .16s ease,box-shadow .16s ease}button:hover:not(:disabled){transform:translateY(-2px);border-color:#38e1e8aa!important;filter:brightness(1.12);box-shadow:0 10px 28px #0008,0 0 18px #38e1e822}button:active:not(:disabled){transform:translateY(0) scale(.98)}button:disabled{filter:grayscale(.4);opacity:.42}
+a{color:var(--cyan)}
+#homeMenu{left:24px;bottom:24px;gap:12px}#homeToggle{border:1px solid #38e1e877!important;background:linear-gradient(135deg,#155a68,#2257b7)!important;color:white!important;box-shadow:0 12px 32px #0008,0 0 24px #38e1e833}#menuPanel{background:linear-gradient(155deg,#17243a,#0b111e)!important;border:1px solid #3b506d!important;border-radius:22px!important;backdrop-filter:blur(18px)}.menuHeading{color:#8193b1}.menuItem{border-radius:16px!important;box-shadow:0 9px 22px #0005,inset 0 1px #ffffff1c!important}.menuItem:hover{box-shadow:0 12px 28px #0008,0 0 22px #38e1e833!important}
+#clickerScreen,#casinoScreen,#casesScreen,#stockMarketScreen,#empireScreen,.gScreen{background:radial-gradient(ellipse at 50% 0,#15223a99,transparent 42%),rgba(5,8,15,.97)!important;backdrop-filter:blur(14px)}#backButton,#casinoBackButton,#casesBackButton,#stockBackButton,.screenBack{border-color:#354762!important;background:#141d2d!important;border-radius:12px!important}
+#shop,.casinoPanel,#caseReelWindow,#changeLogPanel,#statsScreen>*,#empireMarket,.gCard{background:linear-gradient(155deg,#151f31,#0d1421)!important;border:1px solid #2a3a54!important;border-radius:20px!important;box-shadow:0 18px 48px #0006,inset 0 1px #ffffff0a!important}.casinoPanels{gap:18px}.casinoPanel{backdrop-filter:blur(8px)}.casinoPanel h2,#shop h2{color:#eaf4ff;letter-spacing:.04em}.upgrade{border-color:#26344b}.upgradeName{color:#f2f6ff}.upgradeDescription,.caseBlurb,.casinoInfo,.pokerNote{color:var(--muted)!important}
+#clickCount{color:var(--lime)!important;text-shadow:0 0 28px #c9ff5a55!important}#clickPower,#casinoBalance,#casesBalance,#stockBalance,.empireStatValue{color:var(--cyan)!important}#clickHint{color:var(--muted)!important}#gabeClickerImage{box-shadow:0 20px 42px #0009,0 0 0 1px #ffffff14,0 0 34px #38e1e822}
+input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!important;border-radius:11px!important;background:#0b1220!important;color:var(--ink)!important;box-shadow:inset 0 2px 10px #0005}input:focus,select:focus,textarea:focus{outline:2px solid #38e1e866;outline-offset:1px}
+#clickerTitle,#casinoTitle,#casesTitle,#stockTitle{color:#f4f8ff}.casinoButton,#rebirthButton,#stockMarketButton{filter:saturate(1.1)}#casinoBalance,#casesBalance{border-color:#38e1e855!important;background:#101d2e!important;border-radius:999px!important}#caseReelWindow{background:#080d17!important}#caseReelMarker{background:var(--lime)!important;box-shadow:0 0 16px #c9ff5a!important}.caseOpenButton{background:linear-gradient(135deg,#315ac4,#6a5cff)!important;border-color:#7688ff!important}
+#pokerPanel{border-color:#287f8a!important;background:radial-gradient(ellipse at 50% 0,#11343d,#0d1421 62%)!important}.pokerModes button.active{border-color:var(--cyan)!important;box-shadow:0 0 18px #38e1e833}.pokerTable{border:1px solid #294154;border-radius:18px;background:#09131b;padding:16px}.pokerSeat{background:#111e2c;border-color:#2e4358;border-radius:13px}.pokerSeat.current{border-color:var(--lime);box-shadow:0 0 18px #c9ff5a33}.pokerCard{border-radius:7px;box-shadow:0 4px 12px #0008}
+#stockChartContainer,#stockChart,.stockChartWrap{border-radius:16px;overflow:hidden}#plinkoCanvas{border:1px solid #354762;border-radius:16px;box-shadow:0 8px 24px #0008}
+#empireStats{gap:12px}.empireStat{background:linear-gradient(145deg,#151f31,#0d1421)!important;border:1px solid #2a3a54!important;border-radius:16px!important}.empireStatLabel,.empireStatSub{color:var(--muted)!important}.empireTab.active,.empireMode.active,.lbTab.active{border-color:#38e1e8aa!important;background:linear-gradient(135deg,#164a5b,#264d91)!important;color:#fff!important}
+#lbList{gap:10px}.lbRow{background:linear-gradient(145deg,#151f31,#0d1421)!important;border:1px solid #2a3a54!important;border-left:4px solid #334b69!important;border-radius:15px!important}.lbRow.me{border-left-color:var(--lime)!important;background:linear-gradient(145deg,#202b25,#101a1b)!important}.lbScore{color:var(--lime)!important}.lbRank{color:#91a0bb!important}.lbTab{border-radius:12px!important}.gSummary,#lbSummary,#casesBalance{box-shadow:0 8px 24px #0005}.caseInventoryItem{background:linear-gradient(145deg,#151f31,#0d1421)!important;border-color:#2a3a54!important;border-radius:14px!important}
+#changeLogToggle{border-color:#38e1e877!important;background:linear-gradient(135deg,#155a68,#2257b7)!important}#changeLogNew{background:#ff547c!important;box-shadow:0 0 15px #ff547c66}
+@media(max-width:700px){#homeMenu{left:12px;bottom:12px}.casinoPanels{gap:12px}.casinoPanel{max-width:calc(100vw - 24px)}#clickerScreen,#casinoScreen,#casesScreen,#stockMarketScreen{padding-left:12px!important;padding-right:12px!important}.gTitle{font-size:clamp(30px,9vw,48px)!important}}
+</style>
+<script>
+/* Dashboard wiring: retain the site's existing game screens and actions. */
+(function(){
+  const ids=['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','achScreen','statsScreen','lbScreen','socialScreen'];
+  function active(page){document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(function(b){b.classList.toggle('active',b.dataset.page===page);});}
+  window.showSiteHome=function(){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='block';active('home');};
+  window.switchSitePage=function(page){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='none';if(page==='home'){window.showSiteHome();return;}if(page==='clicker')window.openClicker();else if(page==='casino')window.openCasinoFromMenu();else if(page==='stocks')window.openStockMarket();else if(page==='cases')window.openCases();else if(page==='empire')window.openEmpire();else if(page==='social')window.openSocial('chat');active(page);};
+  document.addEventListener('click',function(e){const b=e.target.closest('.siteNavLink,.siteSideLink');if(b){active(b.dataset.page);if(b.classList.contains('siteSideLink')&&b.dataset.page!=='social'){const s=document.getElementById('socialScreen');if(s)s.style.display='none';}}});
+  const chat=document.getElementById('pubChat');if(chat){document.getElementById('socialChatHost').appendChild(chat);chat.classList.remove('collapsed');}
+  ['lbScreen','achScreen','statsScreen'].forEach(function(id){const el=document.getElementById(id);if(el)document.getElementById('socialDynamicHost').appendChild(el);});
+  const nameInput=document.getElementById('socialNameInput');try{if(nameInput)nameInput.value=localStorage.getItem('gabePlayerName')||localStorage.getItem('pubChatName')||'';}catch(e){}
+  window.socialSaveName=function(){const value=(nameInput.value||'').trim();if(value.length<2||value.length>20){nameInput.setCustomValidity('Enter a name between 2 and 20 characters.');nameInput.reportValidity();return;}nameInput.setCustomValidity('');window.openNameChange();const modalInput=document.getElementById('nameInputField');if(modalInput){modalInput.value=value;document.getElementById('nameSave').click();setTimeout(function(){try{nameInput.value=localStorage.getItem('gabePlayerName')||value;}catch(e){nameInput.value=value;}},400);}};
+  window.openSocial=function(tab){
+    const t=tab||'chat';['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','siteHome'].forEach(function(id){const el=document.getElementById(id);if(el)el.style.display='none';});
+    document.querySelectorAll('.gScreen').forEach(function(el){el.style.display='none';});
+    document.getElementById('socialScreen').style.display='flex';active('social');
+    document.querySelectorAll('.socialTab').forEach(function(b){b.classList.toggle('active',b.dataset.socialTab===t);});
+    document.getElementById('socialNameBar').style.display=t==='chat'?'flex':'none';
+    if(t==='chat'){document.getElementById('socialUnreadBadge').classList.remove('visible');}
+    document.getElementById('socialChatPanel').style.display=t==='chat'?'flex':'none';
+    document.getElementById('socialAppPanel').style.display=['leaderboard','achievements','stats'].includes(t)?'block':'none';
+    document.getElementById('socialChangePanel').style.display=t==='changelog'?'flex':'none';
+    ['lbScreen','achScreen','statsScreen'].forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});
+    if(t==='leaderboard')window.openLeaderboard();if(t==='achievements')window.openAchievements();if(t==='stats')window.openStats();
+    if(t==='changelog'){const src=document.getElementById('changeLogEntries'),dst=document.getElementById('socialChangeHost');if(src&&dst)dst.replaceChildren(...Array.from(src.children).map(function(n){return n.cloneNode(true);}));}
+  };
+  window.addEventListener('gabe-chat-message',function(event){const d=event.detail||{};if(d.initial)return;const senderId=String(d.pid||''),myId=String(window.gabePlayerId||'');const senderName=String(d.name||'').trim().toLowerCase();let myName='';try{myName=(localStorage.getItem('gabePlayerName')||localStorage.getItem('pubChatName')||'').trim().toLowerCase();}catch(e){}if((senderId&&myId&&senderId===myId)||(!senderId&&senderName&&myName&&senderName===myName))return;const screen=document.getElementById('socialScreen'),chatPanel=document.getElementById('socialChatPanel');if(!screen||screen.style.display!=='flex'||!chatPanel||chatPanel.style.display==='none')document.getElementById('socialUnreadBadge').classList.add('visible');});
+  window.openSiteSettings=function(){document.getElementById('siteSettings').classList.add('open');};
+  window.closeSiteSettings=function(){document.getElementById('siteSettings').classList.remove('open');};
+  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime'];
+  const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
+  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch']);
+  window.exportSaveCode=function(){
+    try{const data={};saveKeys.forEach(function(key){const value=localStorage.getItem(key);if(value!==null)data[key]=value;});const payload={format:'gabe-clicker-save',version:1,createdAt:new Date().toISOString(),data:data};const bytes=new TextEncoder().encode(JSON.stringify(payload));let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode.apply(null,bytes.subarray(i,Math.min(i+0x8000,bytes.length)));const code='GABE-SAVE-V1:'+btoa(binary);const out=document.getElementById('saveExport');out.value=code;out.focus();out.select();let copied=false;try{copied=document.execCommand('copy');}catch(e){}document.getElementById('saveTransferStatus').textContent=copied?'Export code generated and copied. Store it somewhere safe.':'Export code generated. Select the field and copy it.';}catch(e){document.getElementById('saveTransferStatus').textContent='Could not export save: '+e.message;}
+  };
+  window.importSaveCode=function(){
+    const status=document.getElementById('saveTransferStatus');try{const code=(document.getElementById('saveImport').value||'').replace(/\s+/g,'');const prefix='GABE-SAVE-V1:';if(!code.startsWith(prefix))throw new Error('This code is not a supported Gabe Clicker save.');if(code.length>5000000)throw new Error('Save code is too large.');const binary=atob(code.slice(prefix.length));const bytes=Uint8Array.from(binary,function(ch){return ch.charCodeAt(0);});const payload=JSON.parse(new TextDecoder().decode(bytes));if(!payload||payload.format!=='gabe-clicker-save'||payload.version!==1||!payload.data||typeof payload.data!=='object'||Array.isArray(payload.data))throw new Error('Save data is invalid or unsupported.');const data={};Object.keys(payload.data).forEach(function(key){if(!saveKeys.includes(key))return;const value=payload.data[key];if(typeof value!=='string'||value.length>2000000)throw new Error('Save field is invalid: '+key);if(numericSaveKeys.has(key)&&(!Number.isFinite(Number(value))||Number(value)<0))throw new Error('Invalid number in save field: '+key);if(jsonSaveKeys.has(key)){const parsed=JSON.parse(value);if(!parsed||typeof parsed!=='object')throw new Error('Invalid data in save field: '+key);if(key==='caseInventory'&&!Array.isArray(parsed))throw new Error('Case inventory data is invalid.');}data[key]=value;});if(!Object.keys(data).length)throw new Error('This save contains no game data.');if(!window.confirm('Import this save and replace the game progress currently stored in this browser?'))return;const backup={};saveKeys.forEach(function(key){backup[key]=localStorage.getItem(key);});try{saveKeys.forEach(function(key){localStorage.removeItem(key);});Object.keys(data).forEach(function(key){localStorage.setItem(key,data[key]);});status.textContent='Save imported. Reloading the site…';window.location.reload();}catch(writeError){saveKeys.forEach(function(key){if(backup[key]===null)localStorage.removeItem(key);else localStorage.setItem(key,backup[key]);});throw writeError;}}catch(e){status.textContent='Could not import save: '+e.message;}
+  };
+  const modal=document.getElementById('siteSettings');modal.addEventListener('click',function(e){if(e.target===modal)closeSiteSettings();});
+  function dashboardTick(){
+    let money=0;try{if(typeof gabeClicks==='number')money=gabeClicks;}catch(e){}
+    const cash='$'+(Number(money)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    ['siteBalance','siteNetWorth'].forEach(function(id){const e=document.getElementById(id);if(e)e.textContent=cash;});
+    const clicks=document.getElementById('clickCount'), power=document.getElementById('clickPower');
+    const c=document.getElementById('siteClicks');if(c&&clicks)c.textContent='Clicks: '+clicks.textContent.replace(/[^\d]/g,'');
+    const p=document.getElementById('siteClickPower');if(p&&power)p.textContent=power.textContent.replace(/\s+PER CLICK/i,'/click');
+    const badge=document.getElementById('changeLogNew'), topBadge=document.getElementById('siteChangeNew');if(badge&&topBadge)topBadge.style.display=getComputedStyle(badge).display==='none'?'none':'grid';
+  }
+  dashboardTick();setInterval(dashboardTick,1200);
+  let name='GABE';try{name=localStorage.getItem('gabePlayerName')||localStorage.getItem('pubChatName')||'GABE';}catch(e){};
+  const greet=document.getElementById('siteGreeting');if(greet)greet.textContent='WELCOME BACK, '+name.toUpperCase();
+  const sideGreet=document.getElementById('sidebarGreeting');if(sideGreet)sideGreet.textContent='Good evening, '+name;
+  window.openClicker();active('clicker');
+})();
+</script>
+<style id="reference-ui-theme">
+:root{color-scheme:dark;--ui-bg:#0c0e12;--ui-panel:#141821;--ui-panel2:#191e27;--ui-line:#272d38;--ui-text:#f1f2f4;--ui-muted:#929cab;--ui-amber:#ff9d00;--ui-yellow:#ffd942;--ui-purple:#bd5cff;--ui-green:#23d7a3;--ui-cyan:#20c9db}
+html{scroll-behavior:smooth}body{margin:0!important;padding-top:108px!important;background:radial-gradient(ellipse at 80% 0,#1c1b19 0,transparent 39%),linear-gradient(120deg,#0b0d11,#111114 68%,#0a0b0e)!important;color:var(--ui-text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;letter-spacing:.01em}
+body::before{display:none!important}#homeMenu,#homeClock{display:none!important}.siteTopbar{height:60px;position:fixed;z-index:30000;left:0;right:0;top:0;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#0d1015;border-bottom:1px solid #272b32}.siteBrand{text-decoration:none;color:#f3f4f6;font-weight:950;font-size:17px;letter-spacing:.04em;white-space:nowrap}.siteBrand b{color:var(--ui-amber)}.siteBrand small{color:#687386;font-weight:700;font-size:12px}.topbarRight{display:flex;align-items:center;gap:9px}.balancePill{display:flex;align-items:baseline;gap:18px;margin-right:8px;padding:8px 16px;border:1px solid #704b12;border-radius:12px;background:#14171c;box-shadow:0 0 22px #ff9d001f}.balancePill strong{color:var(--ui-yellow);font:800 21px ui-monospace,monospace}.balancePill small{color:#9aa4b4;font:12px ui-monospace,monospace}.topbarButton{position:relative;padding:9px 13px!important;border:1px solid #292e37!important;border-radius:9px!important;background:#171b22!important;color:#e7e9ed!important;font-weight:750!important;box-shadow:none!important}.topbarButton:hover{border-color:#876019!important;color:#ffc04d!important;transform:none!important}#siteChangeNew{display:none;position:absolute;right:-7px;top:-8px;width:19px;height:19px;border-radius:50%;place-items:center;background:#ff514a;color:white;font-size:12px;font-weight:900}.siteNav{height:45px;position:fixed;z-index:30000;top:60px;left:0;right:0;display:flex;align-items:center;gap:4px;overflow-x:auto;padding:0 16px;background:#0d1015;border-bottom:1px solid #2a2e35;scrollbar-width:none}.siteNav::-webkit-scrollbar{display:none}.siteNavLink{position:relative;flex:0 0 auto;padding:9px 14px!important;border:1px solid transparent!important;border-radius:999px!important;background:transparent!important;color:#8995a6!important;box-shadow:none!important;font-size:10px!important;font-weight:850!important;letter-spacing:.12em}.siteNavLink::before{content:"";display:inline-block;width:7px;height:7px;margin-right:7px;border-radius:50%;background:#677487;vertical-align:1px}.siteNavLink:hover{color:#d8dee8!important;background:#171b22!important;transform:none!important}.siteNavLink.active{color:#ffb52b!important;border-color:#7b5311!important;background:#1d180f!important}.siteNavLink.active::before{background:var(--ui-amber);box-shadow:0 0 9px #ff9d00}
+.siteHome{max-width:1440px;margin:0 auto;padding:18px 24px 50px}.homeHero{min-height:122px;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:20px}.eyebrow{color:#9ca6b4;font-size:11px;font-weight:900;letter-spacing:.2em}.homeHero h1{margin:5px 0 4px;font-size:clamp(30px,5vw,50px);line-height:1.08;letter-spacing:.035em;font-weight:950}.homeHero h1 em{color:var(--ui-amber);font-style:normal}.homeHero p{margin:8px 0 0;color:#a5adba;font-size:14px}.netWorthCard{min-width:178px;padding:15px 22px;border:1px solid #704b12;border-radius:17px;background:linear-gradient(140deg,#18191b,#141518);box-shadow:0 0 24px #ff9d0022}.netWorthCard span{display:block;color:#9ba5b4;font-size:10px;font-weight:900;letter-spacing:.2em}.netWorthCard strong{display:block;margin-top:3px;color:var(--ui-yellow);font:800 39px ui-monospace,monospace;letter-spacing:-.04em}.homeCards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.homeCard{position:relative;min-height:164px;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:21px 23px 18px!important;border:1px solid #252b36!important;border-radius:19px!important;background:#141821!important;color:#eef1f5!important;box-shadow:none!important;transition:transform .18s ease,border-color .18s ease,background .18s ease!important}.homeCard::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--card-accent,#929cab)}.homeCard:hover{transform:translateY(-3px)!important;border-color:#535b67!important;background:#191e27!important;box-shadow:0 15px 32px #0005!important}.cardIcon{height:31px;font-size:20px}.homeCard strong{margin:3px 0 7px;color:var(--card-accent,#d6dbe4);font-size:16px;font-weight:950}.homeCard p{margin:0 0 10px;color:#a2adbd;font-size:13px;line-height:1.55;font-weight:450}.homeCard small{margin-top:auto;color:#718096;font:11px ui-monospace,monospace}.cardClicker{--card-accent:#ffd942}.cardCasino{--card-accent:#d85bff}.cardStocks{--card-accent:#1ed7a2}.cardCases{--card-accent:#ff8d3a}.cardEmpire{--card-accent:#20c9db}.cardAchievements,.cardStatistics{--card-accent:#bb9bff}.cardChat,.cardLeaderboard{--card-accent:#bbc5d2}
+.siteSettings{display:none;position:fixed;z-index:40000;inset:0;align-items:center;justify-content:center;padding:20px;background:#000b}.siteSettings.open{display:flex}.siteSettings section{position:relative;width:min(430px,94vw);padding:26px;border:1px solid #343b47;border-radius:18px;background:#151922;box-shadow:0 24px 70px #000b}.siteSettings h2{margin:8px 0;color:#f3f4f6}.siteSettings p{color:#9ca6b4}.siteSettings section>button:not(.settingsClose){display:block;width:100%;margin-top:10px;padding:12px;text-align:left!important;border:1px solid #303744!important;border-radius:10px!important;background:#1b202a!important;color:#e9edf3!important;box-shadow:none!important}.siteSettings section>button:not(.settingsClose):hover{border-color:#9b681b!important;color:#ffc04d!important;transform:none!important}.settingsClose{float:right;padding:6px 9px!important;border:0!important;background:transparent!important;color:#abb4c1!important;box-shadow:none!important}
+#clickerScreen,#casinoScreen,#casesScreen,#stockMarketScreen,#empireScreen,.gScreen{z-index:500!important;inset:105px 0 0!important;min-height:calc(100vh - 105px);box-sizing:border-box;padding-top:28px!important;background:radial-gradient(ellipse at 50% 0,#201629 0,transparent 46%),#0d1015!important;color:#eef1f5!important}#backButton,#casinoBackButton,#casesBackButton,#stockBackButton{position:sticky!important;top:8px!important;left:auto!important;z-index:600!important;display:block;margin:0 0 0 14px;padding:9px 14px!important;border:1px solid #363d49!important;border-radius:9px!important;background:#171c25!important;color:#dce1e9!important;box-shadow:none!important}#clickerTitle,#casinoTitle,#casesTitle,#stockTitle,.gTitle,#empireTitle{color:#f0f2f5!important;text-shadow:none!important;letter-spacing:.08em!important}#shop,.casinoPanel,#caseReelWindow,#changeLogPanel,#statsScreen>*,#empireMarket,.gCard{border:1px solid #2b303a!important;border-radius:16px!important;background:#141821!important;box-shadow:0 12px 35px #0005!important}.casinoPanel h2,#shop h2{color:#f0f2f5!important}.casinoModes button.active,.casinoTab.active,.pokerModes button.active,.empireTab.active,.empireMode.active,.lbTab.active{background:linear-gradient(135deg,#602a86,#a340dc)!important;border-color:#c06cff!important;color:white!important}.pokerTable{border-color:#3b2d4c!important;background:radial-gradient(ellipse at 50% 0,#241934,#11151d 75%)!important}.pokerSeat{background:#171d27!important;border-color:#343b48!important}.pokerSeat.current{border-color:#bb62ff!important;box-shadow:0 0 14px #a84de944!important}.pokerActions button:not(:disabled),.caseOpenButton{background:linear-gradient(135deg,#702e9e,#ad42e7)!important;border-color:#d178ff!important}input,select,textarea,.casinoInput,.pokerField{border-color:#343b48!important;border-radius:9px!important;background:#10141b!important;color:#eef1f5!important}.lbRow,.empireStat,.caseInventoryItem{border-color:#2b303a!important;background:#151a23!important}.lbRow.me{border-left-color:#ffab16!important;background:#211b12!important}.lbScore,#clickCount{color:#ffd942!important}
+button{font-family:inherit}#changeLogToggle{display:none!important;right:18px!important;bottom:16px!important;border-radius:10px!important;background:#171b22!important;border:1px solid #353b46!important;color:#eff2f6!important;box-shadow:0 6px 20px #0007!important}#changeLogNew{background:#ff514a!important}.changeLogDate,#changeLogPanel h2{color:#ffb52b!important}
+@media(max-width:900px){.homeCards{grid-template-columns:repeat(2,minmax(0,1fr))}.siteHome{padding:16px}.netWorthCard{min-width:140px}.netWorthCard strong{font-size:30px}}@media(max-width:560px){body{padding-top:104px!important}.siteTopbar{height:58px;padding:0 12px}.siteBrand{font-size:14px}.balancePill{gap:6px;margin-right:0;padding:7px 9px}.balancePill strong{font-size:15px}.balancePill small{display:none}.topbarButton{padding:8px!important;font-size:11px!important}.siteNav{top:58px;height:44px;padding:0 8px}.siteNavLink{padding:8px 10px!important;font-size:9px!important}.siteHome{padding:9px 12px 35px}.homeHero{align-items:flex-start;flex-direction:column;gap:14px;padding:11px 0}.homeHero h1{font-size:30px}.homeHero p{font-size:12px}.netWorthCard{width:100%;box-sizing:border-box;padding:10px 14px}.netWorthCard strong{font-size:27px}.homeCards{gap:10px}.homeCard{min-height:160px;padding:15px!important;border-radius:14px!important}.homeCard p{font-size:12px}.homeCard strong{font-size:14px}#clickerScreen,#casinoScreen,#casesScreen,#stockMarketScreen,#empireScreen,.gScreen{inset:102px 0 0!important;min-height:calc(100vh - 102px);padding-left:10px!important;padding-right:10px!important}.casinoPanels{gap:10px}}
+</style>
+<style id="reference-sidebar-ui">
+body{padding:74px 0 0 220px!important;background:radial-gradient(ellipse at 68% 44%,#0b1718 0,transparent 42%),linear-gradient(105deg,#0c1117,#0b0d13 60%,#120d19)!important;color:#edf4fa!important}body::before{display:none!important}.siteTopbar{height:74px;padding:0 26px 0 244px;background:#10141c;border-bottom:1px solid #252a35}.siteBrand{font-size:0}.siteBrand::before{content:"GABE CLICKER";font-size:15px;color:#35dfdf;letter-spacing:.025em}.siteBrand b,.siteBrand small{display:none}.siteSidebar{position:fixed;z-index:25000;left:0;top:74px;bottom:0;width:220px;display:flex;flex-direction:column;padding:20px 15px 16px;background:#121621;border-right:1px solid #252b38}.sidebarIdentity{display:flex;align-items:center;gap:12px;padding:3px 8px 24px}.sidebarIdentity img{width:42px;height:42px;object-fit:cover;border:2px solid #22d7dc;border-radius:50%;box-shadow:0 0 15px #16cfdc55}.sidebarIdentity strong{display:block;color:#27d9de;font-size:13px;font-weight:950}.sidebarIdentity small{display:block;margin-top:3px;color:#9ba6b6;font-size:10px}.sidebarLinks{display:flex;flex-direction:column;gap:5px}.siteSideLink{display:flex;align-items:center;gap:13px;width:100%;padding:12px 14px!important;border:0!important;border-radius:12px!important;background:transparent!important;color:#9aa5b6!important;text-align:left!important;font-size:13px!important;font-weight:750!important;box-shadow:none!important}.siteSideLink span{width:20px;color:#9ba6b6;font-size:18px;text-align:center}.siteSideLink:hover{background:#1b202d!important;color:#ecf2f9!important;transform:none!important}.siteSideLink.active{background:linear-gradient(110deg,#12d8e5,#a146f3)!important;color:#10131b!important;box-shadow:0 5px 20px #26c8ec33!important}.siteSideLink.active span{color:#10131b}.sidebarFoot{margin-top:auto;padding:8px;color:#657183;font:10px ui-monospace,monospace;letter-spacing:.04em}.siteNav{display:none!important}.siteHome{max-width:none;width:100%;min-height:calc(100vh - 74px);margin:0;padding:38px clamp(20px,4vw,70px);box-sizing:border-box;background:radial-gradient(ellipse at 30% 40%,#0c1b1b55,transparent 55%)}.homeHero{margin:0 0 32px}.homeHero h1{font-size:clamp(30px,4.3vw,52px)}.homeCards{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.homeCard{min-height:150px;border-radius:15px!important;background:linear-gradient(145deg,#151a24,#11151e)!important}.netWorthCard{background:#151922}.topbarButton{background:#171c26!important}.topbarButton:hover{border-color:#7948b2!important;color:#d299ff!important}.balancePill{border-color:#594315;background:#171a20}.balancePill strong{color:#ffdb39}
+#clickerScreen[style*="block"]{display:grid!important;position:fixed!important;z-index:500!important;inset:74px 0 0 220px!important;width:auto!important;height:auto!important;min-height:0!important;overflow-y:auto!important;grid-template-columns:minmax(340px,1fr) minmax(300px,380px);grid-template-rows:minmax(0,1fr);align-items:stretch;gap:clamp(20px,4vw,65px);padding:36px clamp(22px,4vw,72px) 26px!important;background:radial-gradient(ellipse at 42% 43%,#082322 0,#0a1014 42%,#0c0d14 100%)!important}#clickerScreen #backButton,#clickerScreen #clickerTitle{display:none!important}#clickerArea{grid-column:1;grid-row:1;align-self:center;justify-self:center;width:100%;max-width:760px;margin:0!important;padding:0!important;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent!important;box-shadow:none!important}#gabeClickerImage{width:clamp(210px,23vw,300px)!important;height:clamp(210px,23vw,300px)!important;object-fit:cover;border:3px solid #13d9d0;border-radius:50%!important;box-shadow:0 0 30px #13c9d499,0 0 70px #a13ff633!important;cursor:pointer}#clickCount{margin-top:22px!important;color:#22dff0!important;font:900 36px ui-monospace,monospace!important}#clickPower{margin-top:6px;color:#90a2ae!important;font:11px ui-monospace,monospace!important;letter-spacing:.18em}#rebirthDisplay{color:#f0cf49!important;font-size:12px!important}#comboBox{width:min(340px,90%);margin-top:12px}#clickHint{margin:15px 0;color:#94a5b1;font:11px ui-monospace,monospace;letter-spacing:.08em}#casinoButton,#rebirthButton{border:0!important;border-radius:999px!important;background:linear-gradient(100deg,#a944ef,#f0009d)!important;color:#120d1c!important;font-weight:950;box-shadow:0 8px 26px #b329ee55!important}#shop{grid-column:2;grid-row:1;align-self:center;width:100%!important;max-height:calc(100vh - 124px);overflow:auto;padding:17px!important;background:transparent!important;border:0!important;box-shadow:none!important}#shop h2{position:sticky;top:-17px;margin:0 0 12px;padding:8px 0;background:#10121a;color:#ffd830!important;text-align:left!important;font-size:22px!important}#shop .upgrade{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;min-height:82px;margin:10px 0;padding:14px!important;border:1px solid #242a35!important;border-radius:15px!important;background:linear-gradient(145deg,#151922,#10131b)!important;box-shadow:none!important}#shop .upgradeName{color:#e6edf5!important;font-weight:850}#shop .upgradeDescription{color:#8f9baa!important}#shop .upgradeCost{color:#717e8c!important}#shop .upgrade button{grid-column:2;grid-row:1/4;border-radius:9px!important;background:linear-gradient(120deg,#a940ec,#f000a2)!important;color:white!important}
+#casinoScreen,#casesScreen,#stockMarketScreen,#empireScreen,.gScreen{position:fixed!important;z-index:500!important;inset:74px 0 0 220px!important;width:auto!important;height:auto!important;min-height:0!important;overflow:auto!important;padding:30px clamp(16px,3vw,50px) 40px!important;background:radial-gradient(ellipse at 50% 0,#21142b 0,transparent 48%),#0c0e14!important}.gScreen{inset:74px 0 0 220px!important}.casinoPanels{max-width:1440px;margin:16px auto!important;gap:14px!important}.casinoPanel,.gCard,#empireMarket{border-color:#292432!important;background:linear-gradient(145deg,#151620,#10121b)!important;border-radius:15px!important;box-shadow:0 12px 32px #0005!important}.casinoPanel h2{color:#c86aff!important}.pokerModes button.active,.casinoPanel button.active,.casinoTab.active,.empireTab.active,.empireMode.active,.lbTab.active{background:linear-gradient(110deg,#7440c8,#d238db)!important;border-color:#d977ff!important}.pokerTable{border:1px solid #53366b!important;background:radial-gradient(ellipse at center,#1d1730,#11131b 76%)!important}.pokerSeat{background:#171824!important;border-color:#353040!important}.pokerSeat.current{border-color:#cd67ff!important;box-shadow:0 0 15px #b045e855!important}.pokerActions button:not(:disabled),.caseOpenButton{border:0!important;background:linear-gradient(100deg,#a944ef,#f0009d)!important;color:white!important}.lbRow,.empireStat,.caseInventoryItem{background:#151720!important;border-color:#2a2c37!important}.lbScore{color:#f1d544!important}#pubChat{z-index:8000}
+@media(max-width:900px){body{padding-left:76px!important}.siteTopbar{padding-left:95px}.siteSidebar{width:76px;padding:16px 8px}.sidebarIdentity{justify-content:center;padding:0 0 20px}.sidebarIdentity div,.sidebarFoot{display:none}.sidebarIdentity img{width:42px;height:42px}.siteSideLink{justify-content:center;padding:12px 4px!important;font-size:0!important}.siteSideLink span{font-size:19px}#clickerScreen[style*="block"]{inset:74px 0 0 76px!important;grid-template-columns:minmax(270px,1fr) minmax(270px,340px);gap:12px;padding:25px 16px!important}#casinoScreen,#casesScreen,#stockMarketScreen,#empireScreen,.gScreen{left:76px!important}.gScreen{left:76px!important}}
+@media(max-width:620px){body{padding:64px 0 0 62px!important}.siteTopbar{height:64px;padding:0 8px 0 70px}.siteBrand::before{font-size:12px}.balancePill{padding:6px 8px;margin:0}.balancePill strong{font-size:14px}.topbarRight{gap:4px}.topbarButton{padding:7px!important;font-size:10px!important}.siteSidebar{top:64px;width:62px;padding:12px 5px}.siteSideLink{padding:11px 2px!important}.siteHome{padding:22px 12px}.homeHero{align-items:flex-start;flex-direction:column}.homeHero h1{font-size:28px}.netWorthCard{width:100%;box-sizing:border-box}.homeCards{grid-template-columns:1fr 1fr;gap:8px}.homeCard{min-height:150px;padding:13px!important}.homeCard p{font-size:11px}#clickerScreen[style*="block"]{inset:64px 0 0 62px!important;display:flex!important;flex-direction:column;gap:6px;padding:14px 8px!important}#clickerArea{min-height:330px;flex:0 0 42vh}#gabeClickerImage{width:min(48vw,210px)!important;height:min(48vw,210px)!important}#clickCount{font-size:28px!important;margin-top:10px!important}#shop{max-height:none;overflow:visible;padding:8px!important}#shop .upgrade{min-height:70px;padding:10px!important}#casinoScreen,#casesScreen,#stockMarketScreen,#empireScreen,.gScreen{inset:64px 0 0 62px!important;padding:18px 8px 30px!important}.gScreen{left:62px!important}#changeLogToggle{right:8px!important;bottom:8px!important}}
+</style>
+<style id="social-workspace-theme">
+#socialScreen{position:fixed;z-index:480;inset:74px 0 0 220px;display:none;flex-direction:column;gap:16px;padding:20px clamp(16px,3vw,48px) 28px;overflow:auto;box-sizing:border-box;background:radial-gradient(ellipse at 25% 22%,#09202066,transparent 48%),linear-gradient(115deg,#0b0d12,#0b0c11 70%,#120e18)}.socialTabs{display:flex;align-items:center;gap:8px;min-height:38px;overflow:auto;scrollbar-width:none}.socialTabs::-webkit-scrollbar{display:none}.socialTab{flex:none;padding:10px 14px!important;border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;color:#99a4b5!important;box-shadow:none!important;font-size:13px!important;font-weight:800!important}.socialTab:hover{background:#1a1d27!important;color:#eef2f7!important;transform:none!important}.socialTab.active{background:linear-gradient(110deg,#ffbf00,#ff9f00)!important;color:#11151a!important;box-shadow:0 5px 20px #ffad0033!important}.socialNameBar{display:flex;align-items:center;gap:10px;min-height:62px;padding:11px 13px;border:1px solid #272b37;border-radius:13px;background:#12151e}.socialNameBar label{flex:none;color:#9da8b7;font-size:13px}.socialNameBar input{min-width:0;flex:1;height:39px;padding:0 13px!important;border:1px solid #343846!important;border-radius:12px!important;background:#1a1c27!important;color:#edf1f6!important;font-size:13px}.socialNameBar button{flex:none;padding:10px 17px!important;border:1px solid #08758d!important;border-radius:11px!important;background:#10232a!important;color:#2ce4eb!important;box-shadow:none!important}.socialNameBar button:hover{background:#14333b!important;transform:none!important}.socialChatPanel,.socialAppPanel{min-height:0;flex:1;border:1px solid #272b37;border-radius:17px;background:#12141d;overflow:hidden}.socialChatPanel{display:flex;flex-direction:column;padding:0}.socialChatPanel #socialChatHost{display:flex;flex:1;min-height:0}.socialChatPanel #pubChat{position:static!important;display:flex!important;flex:1;flex-direction:column;width:100%!important;max-width:none!important;min-height:0;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden}.socialChatPanel #pubChatHeader{display:none!important}.socialChatPanel #pubChatBody{display:flex!important;flex:1;min-height:0;flex-direction:column}.socialChatPanel #pubChatMessages{flex:1;height:auto!important;min-height:250px;overflow:auto;padding:18px!important;border:0!important;scrollbar-color:#39404c transparent}.socialChatPanel #pubChatMessages:empty::before{content:"No messages yet. Say hi!";display:block;margin:38px auto;color:#98a2b1;text-align:center;font-size:13px}.socialChatPanel #pubChatStatus{order:2;padding:5px 17px!important;border:0!important;color:#788596!important;font-size:10px!important}.socialChatPanel #pubChatForm{order:3;display:block!important;margin:0!important;padding:8px 16px 16px!important}.socialChatPanel #pubChatAs,.socialChatPanel #pubChatName{display:none!important}.socialChatPanel #pubChatRow{display:flex;align-items:center;gap:9px}.socialChatPanel #pubChatInput{height:42px;min-width:0;padding:0 13px!important;border:1px solid #343846!important;border-radius:14px!important;background:#1a1c27!important;color:#f2f4f8!important;font-size:13px!important}.socialChatPanel #pubChatInput::placeholder,.socialNameBar input::placeholder{color:#777f8d}.socialChatPanel #pubChatSend{width:48px;height:42px;padding:0!important;border:0!important;border-radius:13px!important;background:linear-gradient(135deg,#16d5e6,#9b51f6)!important;color:#11151a!important;font-size:0!important;box-shadow:none!important}.socialChatPanel #pubChatSend::before{content:"➤";font-size:20px}.socialChatPanel .pcMsg{padding:10px 4px;border-color:#242935;font-size:13px}.socialChatPanel .pcName{color:#3ddfe7}.socialChatPanel .pcTime{color:#737e8e}.socialChatPanel .pcText{color:#e1e6ee}.socialAppPanel{padding:16px;overflow:auto}.socialAppPanel .gScreen{position:static!important;inset:auto!important;display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;padding:0!important;overflow:visible!important;background:transparent!important}.socialAppPanel .screenBack{display:none!important}.socialAppPanel .gTitle{margin:3px 0 18px!important;text-align:left!important;font-size:24px!important}.socialAppPanel #lbScreen{max-width:100%!important}.socialAppPanel #lbList{max-height:55vh;overflow:auto}.socialChangePanel{padding:18px 22px;overflow:auto}.socialChangeIntro{color:#99a3b1;font-size:13px;margin-bottom:8px}.socialChangePanel #socialChangeHost{overflow:auto}.socialChangePanel .changeLogEntry{border-color:#292d37}.socialChangePanel .changeLogTitle{color:#e7eaf0}.socialChangePanel .changeLogEntry ul{color:#aeb7c3}
+@media(max-width:900px){#socialScreen{left:76px;padding:15px 14px 20px;gap:12px}.socialNameBar{min-height:54px}}@media(max-width:620px){#socialScreen{inset:64px 0 0 62px;padding:10px 8px;gap:8px}.socialTabs{gap:2px}.socialTab{padding:9px 10px!important;font-size:11px!important}.socialNameBar{gap:6px;padding:8px}.socialNameBar label{font-size:11px}.socialNameBar input{height:36px;font-size:11px}.socialNameBar button{padding:9px 11px!important;font-size:11px!important}.socialChatPanel{border-radius:13px}.socialChatPanel #pubChatMessages{padding:12px!important}.socialChatPanel #pubChatForm{padding:6px 9px 10px!important}.socialAppPanel{padding:10px}}
+.socialAppPanel .gScreen{display:none!important}.socialAppPanel .gScreen[style*="display: block"]{display:block!important}.siteSideLink{position:relative}.socialUnreadBadge{display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);width:19px;height:19px;align-items:center;justify-content:center;border-radius:50%;background:#f04452;color:#fff;font:900 13px/1 system-ui;box-shadow:0 0 12px #f0445266}.socialUnreadBadge.visible{display:flex}.siteSideLink.active .socialUnreadBadge{background:#ff3f59;color:#fff}
+</style>
+<style id="save-transfer-and-navigation-fixes">
+/* The fixed sidebar is the site's navigation; legacy screen back controls are obsolete. */
+#backButton,#casinoBackButton,#casesBackButton,#stockBackButton,.screenBack{display:none!important}
+.siteSettings section{width:min(620px,94vw);max-height:90vh;overflow:auto}
+.saveTransfer{margin-top:20px;padding-top:14px;border-top:1px solid #303744}
+.saveTransfer label{display:block;margin:12px 0 7px;color:#99a6b7;font-size:11px;font-weight:850;letter-spacing:.12em}
+.saveTransfer textarea{display:block;width:100%;min-height:76px;max-height:180px;box-sizing:border-box;resize:vertical;padding:12px!important;border:1px solid #303744!important;border-radius:10px!important;background:#0e1118!important;color:#dfe6ef!important;font:12px ui-monospace,monospace!important;overflow-wrap:anywhere}
+.saveTransfer button{margin:8px 8px 2px 0;padding:10px 14px!important;border:1px solid #3a5064!important;border-radius:10px!important;background:#172332!important;color:#e7f0fa!important;font-size:12px!important}
+.saveTransfer button:hover{border-color:#38dfe8!important;transform:translateY(-1px)}
+#saveTransferStatus{min-height:18px;margin-top:8px;color:#2bdde5;font-size:12px}
+#casePanels{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));align-items:stretch;gap:18px;width:min(1240px,100%);margin:18px auto!important}
+.caseStorePanel{width:auto!important;max-width:none!important;height:520px;min-width:0;display:flex;flex-direction:column;padding:20px!important;box-sizing:border-box}
+.caseStorePanel h2{display:flex;align-items:center;justify-content:center;min-height:58px;margin:0 0 10px!important;font-size:clamp(18px,1.65vw,24px)!important;line-height:1.15;overflow-wrap:anywhere}
+.caseStorePanel .casePrice{flex:none}
+.caseStorePanel .caseBlurb{min-height:38px;display:flex;align-items:center;justify-content:center;text-align:center}
+.caseStorePanel .caseOddsRow{flex:none;padding:6px 0;font-size:12px;gap:7px}
+.caseStorePanel .caseOddsHeader{padding:4px 0}
+.caseStorePanel .caseOpenButton{margin-top:auto;flex:none}
+@media(max-width:700px){#casePanels{grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px}.caseStorePanel{height:470px;padding:16px!important}.caseStorePanel h2{font-size:19px!important}}
+.caseStickerContents{min-height:28px;margin:8px 0 10px;border:1px solid #34313e;border-radius:9px;background:#10121a;overflow:hidden}
+.caseStickerContents summary{padding:8px 10px;color:#d9c1ff;font-size:11px;font-weight:850;cursor:pointer;list-style-position:inside}
+.caseStickerContents[open]{height:174px;min-height:174px;display:flex;flex-direction:column}
+.caseStickerList{flex:1;min-height:0;overflow:auto;padding:0 7px 7px;scrollbar-color:#484151 transparent}
+.caseStickerRow{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:7px;min-height:42px;padding:4px 2px;border-top:1px solid #272631}
+.caseStickerPhoto{width:40px;height:38px;display:flex;align-items:center;justify-content:center;border:1px dashed #50505c;border-radius:5px;color:#7e8490;font-size:7px;font-weight:800}
+.caseStickerPhoto[src]{display:block;object-fit:contain;border-style:solid;background:#0b0d12}
+.caseStickerName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e6e4ec;font-size:10px}
+.caseStickerPrice{white-space:nowrap;font-size:10px;font-weight:850}
+.caseMarketNote{min-height:24px;margin:-7px 0 4px;color:#8992a2;text-align:center;font-size:9px;line-height:1.3}
+.caseMarketNote a{color:#c990ff;text-decoration:underline}
+.caseStickerContents[open]{height:132px;min-height:132px}
+@media(max-width:700px){.caseStorePanel{height:500px}}
+</style>
+<style id="loading-and-notification-fit">
+#toastHost{top:max(12px,env(safe-area-inset-top));left:50%;width:min(410px,calc(100vw - 24px));max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);padding:0 2px 4px;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.toast{min-width:0;max-width:100%;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);box-sizing:border-box;overflow:auto;overflow-wrap:anywhere}
+.toastText{flex:1;min-width:0;overflow-wrap:anywhere;word-break:normal}
+.toastTitle,.toastBody{overflow-wrap:anywhere;word-break:normal}
+.toastBody{max-height:calc(100vh - 125px);max-height:calc(100dvh - 125px);overflow:auto}
+#achHost{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));width:min(340px,calc(100vw - 24px));max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);box-sizing:border-box;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.achPopup{min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+.achPopup>div:last-child,.achName,.achDesc{min-width:0;overflow-wrap:anywhere;word-break:normal}
+@media(max-width:480px){.loadingSubtitle{font-size:9px;letter-spacing:.13em}.toast{gap:9px;padding:11px 12px}.toastTitle{font-size:14px}.toastBody{font-size:12px}.achPopup{gap:9px;padding:10px 12px}.achName{font-size:14px}}
+</style>
 </body>
 </html>
 
