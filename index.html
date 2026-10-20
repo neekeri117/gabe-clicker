@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 6.16 — CASE REEL SKIN CARDS -->
+<!-- OUTER/GABE CLICKER SITE VERSION 6.17 — CASE INVENTORY CLEANUP -->
 
 <html lang="en">
 <head>
@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.16</div>
+  <div class="sidebarFoot">V6.17</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -10359,6 +10359,55 @@ try {
     if (Array.isArray(savedInventory)) caseInventory = savedInventory.filter(item => item && CASE_TIERS[item.tier]);
 } catch (e) {}
 
+function migrateMissingCasePictures() {
+    const migrationKey = "caseInventoryPictureRefundV1";
+    function completePending(record) {
+        caseInventory = Array.isArray(record.inventory) ? record.inventory : [];
+        gabeClicks = Math.max(0, Number(record.balance) || 0);
+        localStorage.setItem("caseInventory", JSON.stringify(caseInventory));
+        localStorage.setItem("gabeClicks", String(gabeClicks));
+        localStorage.setItem(migrationKey, JSON.stringify({status:"done",removed:Number(record.removed)||0,refund:Number(record.refund)||0}));
+        updateClicker();
+    }
+    try {
+        const prior = JSON.parse(localStorage.getItem(migrationKey) || "null");
+        if (prior && prior.status === "done") return;
+        if (prior && prior.status === "pending") {
+            completePending(prior);
+            return;
+        }
+        const kept = [];
+        const removed = [];
+        caseInventory.forEach(function(item) {
+            if (item && typeof item.image === "string" && item.image.trim()) kept.push(item);
+            else if (item) removed.push(item);
+        });
+        if (!removed.length) {
+            localStorage.setItem(migrationKey, JSON.stringify({status:"done",removed:0,refund:0}));
+            return;
+        }
+        const refund = removed.reduce(function(total, item) {
+            const value = Number(item.payout);
+            return total + (Number.isFinite(value) && value > 0 ? value : 0);
+        }, 0);
+        const record = {
+            status: "pending",
+            inventory: kept,
+            balance: Math.max(0, Number(gabeClicks) || 0) + refund,
+            removed: removed.length,
+            refund: refund
+        };
+        localStorage.setItem(migrationKey, JSON.stringify(record));
+        completePending(record);
+        if (typeof showToast === "function") {
+            showToast("🧹 Older case drops without pictures were removed. Refunded $" + formatCaseMoney(refund) + ".");
+        }
+    } catch (error) {
+        console.warn("Could not finish the case inventory cleanup yet:", error);
+    }
+}
+migrateMissingCasePictures();
+
 function pickCaseDrop(caseDef) {
 
     let total = 0;
@@ -13601,7 +13650,8 @@ const CHANGELOG_ENTRIES = [
     changes: [
       "Added the CS:GO Weapon Case, Kilowatt Case, and two 2014 souvenir packages, including the ESL One Cologne Nuke package.",
       "Every skin shown on the case reel now has its matching picture and name; the full drop gallery is available when you want it.",
-      "Case buttons stay usable after opening, and prices keep their cents."
+      "Case buttons stay usable after opening, and prices keep their cents.",
+      "Older case drops without pictures are removed from each player's inventory and their recorded value is refunded."
     ]
   },
   {
