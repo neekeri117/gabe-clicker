@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.0 · </div>
+  <div class="sidebarFoot">V6.1</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4170,7 +4170,7 @@ alt=""
   <section id="socialAppPanel" class="socialAppPanel" style="display:none"><div id="socialDynamicHost"></div></section>
   <section id="socialChangePanel" class="socialChatPanel socialChangePanel" style="display:none"><div class="socialChangeIntro">Recent site updates</div><div id="socialChangeHost"></div></section>
 </main>
-<div id="siteSettings" class="siteSettings" role="dialog" aria-modal="true" aria-labelledby="siteSettingsTitle"><section><button class="settingsClose" onclick="closeSiteSettings()">✕</button><div class="eyebrow">PREFERENCES</div><h2 id="siteSettingsTitle">Settings</h2><p>Adjust your site view.</p><button onclick="changeBackground()">Change background</button><button onclick="openNameChange()">Change display name</button><button onclick="toggleChangeLog(true);closeSiteSettings()">View changelog</button><div class="saveTransfer"><label for="saveExport">SAVE EXPORT (COPY TO MOVE SAVES ANYWHERE)</label><textarea id="saveExport" readonly placeholder="Generate an export code to copy your save."></textarea><button type="button" onclick="exportSaveCode()">GENERATE / COPY CODE</button><label for="saveImport">IMPORT SAVE (PASTE + LOAD)</label><textarea id="saveImport" placeholder="Paste exported save code here"></textarea><button type="button" onclick="importSaveCode()">IMPORT SAVE</button><div id="saveTransferStatus" role="status" aria-live="polite"></div></div></section></div>
+<div id="siteSettings" class="siteSettings" role="dialog" aria-modal="true" aria-labelledby="siteSettingsTitle"><section><button class="settingsClose" onclick="closeSiteSettings()">✕</button><div class="eyebrow">PREFERENCES</div><h2 id="siteSettingsTitle">Settings</h2><p>Adjust your site view.</p><button id="lowGraphicsButton" type="button" aria-pressed="false" onclick="toggleLowGraphics()">Low graphics: Off</button><div class="settingsHint">Reduces visual effects and eases Plinko rendering.</div><button onclick="changeBackground()">Change background</button><button onclick="openNameChange()">Change display name</button><button onclick="toggleChangeLog(true);closeSiteSettings()">View changelog</button><div class="saveTransfer"><label for="saveExport">SAVE EXPORT (COPY TO MOVE SAVES ANYWHERE)</label><textarea id="saveExport" readonly placeholder="Generate an export code to copy your save."></textarea><button type="button" onclick="exportSaveCode()">GENERATE / COPY CODE</button><label for="saveImport">IMPORT SAVE (PASTE + LOAD)</label><textarea id="saveImport" placeholder="Paste exported save code here"></textarea><button type="button" onclick="importSaveCode()">IMPORT SAVE</button><div id="saveTransferStatus" role="status" aria-live="polite"></div></div></section></div>
 <script>
 /* Home menu: kept in its own script right after the markup so it works
    even if another part of the page has a problem. */
@@ -7526,7 +7526,7 @@ function animatePlinko() {
         // Gently guide the animation toward the preselected, odds-weighted slot.
         const targetX = (ball.targetSlot + 0.5) * (plinkoCanvas.width / plinkoMultipliers.length);
         if (ball.y > 170) ball.x += (targetX - ball.x) * 0.025;
-        plinkoPegs.forEach(peg => {
+        if (!document.documentElement.classList.contains("lowGraphics")) plinkoPegs.forEach(peg => {
             const dx = ball.x - peg.x, dy = ball.y - peg.y, distance = Math.sqrt(dx*dx + dy*dy);
             const collisionDistance = plinkoBallRadius + plinkoPegRadius;
             if (distance < collisionDistance && distance > 0) {
@@ -7538,7 +7538,7 @@ function animatePlinko() {
         });
         if (ball.y > plinkoCanvas.height - 35 || ball.frames >= 300) settlePlinkoBall(i);
     }
-    drawPlinko();
+    if (!document.documentElement.classList.contains("lowGraphics") || plinkoBalls.length % 2 === 0) drawPlinko();
     if (plinkoBalls.length > 0 || plinkoBatchRemaining > 0) requestAnimationFrame(animatePlinko);
     else { plinkoAnimating = false; finishPlinkoBatch(); }
 }
@@ -10183,23 +10183,16 @@ function formatCaseMoney(value) {
     return Number(value).toLocaleString("en-US", {minimumFractionDigits:Number.isInteger(Number(value))?0:2,maximumFractionDigits:2});
 }
 
-/* Case opening sound. The mp3 is cut so the ticking runs for exactly
-   CASE_SPIN_MS and the reveal sting hits as the reel stops. If you
-   change CASE_SPIN_MS, the sound will no longer line up. */
+/* Keep the original case-opening audio beside the HTML file. */
 const caseOpenSound = new Audio("csgo-case-open-cut.mp3");
-
 caseOpenSound.preload = "auto";
 
 function playCaseOpenSound() {
-
     try {
+        caseOpenSound.pause();
         caseOpenSound.currentTime = 0;
-
-        const p = caseOpenSound.play();
-
-        if (p && p.catch) {
-            p.catch(function() {});
-        }
+        const playback = caseOpenSound.play();
+        if (playback && playback.catch) playback.catch(function() {});
     } catch (e) {}
 }
 
@@ -10258,7 +10251,18 @@ function randomReelTier(caseDef) {
     return caseDef.drops[0].tier;
 }
 
-function renderCaseReel(caseDef, winningTier, winIndex) {
+function randomReelDrop(caseDef) {
+    let total = 0;
+    caseDef.drops.forEach(function(drop) { total += Math.sqrt(drop.chance); });
+    let roll = Math.random() * total;
+    for (const drop of caseDef.drops) {
+        roll -= Math.sqrt(drop.chance);
+        if (roll < 0) return drop;
+    }
+    return caseDef.drops[0];
+}
+
+function renderCaseReel(caseDef, winningTier, winIndex, winningDrop) {
 
     const track = document.getElementById("caseReelTrack");
 
@@ -10266,9 +10270,10 @@ function renderCaseReel(caseDef, winningTier, winIndex) {
 
     for (let i = 0; i < CASE_REEL_CARDS; i++) {
 
-        const tier = i === winIndex
-            ? winningTier
-            : randomReelTier(caseDef);
+        const reelDrop = i === winIndex && winningDrop
+            ? winningDrop
+            : randomReelDrop(caseDef);
+        const tier = i === winIndex ? winningTier : reelDrop.tier;
 
         const color = CASE_TIERS[tier].color;
 
@@ -10279,6 +10284,18 @@ function renderCaseReel(caseDef, winningTier, winIndex) {
         card.style.background =
             "linear-gradient(160deg, " + color + ", " + color + "99)";
 
+        if (reelDrop.image) {
+            card.classList.add("caseCardSticker");
+            const img = document.createElement("img");
+            img.src = reelDrop.image;
+            img.alt = reelDrop.itemName || "Sticker";
+            img.decoding = "async";
+            card.appendChild(img);
+            const label = document.createElement("span");
+            label.textContent = (reelDrop.itemName || "").replace("Sticker | ", "").replace(" | Katowice 2014", "");
+            card.appendChild(label);
+        }
+
         track.appendChild(card);
     }
 }
@@ -10286,6 +10303,7 @@ function renderCaseReel(caseDef, winningTier, winIndex) {
 function setCaseReelPosition(index, animate, extraOffset) {
 
     const track = document.getElementById("caseReelTrack");
+    const lowGraphics = document.documentElement.classList.contains("lowGraphics");
 
     const windowWidth =
         document.getElementById("caseReelWindow").clientWidth;
@@ -10298,21 +10316,24 @@ function setCaseReelPosition(index, animate, extraOffset) {
 
     if (!animate) {
 
-        track.style.transition = "none";
+        if (lowGraphics) track.style.setProperty("transition", "none", "important");
+        else track.style.transition = "none";
 
         track.style.transform = "translateX(" + (-offset) + "px)";
 
         return;
     }
 
-    track.style.transition = "none";
+    if (lowGraphics) track.style.setProperty("transition", "none", "important");
+    else track.style.transition = "none";
 
     track.style.transform = "translateX(0px)";
 
     void track.offsetWidth;
 
-    track.style.transition =
-        "transform " + (CASE_SPIN_MS / 1000) + "s cubic-bezier(0.35, 0.1, 0.4, 1)";
+    const reelTransition = "transform " + (CASE_SPIN_MS / 1000) + "s cubic-bezier(0.35, 0.1, 0.4, 1)";
+    if (lowGraphics) track.style.setProperty("transition", reelTransition, "important");
+    else track.style.transition = reelTransition;
 
     track.style.transform = "translateX(" + (-offset) + "px)";
 }
@@ -10424,6 +10445,17 @@ function renderCaseInventory() {
         const card = document.createElement("div");
         card.className = "caseInventoryItem";
         card.style.borderLeftColor = tier.color;
+        const sourceCase = Object.values(CASE_TYPES).find(def => def.name === group.caseName);
+        const stickerDrop = sourceCase && sourceCase.drops.find(drop => drop.itemName === group.itemName);
+        const stickerImage = stickerDrop && stickerDrop.image;
+        if (stickerImage) {
+            const image = document.createElement("img");
+            image.className = "caseInventorySticker";
+            image.src = stickerImage;
+            image.alt = group.itemName;
+            image.loading = "lazy";
+            card.appendChild(image);
+        }
         const name = document.createElement("div");
         name.className = "caseInventoryName";
         name.style.color = tier.color;
@@ -10505,7 +10537,7 @@ function openCase(caseKey) {
 
     const winIndex = 50 + Math.floor(Math.random() * 6);
 
-    renderCaseReel(def, drop.tier, winIndex);
+    renderCaseReel(def, drop.tier, winIndex, drop);
 
     const wobble = (Math.random() - 0.5) * CASE_CARD_WIDTH * 0.7;
 
@@ -13400,15 +13432,15 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
-    {
-  date: "2026-10-20",
-  title: "Visual Rehaul",
-  changes: [
-    "Completely redid the visuals of the entire site \(r.i.p to epstein.gif)\",
-    "Added the Katowice 2014 Legends and the Katowice 2014 Challengers sticker capsules.",
-    "Changed some of the Business' names."
-  ]
-},
+  {
+    date: "2026-10-20",
+    title: "Visual Rehaul",
+    changes: [
+      "Completely redesigned the site's visuals and loading screen.",
+      "Added the EMS Katowice 2014 Legends and Challengers sticker capsules.",
+      "Renamed several Empire businesses."
+    ]
+  },
   {
     date: "2026-10-20",
     title: "Poker + QoL + Names",
@@ -13457,6 +13489,7 @@ function updateChangeLogBadge() {
 function toggleChangeLog(open) {
   const overlay = document.getElementById("changeLogOverlay");
   if (!overlay) return;
+  if (open) renderChangeLog();
   overlay.classList.toggle("open", !!open);
   if (open) {
     try { localStorage.setItem(CHANGELOG_SEEN_KEY, CHANGELOG_VERSION); } catch (e) {}
@@ -15234,11 +15267,14 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
     document.getElementById('socialChangePanel').style.display=t==='changelog'?'flex':'none';
     ['lbScreen','achScreen','statsScreen'].forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});
     if(t==='leaderboard')window.openLeaderboard();if(t==='achievements')window.openAchievements();if(t==='stats')window.openStats();
-    if(t==='changelog'){const src=document.getElementById('changeLogEntries'),dst=document.getElementById('socialChangeHost');if(src&&dst)dst.replaceChildren(...Array.from(src.children).map(function(n){return n.cloneNode(true);}));}
+    if(t==='changelog'){renderChangeLog();const src=document.getElementById('changeLogEntries'),dst=document.getElementById('socialChangeHost');if(src&&dst)dst.replaceChildren(...Array.from(src.children).map(function(n){return n.cloneNode(true);}));}
   };
   window.addEventListener('gabe-chat-message',function(event){const d=event.detail||{};if(d.initial)return;const senderId=String(d.pid||''),myId=String(window.gabePlayerId||'');const senderName=String(d.name||'').trim().toLowerCase();let myName='';try{myName=(localStorage.getItem('gabePlayerName')||localStorage.getItem('pubChatName')||'').trim().toLowerCase();}catch(e){}if((senderId&&myId&&senderId===myId)||(!senderId&&senderName&&myName&&senderName===myName))return;const screen=document.getElementById('socialScreen'),chatPanel=document.getElementById('socialChatPanel');if(!screen||screen.style.display!=='flex'||!chatPanel||chatPanel.style.display==='none')document.getElementById('socialUnreadBadge').classList.add('visible');});
   window.openSiteSettings=function(){document.getElementById('siteSettings').classList.add('open');};
   window.closeSiteSettings=function(){document.getElementById('siteSettings').classList.remove('open');};
+  window.setLowGraphics=function(enabled){const on=!!enabled;document.documentElement.classList.toggle('lowGraphics',on);try{localStorage.setItem('gabeLowGraphics',on?'1':'0');}catch(e){}const b=document.getElementById('lowGraphicsButton');if(b){b.textContent='Low graphics: '+(on?'On':'Off');b.setAttribute('aria-pressed',String(on));}};
+  window.toggleLowGraphics=function(){window.setLowGraphics(!document.documentElement.classList.contains('lowGraphics'));};
+  try{window.setLowGraphics(localStorage.getItem('gabeLowGraphics')==='1');}catch(e){window.setLowGraphics(false);}
   const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime'];
   const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
   const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch']);
@@ -15253,6 +15289,8 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
     let money=0;try{if(typeof gabeClicks==='number')money=gabeClicks;}catch(e){}
     const cash='$'+(Number(money)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
     ['siteBalance','siteNetWorth'].forEach(function(id){const e=document.getElementById(id);if(e)e.textContent=cash;});
+    let incomeRate=0;try{if(typeof window.getEmpireIncome==='function')incomeRate=Number(window.getEmpireIncome())||0;if(typeof window.gabeIncomeMult==='function')incomeRate*=Number(window.gabeIncomeMult())||1;}catch(e){}
+    const incomeEl=document.getElementById('siteIncome');if(incomeEl)incomeEl.textContent='+$'+formatMoney(Math.max(0,incomeRate))+'/s';
     const clicks=document.getElementById('clickCount'), power=document.getElementById('clickPower');
     const c=document.getElementById('siteClicks');if(c&&clicks)c.textContent='Clicks: '+clicks.textContent.replace(/[^\d]/g,'');
     const p=document.getElementById('siteClickPower');if(p&&power)p.textContent=power.textContent.replace(/\s+PER CLICK/i,'/click');
@@ -15319,6 +15357,18 @@ body{padding:74px 0 0 220px!important;background:radial-gradient(ellipse at 68% 
 .caseMarketNote a{color:#c990ff;text-decoration:underline}
 .caseStickerContents[open]{height:132px;min-height:132px}
 @media(max-width:700px){.caseStorePanel{height:500px}}
+.caseCardSticker{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:7px;box-sizing:border-box;text-align:center}
+.caseCardSticker img{width:100%;height:72px;object-fit:contain;filter:drop-shadow(0 3px 5px #0009)}
+.caseCardSticker span{max-width:100%;color:#fff;font-size:9px;font-weight:850;line-height:1.1;text-shadow:0 1px 3px #000;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.caseInventoryItem{display:flex;align-items:center;gap:12px;min-height:74px}
+.caseInventorySticker{width:62px;height:62px;flex:none;object-fit:contain;border-radius:8px;background:#0d1119}
+.caseInventoryName,.caseInventoryDetail{min-width:0;overflow-wrap:anywhere}
+.settingsHint{margin:6px 0 10px;color:#9ca6b4;font-size:12px;line-height:1.45}
+html.lowGraphics *,html.lowGraphics *::before,html.lowGraphics *::after{animation:none!important;transition:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;text-shadow:none!important;scroll-behavior:auto!important}
+html.lowGraphics body{background:#0c0e12!important;background-image:none!important}
+html.lowGraphics #clickerScreen,html.lowGraphics #casinoScreen,html.lowGraphics #casesScreen,html.lowGraphics #stockMarketScreen,html.lowGraphics #empireScreen,html.lowGraphics .gScreen,html.lowGraphics #socialScreen{background:#0c0e12!important;background-image:none!important}
+html.lowGraphics #caseReelTrack{transition:transform 5.2s cubic-bezier(.35,.1,.4,1)!important}
+#changeLogOverlay{z-index:32000!important}
 </style>
 <style id="loading-and-notification-fit">
 #toastHost{top:max(12px,env(safe-area-inset-top));left:50%;width:min(410px,calc(100vw - 24px));max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);padding:0 2px 4px;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
