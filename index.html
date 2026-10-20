@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 6.10 — CASES OPENED LEADERBOARD -->
+<!-- OUTER/GABE CLICKER SITE VERSION 6.12 — EXPANDED CASE SELECTION -->
 
 <html lang="en">
 <head>
@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.10</div>
+  <div class="sidebarFoot">V6.12</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -10167,23 +10167,26 @@ const KATOWICE_CHALLENGERS_DROPS = makeKatowiceStickerDrops([
 const CASE_TYPES = {
 
     starter: {
-        name: "REVOLUTION CASE",
-        price: 500,
-        blurb: "An affordable case with a fair shot at upgraded drops.",
+        name: "CS:GO WEAPON CASE",
+        price: 148.59,
+        marketSource: "https://steamcommunity.com/market/listings/730/G18A11F3004?appid=730",
+        blurb: "Classic CS:GO case · simulated payouts; Steam listing price, key not included.",
         drops: [
-            { tier: "milspec", chance: 70, mult: 0.5 },
-            { tier: "restricted", chance: 24, mult: 1.1 },
-            { tier: "classified", chance: 5, mult: 4 },
-            { tier: "covert", chance: 1, mult: 15 }
+            { tier: "milspec", chance: 79.92, mult: 0.5 },
+            { tier: "restricted", chance: 15.98, mult: 1.1 },
+            { tier: "classified", chance: 3.20, mult: 4 },
+            { tier: "covert", chance: 0.64, mult: 15 },
+            { tier: "contraband", chance: 0.26, mult: 40 }
         ]
     },
 
     weapon: {
         name: "KILOWATT CASE",
 
-        price: 1000,
+        price: 0.19,
+        marketSource: "https://steamcommunity.com/market/listings/730/Kilowatt%20Case",
 
-        blurb: "CS2 drop rates: 79.92% / 15.98% / 3.20% / 0.64% / 0.26%",
+        blurb: "Real CS2 case · simulated drop table; Steam listing price, key not included.",
 
         drops: [
             { tier: "milspec",    chance: 79.92, mult: 0.35 },
@@ -10196,11 +10199,12 @@ const CASE_TYPES = {
 
     scrap: {
 
-        name: "FEVER CASE",
+        name: "ESL ONE COLOGNE 2014 DUST II SOUVENIR PACKAGE",
 
-        price: 100,
+        price: 491.63,
+        marketSource: "https://steamcommunity.com/market/listings/730/G18B61F3004",
 
-        blurb: "Cheap case where the low grades can drop too.",
+        blurb: "Real 2014 Dust II souvenir package · simulated drops; Steam listing price.",
 
         drops: [
             { tier: "consumer",   chance: 38, mult: 0.2 },
@@ -10213,9 +10217,10 @@ const CASE_TYPES = {
     },
 
     neon: {
-        name: "GALLERY CASE",
-        price: 5000,
-        blurb: "Bright drops, with a rare contraband jackpot.",
+        name: "ESL ONE COLOGNE 2014 NUKE SOUVENIR PACKAGE",
+        price: 958.00,
+        marketSource: "https://steamcommunity.com/market/listings/730/G18B91F3004",
+        blurb: "Real 2014 Nuke souvenir package · simulated drops; Steam listing price.",
         drops: [
             { tier: "milspec", chance: 45, mult: 0.3 },
             { tier: "restricted", chance: 35, mult: 0.8 },
@@ -10419,6 +10424,10 @@ function renderCasePanels() {
             "<h2>" + def.name + "</h2>" +
             '<div class="casePrice">$' + formatCaseMoney(def.price) + "</div>" +
             '<div class="caseBlurb">' + def.blurb + "</div>";
+
+        if (!def.stickerCapsule && def.marketSource) {
+            html += '<div class="caseMarketNote">Market listing price (may change; key not included). <a href="'+def.marketSource+'" target="_blank" rel="noopener">Price source</a></div>';
+        }
 
         if (def.stickerCapsule) {
             html += '<div class="caseMarketNote">Reference asks from low-volume marketplaces; prices can move. <a href="'+def.marketSource+'" target="_blank" rel="noopener">Price source</a></div>';
@@ -13494,6 +13503,13 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+  {
+    date: "2026-10-20",
+    title: "More CS2 Cases",
+    changes: [
+      "Added the classic CS:GO Weapon Case and two 2014 souvenir packages, including the ESL One Cologne Nuke package."
+    ]
+  },
   {
     date: "2026-10-20",
     title: "Cases Opened Leaderboard",
