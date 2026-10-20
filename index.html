@@ -11954,6 +11954,7 @@ updateClicker();
     }
 
     let stats = loadStats();
+    window.getPlayerPlayTime = function() { return Math.max(0, Number(stats.playTime) || 0); };
 
     let unlocked = {};
 
@@ -13892,6 +13893,7 @@ updateChangeLogBadge();
     <div id="lbTabs">
         <button class="lbTab active" data-tab="net" onclick="lbSetTab('net')">💰 NET WORTH</button>
         <button class="lbTab" data-tab="reb" onclick="lbSetTab('reb')">🔥 REBIRTHS</button>
+        <button class="lbTab" data-tab="time" onclick="lbSetTab('time')">⏱ PLAYTIME</button>
     </div>
 
     <div id="lbList"></div>
@@ -14331,8 +14333,9 @@ updateChangeLogBadge();
 
         const score = currentScore();
         const rebirths = currentRebirths();
+        const playTime = currentPlayTime();
 
-        const key = playerName + "|" + score + "|" + rebirths;
+        const key = playerName + "|" + score + "|" + rebirths + "|" + Math.floor(playTime / 60000);
 
         const now = Date.now();
 
@@ -14351,6 +14354,7 @@ updateChangeLogBadge();
                         name: playerName,
                         score: score,
                         rebirths: rebirths,
+                        playTime: playTime,
                         ts: { ".sv": "timestamp" }
                     })
                 }
@@ -14384,6 +14388,7 @@ updateChangeLogBadge();
                         name: playerName,
                         score: currentScore(),
                         rebirths: currentRebirths(),
+                        playTime: currentPlayTime(),
                         ts: { ".sv": "timestamp" }
                     })
                 }
@@ -14398,6 +14403,13 @@ updateChangeLogBadge();
 
     const SUFFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc"];
 
+    function formatPlayTime(ms) {
+        const t = Math.floor((Number(ms) || 0) / 60000), d = Math.floor(t / 1440), h = Math.floor((t % 1440) / 60), m = t % 60;
+        return d ? d + "d " + h + "h" : h ? h + "h " + m + "m" : m + "m";
+    }
+    function currentPlayTime() {
+        try { return Math.max(0, Number(window.getPlayerPlayTime()) || 0); } catch (e) { return 0; }
+    }
     function compact(n) {
 
         n = Number(n) || 0;
@@ -14448,6 +14460,9 @@ updateChangeLogBadge();
             if (lbTab === "reb") {
                 return (b.rebirths - a.rebirths) || (b.score - a.score);
             }
+            if (lbTab === "time") {
+                return (b.playTime - a.playTime) || (b.score - a.score);
+            }
             return (b.score - a.score) || (b.rebirths - a.rebirths);
         });
 
@@ -14480,9 +14495,11 @@ updateChangeLogBadge();
             mid.appendChild(el(
                 "div",
                 "lbSub",
-                lbTab === "reb"
-                    ? "Net worth $" + compact(r.score)
-                    : r.rebirths + (r.rebirths === 1 ? " rebirth" : " rebirths")
+                lbTab === "time"
+                    ? "Playtime"
+                    : lbTab === "reb"
+                        ? "Net worth $" + compact(r.score)
+                        : r.rebirths + (r.rebirths === 1 ? " rebirth" : " rebirths")
             ));
 
             row.appendChild(mid);
@@ -14490,7 +14507,7 @@ updateChangeLogBadge();
             row.appendChild(el(
                 "div",
                 "lbScore",
-                lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
+                lbTab === "time" ? "⏱ " + formatPlayTime(r.playTime) : lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
             ));
 
             list.appendChild(row);
@@ -14546,7 +14563,8 @@ updateChangeLogBadge();
                         id: id,
                         name: d.name.slice(0, NAME_MAX),
                         score: isFinite(score) && score > 0 ? score : 0,
-                        rebirths: isFinite(rebirths) && rebirths > 0 ? Math.floor(rebirths) : 0
+                        rebirths: isFinite(rebirths) && rebirths > 0 ? Math.floor(rebirths) : 0,
+                        playTime: isFinite(Number(d.playTime)) && Number(d.playTime) > 0 ? Number(d.playTime) : 0
                     });
                 });
             }
@@ -14785,7 +14803,7 @@ window.pokerSetMode=function(m){mode=m;hand=null;showMode();if(m==='multi'&&room
 function getBet(){const v=Number(document.getElementById('pokerBet').value);return Number.isFinite(v)?Math.floor(v):0}
 window.pokerDealSolo=function(){shuffle();const cards=[draw(),draw(),draw(),draw(),draw(),draw(),draw()];const r=bestOf(cards);hand={street:'showdown',pot:0,board:cards.slice(2),status:'Your best hand: '+r.name,players:[{id:pid,name:playerLabel,stack:0,cards:cards.slice(0,2),reveal:true,result:r.name}]};render()};
 function startLocal(bots){const bet=getBet();if(!Number.isSafeInteger(bet)||bet<1){alert('Enter a valid bet.');return}if(typeof gabeClicks==='undefined'||gabeClicks<bet){alert('Not enough Gabe clicks for that ante.');return}shuffle();gabeClicks-=bet;const players=[{id:pid,name:playerLabel,stack:0,cards:[draw(),draw()],folded:false,bet:bet}];for(let i=0;i<3;i++)players.push({id:'bot'+i,name:['Gabe Bot','Clicker AI','The House'][i],stack:0,cards:[draw(),draw()],folded:false,bet:bet});hand={street:'preflop',pot:bet*players.length,players,board:[],turn:0,bet,status:'Your turn — check/call to see the flop.'};updateCasinoBalance();updateClickDisplay();saveGame();render()}
-window.pokerStartBots=function(){if(mode!=='bots')return;startLocal(true)};
+window.pokerStartBots=function(){if(mode!=='bots'){mode='bots';showMode()}startLocal(true)};
 function advance(state){const streets=['preflop','flop','turn','river','showdown'];const ix=streets.indexOf(state.street);if(ix<1){state.board.push(draw(),draw(),draw())}else if(ix===1||ix===2)state.board.push(draw());if(ix>=3){state.street='showdown';const active=state.players.filter(p=>!p.folded);let winner=null;for(const p of active){p.result=bestOf(p.cards.concat(state.board)).name;if(!winner||compare(bestOf(p.cards.concat(state.board)),bestOf(winner.cards.concat(state.board)))>0)winner=p}if(winner){winner.stack+=state.pot;state.status=winner.id===pid?'You win the pot! Your hand: '+winner.result:winner.name+' wins with '+winner.result+'.';if(winner.id===pid){gabeClicks+=state.pot;updateCasinoBalance();updateClickDisplay();saveGame()}}else state.status='Everyone folded.';return}state.street=streets[ix+1];state.status=state.street==='flop'?'Flop dealt — your action.':state.street==='turn'?'Turn dealt — your action.':'River dealt — your action.';}
 window.pokerPlayerAction=function(action){if(mode==='multi'){pokerMultiAction(action);return}if(!hand||hand.street==='showdown')return;const me=hand.players[0];if(action==='fold'){me.folded=true;hand.street='showdown';hand.status='You folded. Start a new hand to play again.';render();return}if(action==='raise'){const raise=Math.max(1,Math.floor(getBet()/2));if(gabeClicks<raise){hand.status='Not enough clicks to raise.';render();return}gabeClicks-=raise;hand.pot+=raise;hand.players[0].bet+=raise;hand.status='You raised. The bots respond...';updateCasinoBalance();updateClickDisplay();saveGame()}for(let i=1;i<hand.players.length;i++){const p=hand.players[i];if(Math.random()<0.13&&hand.street!=='river')p.folded=true}if(hand.players.filter(p=>!p.folded).length===1){hand.street='showdown';hand.status='Everyone else folded — you win '+hand.pot+' clicks!';gabeClicks+=hand.pot;updateCasinoBalance();updateClickDisplay();saveGame()}else advance(hand);render()};
 async function api(path,method='GET',data){const r=await fetch(DB+'/'+path+'.json',{method,headers:{'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});if(!r.ok)throw Error('Database HTTP '+r.status);return r.json()}
@@ -14890,4 +14908,22 @@ window.pokerFallbackStart=function(kind){
  if(kind==='solo'){
   mode='solo';showMode();pokerDealSolo();document.getElementById('pokerMatchStatus').textContent='Started solo practice — no bots, no wager.';
  }else{
-  // A bot table uses the
+  // A bot table uses the same money-backed room logic as multiplayer.
+  mode='multi';showMode();const code=newCode();const players=[{id:pid,name:playerLabel,stack:currentPokerMoney(),cards:[],folded:false}];
+  for(let i=0;i<3;i++)players.push({id:'bot-'+i,name:['Gabe Bot','Clicker AI','The House'][i],stack:currentPokerMoney(),cards:[],folded:false,isBot:true});
+  roomCode=code;room={code,host:pid,players,game:null,updated:Date.now(),localBots:true};pokerLastAppliedStack=currentPokerMoney();
+  document.getElementById('pokerRoomStatus').textContent='Started a local table using your in-game money.';
+  document.getElementById('pokerMatchStatus').textContent='Started against bots. No public match or room code required.';
+  render();pokerMultiStart();
+ }
+ matchUi(false,document.getElementById('pokerMatchStatus').textContent);
+};
+window.addEventListener('beforeunload',()=>{if(polling)clearInterval(polling);if(matchSearchTimer)clearInterval(matchSearchTimer)});
+showMode();
+})();
+</script>
+
+</body>
+</html>
+
+
