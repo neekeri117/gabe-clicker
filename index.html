@@ -7340,6 +7340,18 @@ const plinkoCtx =
 
 const plinkoNormalMultipliers = [3.5, 1, 0.75, 0.5, 0.25, 0, 0.25, 0.5, 0.75, 1, 3.5];
 const plinkoHighRiskMultipliers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15];
+// Outcome odds: normal corner jackpots are 0.1% each; the high-risk jackpot is 1%.
+const plinkoNormalSlotWeights = [1, 80, 120, 150, 160, 178, 160, 150, 120, 80, 1];
+const plinkoHighSlotWeights = [99, 100, 100, 100, 100, 100, 100, 100, 100, 91, 10];
+function choosePlinkoSlot(mode) {
+    const weights = mode === "high" ? plinkoHighSlotWeights : plinkoNormalSlotWeights;
+    let roll = Math.random() * weights.reduce((sum, weight) => sum + weight, 0);
+    for (let i = 0; i < weights.length; i++) {
+        roll -= weights[i];
+        if (roll < 0) return i;
+    }
+    return weights.length - 1;
+}
 let plinkoMode = "normal";
 let plinkoMultipliers = plinkoNormalMultipliers;
 const plinkoRows = 9;
@@ -7364,8 +7376,8 @@ function setPlinkoMode(mode) {
     document.getElementById("plinkoNormalButton").classList.toggle("selected", plinkoMode === "normal");
     document.getElementById("plinkoHighRiskButton").classList.toggle("selected", plinkoMode === "high");
     document.getElementById("plinkoModeInfo").innerHTML = plinkoMode === "high"
-        ? "🔥 HIGH RISK: one winning slot out of 11 pays 15×. Every other slot pays 0×. Huge risk, low chance!"
-        : "🟡 NORMAL: multipliers range from 0× to 1.5×. Drop up to 50 balls per batch.";
+        ? "🔥 HIGH RISK: the 15× jackpot has a 1% chance; all other slots pay 0×."
+        : "🟡 NORMAL: corner jackpots have a 0.2% combined chance (0.1% per corner). Drop up to 50 balls per batch.";
     drawPlinko();
 }
 
@@ -7438,7 +7450,7 @@ function launchNextPlinkoBall() {
         return;
     }
     plinkoBalls.push({x: plinkoCanvas.width / 2 + (Math.random() - .5) * 8, y: 35,
-        vx: (Math.random() - .5) * 1.5, vy: 1.5, bet: plinkoBetAmount, mode: plinkoMode});
+        vx: (Math.random() - .5) * 1.5, vy: 1.5, bet: plinkoBetAmount, mode: plinkoMode, targetSlot: choosePlinkoSlot(plinkoMode)});
     plinkoBatchRemaining--;
     document.getElementById("plinkoBatchStatus").textContent = "Launched " + (plinkoBatchTotal - plinkoBatchRemaining) + "/" + plinkoBatchTotal + " · " + plinkoBalls.length + " in play";
     if (!plinkoAnimating) { plinkoAnimating = true; requestAnimationFrame(animatePlinko); }
@@ -7454,6 +7466,9 @@ function animatePlinko() {
         ball.x += ball.vx; ball.y += ball.vy; ball.vx *= 0.995;
         if (ball.x < plinkoBallRadius) { ball.x = plinkoBallRadius; ball.vx = Math.abs(ball.vx); }
         if (ball.x > plinkoCanvas.width - plinkoBallRadius) { ball.x = plinkoCanvas.width - plinkoBallRadius; ball.vx = -Math.abs(ball.vx); }
+        // Gently guide the animation toward the preselected, odds-weighted slot.
+        const targetX = (ball.targetSlot + 0.5) * (plinkoCanvas.width / plinkoMultipliers.length);
+        if (ball.y > 170) ball.x += (targetX - ball.x) * 0.025;
         plinkoPegs.forEach(peg => {
             const dx = ball.x - peg.x, dy = ball.y - peg.y, distance = Math.sqrt(dx*dx + dy*dy);
             const collisionDistance = plinkoBallRadius + plinkoPegRadius;
@@ -7474,7 +7489,7 @@ function animatePlinko() {
 function settlePlinkoBall(index) {
     const ball = plinkoBalls[index];
     const slotWidth = plinkoCanvas.width / plinkoMultipliers.length;
-    let slot = Math.max(0, Math.min(plinkoMultipliers.length - 1, Math.floor(ball.x / slotWidth)));
+    let slot = Number.isInteger(ball.targetSlot) ? ball.targetSlot : Math.max(0, Math.min(plinkoMultipliers.length - 1, Math.floor(ball.x / slotWidth)));
     // Resolve against the mode the ball was launched in, even if the player changes mode mid-drop.
     const multipliers = ball.mode === "high" ? plinkoHighRiskMultipliers : plinkoNormalMultipliers;
     const multiplier = multipliers[slot];
