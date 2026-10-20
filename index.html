@@ -13283,13 +13283,13 @@ const CHANGELOG_ENTRIES = [
     date: "2026-10-20",
     title: "Poker + QoL + Names",
     changes: [
-      "Added Texas Hold'Em Poker. Unsure if everything works correctly, especially multiplayer.",
+       "Added Texas Hold'Em Poker. Unsure if everything works correctly, especially multiplayer.",
       "Added a new \"NAME\" system for chats and leaderboards. You can change your name if you are not happy with it.",
       "Added the previously mentioned leaderboard.",
       "Added a new \"INVENTORY\" system for the cases.",
       "Added a few more cases.",
       "Updated Plinko with a small nerf, the ability to drop multiple balls at once, and a new HIGH RISK mode.",
-      "Added this changelog so you guys can see site updates."
+      "Added this changelog so players can see site updates."
     ]
   }
 ];
@@ -14431,6 +14431,7 @@ updateChangeLogBadge();
     let lastSent = "";
     let lastSentAt = 0;
     let sending = false;
+    let lastSubmitError = "";
 
     async function submitScore(force) {
 
@@ -14465,12 +14466,23 @@ updateChangeLogBadge();
                 }
             );
 
-            if (res.ok) {
-                lastSent = key;
-                lastSentAt = now;
+            if (!res.ok) {
+                const playTimeError = "HTTP " + res.status;
+                const fallback = await fetch(base + "/leaderboard/" + encodeURIComponent(playerId) + ".json", {
+                    method: "PATCH",
+                    body: JSON.stringify({ name: playerName, score: score, rebirths: rebirths, ts: { ".sv": "timestamp" } })
+                });
+                if (!fallback.ok) throw new Error(playTimeError + "; legacy score write HTTP " + fallback.status);
+                lastSubmitError = "Score saved; playtime sync was rejected (" + playTimeError + ").";
+            } else {
+                lastSubmitError = "";
             }
+            lastSent = key;
+            lastSentAt = now;
 
-        } catch (e) {}
+        } catch (e) {
+            lastSubmitError = e && e.message ? e.message : "Network error";
+        }
 
         sending = false;
     }
@@ -14585,10 +14597,12 @@ updateChangeLogBadge();
         });
 
         const myIndex = rows.findIndex(function(r) { return r.id === playerId; });
+        const rowsToShow = lbTab === "time" ? rows : rows.slice(0, BOARD_SHOW);
 
         summary.textContent = myIndex >= 0
             ? "YOUR RANK: #" + (myIndex + 1) + " of " + rows.length
             : rows.length + " PLAYERS";
+        if (lastSubmitError) summary.textContent += " · " + lastSubmitError;
 
         if (!rows.length) {
             const empty = el("div", "", "No scores yet. Be the first!");
@@ -14599,7 +14613,7 @@ updateChangeLogBadge();
 
         const medals = ["🥇", "🥈", "🥉"];
 
-        rows.slice(0, BOARD_SHOW).forEach(function(r, i) {
+        rowsToShow.forEach(function(r, i) {
 
             const row = el("div", "lbRow" + (r.id === playerId ? " me" : ""));
 
@@ -14632,7 +14646,7 @@ updateChangeLogBadge();
         });
 
         /* If you are outside the shown top list, show your own row at the end. */
-        if (myIndex >= BOARD_SHOW) {
+        if (myIndex >= rowsToShow.length) {
 
             const r = rows[myIndex];
 
@@ -14687,6 +14701,9 @@ updateChangeLogBadge();
                 });
             }
 
+            if (playerName && !lbData.some(function(r) { return r.id === playerId; })) {
+                lbData.push({ id: playerId, name: playerName, score: currentScore(), rebirths: currentRebirths(), playTime: currentPlayTime() });
+            }
             lbLoaded = true;
             lbFailed = false;
 
