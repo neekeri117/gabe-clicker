@@ -7338,8 +7338,8 @@ const plinkoCtx =
         "2d"
     );
 
-const plinkoNormalMultipliers = [3.5, 1, 0.75, 0.5, 0.25, 0, 0.25, 0.5, 0.75, 1, 3.5];
-const plinkoHighRiskMultipliers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15];
+const plinkoNormalMultipliers = [10, 1.5, 1.25, 0.75, 0.5, 0, 0.5, 0.75, 1.25, 1.5, 10];
+const plinkoHighRiskMultipliers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30];
 // Outcome odds: normal corner jackpots are 0.1% each; the high-risk jackpot is 1%.
 const plinkoNormalSlotWeights = [1, 80, 120, 150, 160, 178, 160, 150, 120, 80, 1];
 const plinkoHighSlotWeights = [99, 100, 100, 100, 100, 100, 100, 100, 100, 91, 10];
@@ -7376,8 +7376,8 @@ function setPlinkoMode(mode) {
     document.getElementById("plinkoNormalButton").classList.toggle("selected", plinkoMode === "normal");
     document.getElementById("plinkoHighRiskButton").classList.toggle("selected", plinkoMode === "high");
     document.getElementById("plinkoModeInfo").innerHTML = plinkoMode === "high"
-        ? "🔥 HIGH RISK: the 15× jackpot has a 1% chance; all other slots pay 0×."
-        : "🟡 NORMAL: corner jackpots have a 0.2% combined chance (0.1% per corner). Drop up to 50 balls per batch.";
+        ? "🔥 HIGH RISK: the 30× jackpot has a 1% chance; all other slots pay 0×."
+        : "🟡 NORMAL: returns more than your bet on about 24.2% of balls; corner jackpots pay 10× (0.1% per corner). Drop up to 50 balls per batch.";
     drawPlinko();
 }
 
