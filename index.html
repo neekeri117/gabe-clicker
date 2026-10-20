@@ -10208,7 +10208,9 @@ function renderCasePanels() {
 
     container.innerHTML = "";
 
-    for (const key in CASE_TYPES) {
+    const orderedCases = Object.keys(CASE_TYPES).sort((a, b) => CASE_TYPES[a].price - CASE_TYPES[b].price);
+
+    for (const key of orderedCases) {
 
         const def = CASE_TYPES[key];
 
@@ -10294,7 +10296,9 @@ function renderCaseInventory() {
         if (!group.lastPayout) group.lastPayout = item.payout || 0;
         groups.set(key, group);
     });
-    for (const group of groups.values()) {
+    const rarityOrder = ["consumer", "industrial", "milspec", "restricted", "classified", "covert", "contraband"];
+    const orderedGroups = Array.from(groups.values()).sort((a, b) => rarityOrder.indexOf(a.tier) - rarityOrder.indexOf(b.tier) || a.caseName.localeCompare(b.caseName));
+    for (const group of orderedGroups) {
         const tier = CASE_TIERS[group.tier];
         const card = document.createElement("div");
         card.className = "caseInventoryItem";
@@ -13285,7 +13289,7 @@ const CHANGELOG_ENTRIES = [
       "Added a new \"INVENTORY\" system for the cases.",
       "Added a few more cases.",
       "Updated Plinko with a small nerf, the ability to drop multiple balls at once, and a new HIGH RISK mode.",
-      "Added this changelog so players can see site updates."
+      "Added this changelog so you guys can see site updates."
     ]
   }
 ];
