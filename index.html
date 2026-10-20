@@ -14439,8 +14439,8 @@ updateChangeLogBadge();
 
         const score = currentScore();
         const rebirths = currentRebirths();
-        const playTime = currentPlayTime();
 
+        const playTime = currentPlayTime();
         const key = playerName + "|" + score + "|" + rebirths + "|" + Math.floor(playTime / 60000);
 
         const now = Date.now();
@@ -14473,7 +14473,7 @@ updateChangeLogBadge();
                     body: JSON.stringify({ name: playerName, score: score, rebirths: rebirths, ts: { ".sv": "timestamp" } })
                 });
                 if (!fallback.ok) throw new Error(playTimeError + "; legacy score write HTTP " + fallback.status);
-                lastSubmitError = "Score saved; playtime sync was rejected (" + playTimeError + ").";
+                lastSubmitError = "Score saved; playtime was not synced. Add playTime to the Firebase leaderboard rules.";
             } else {
                 lastSubmitError = "";
             }
