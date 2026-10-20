@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.5</div>
+  <div class="sidebarFoot">V6.6</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -7461,6 +7461,10 @@ let plinkoBatchNet = 0;
 const PLINKO_LAUNCH_COOLDOWN = 35;
 
 function setPlinkoMode(mode) {
+    if (plinkoBalls.length > 0 || plinkoBatchRemaining > 0) {
+        document.getElementById("plinkoBatchStatus").textContent = "Let the current batch finish before changing modes.";
+        return;
+    }
     plinkoMode = mode === "high" ? "high" : "normal";
     plinkoMultipliers = plinkoMode === "high" ? plinkoHighRiskMultipliers : plinkoNormalMultipliers;
     document.getElementById("plinkoNormalButton").classList.toggle("selected", plinkoMode === "normal");
@@ -7559,7 +7563,11 @@ function animatePlinko() {
         if (ball.x > plinkoCanvas.width - plinkoBallRadius) { ball.x = plinkoCanvas.width - plinkoBallRadius; ball.vx = -Math.abs(ball.vx); }
         // Gently guide the animation toward the preselected, odds-weighted slot.
         const targetX = (ball.targetSlot + 0.5) * (plinkoCanvas.width / plinkoMultipliers.length);
-        if (ball.y > 170) ball.x += (targetX - ball.x) * 0.025;
+        if (ball.y > 170) {
+            const finalApproach = ball.y > 350;
+            const steering = finalApproach ? 0.55 : 0.045;
+            ball.x += (targetX - ball.x) * steering;
+        }
         if (!document.documentElement.classList.contains("lowGraphics")) plinkoPegs.forEach(peg => {
             const dx = ball.x - peg.x, dy = ball.y - peg.y, distance = Math.sqrt(dx*dx + dy*dy);
             const collisionDistance = plinkoBallRadius + plinkoPegRadius;
@@ -7581,6 +7589,8 @@ function settlePlinkoBall(index) {
     const ball = plinkoBalls[index];
     const slotWidth = plinkoCanvas.width / plinkoMultipliers.length;
     let slot = Number.isInteger(ball.targetSlot) ? ball.targetSlot : Math.max(0, Math.min(plinkoMultipliers.length - 1, Math.floor(ball.x / slotWidth)));
+    // The animation and payout must land in the same slot, including the edge jackpots.
+    ball.x = (slot + 0.5) * slotWidth;
     // Resolve against the mode the ball was launched in, even if the player changes mode mid-drop.
     const multipliers = ball.mode === "high" ? plinkoHighRiskMultipliers : plinkoNormalMultipliers;
     const multiplier = multipliers[slot];
@@ -7605,7 +7615,7 @@ function finishPlinkoBatch() {
 }
 
 createPlinkoBoard();
-drawPlinko();
+setPlinkoMode(plinkoMode);
 
 /* =========================================================
    STOCK MARKET
@@ -13471,7 +13481,9 @@ const CHANGELOG_ENTRIES = [
     title: "Visual Rehaul",
     changes: [
       "Completely redesigned the site's visuals and loading screen.",
+      "Added the ability to Export/Import save files using the code you can get in the settings.",
       "Added the EMS Katowice 2014 Legends and Challengers sticker capsules.",
+      "Added a LOW GRAPHICS toggle.",
       "Renamed several Empire businesses."
     ]
   },
