@@ -11247,6 +11247,7 @@ updateClicker();
 
     /* used by achievements and Gabe events */
     window.getEmpireIncome = totalIncome;
+    window.getEmpireNetWorth = netWorth;
 
     /* Housing market: slow smooth cycle (same for everyone, based on the clock). */
     function marketAt(t) {
@@ -13686,6 +13687,14 @@ function closeWebsite() {
 
     function setStatus(t) { status.textContent = t; }
 
+    /* used after a name change to redraw all messages with the new names */
+    window.pubChatReload = function() {
+        box.textContent = "";
+        Object.keys(seen).forEach(function(k) { delete seen[k]; });
+        lastKey = null;
+        return poll().then(function() { box.scrollTop = box.scrollHeight; });
+    };
+
     /* ---------- online mode (Firebase REST) ---------- */
 
     async function poll() {
@@ -13724,6 +13733,7 @@ function closeWebsite() {
             method: "POST",
             body: JSON.stringify({
                 name: m.name,
+                pid: window.gabePlayerId || "",
                 text: m.text,
                 ts: { ".sv": "timestamp" }     /* server time, can't be faked */
             })
@@ -13799,6 +13809,1129 @@ function closeWebsite() {
 
 })();
 </script>
+
+
+<!-- =========================================================
+     PLAYER NAMES + PUBLIC LEADERBOARD
+     Paste this whole block right before </body>,
+     AFTER the PUBLIC CHAT block. No other code needs to change
+     (see the optional one-line tweak at the bottom).
+     ========================================================= -->
+
+<style>
+/* ---------- name popup ---------- */
+#nameOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.88);
+}
+
+#nameBox {
+    width: min(420px, 100%);
+
+    padding: 26px 24px 22px;
+
+    border: 1px solid rgba(255, 216, 77, 0.35);
+    border-radius: 22px;
+
+    background: linear-gradient(160deg, #1c1c26, #0b0b0f);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+
+    text-align: center;
+}
+
+#nameBoxTitle {
+    font-size: 24px;
+    font-weight: 1000;
+    letter-spacing: 2px;
+    color: #fff;
+}
+
+#nameBoxSub {
+    margin: 10px 0 16px;
+    color: #a5a5b3;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#nameInputField {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #3a3a46;
+    border-radius: 11px;
+
+    background: rgba(6, 6, 9, 0.9);
+    color: #fff;
+
+    font-size: 17px;
+    text-align: center;
+    outline: none;
+}
+
+#nameInputField:focus {
+    border-color: #d7a900;
+    box-shadow: 0 0 0 2px rgba(215, 169, 0, 0.15);
+}
+
+#nameError {
+    min-height: 20px;
+    margin: 8px 0 4px;
+
+    color: #ff6b6b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#nameButtons {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+#nameButtons button {
+    flex: 1;
+    padding: 12px;
+
+    border: 1px solid #555;
+    border-radius: 10px;
+
+    color: #fff;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+#nameSave {
+    border-color: rgba(255, 216, 77, 0.5);
+    background: linear-gradient(135deg, #7a5400, #d9a400);
+}
+
+#nameCancel {
+    background: #24242d;
+}
+
+#nameButtons button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
+/* ---------- menu buttons ---------- */
+#leaderboardButton {
+    background: linear-gradient(145deg, #7a3b00, #ff9a1f);
+}
+
+#nameMenuButton {
+    background: linear-gradient(145deg, #0b4a52, #19b6c9);
+}
+
+/* ---------- leaderboard screen ---------- */
+#lbScreen {
+    background:
+        radial-gradient(circle at top, rgba(255, 154, 31, 0.15), transparent 45%),
+        rgba(4, 4, 6, 0.98);
+}
+
+#lbTabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 auto 16px;
+}
+
+.lbTab {
+    padding: 9px 16px;
+
+    border: 1px solid #3a3a46;
+    border-radius: 10px;
+
+    background: #15151c;
+    color: #bbb;
+
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.lbTab.active {
+    border-color: rgba(255, 216, 77, 0.6);
+    background: linear-gradient(135deg, #4a3500, #9a7300);
+    color: #fff;
+}
+
+#lbList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    width: min(640px, 96vw);
+    margin: 0 auto;
+}
+
+.lbRow {
+    display: grid;
+    grid-template-columns: 46px 1fr auto;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 4px solid #2c2c36;
+    border-radius: 14px;
+
+    background: linear-gradient(160deg, #16161d, #0b0b0f);
+}
+
+.lbRow.me {
+    border-left-color: #ffd84d;
+    background: linear-gradient(160deg, #2a2208, #14110a);
+}
+
+.lbRank {
+    font-size: 20px;
+    font-weight: 1000;
+    text-align: center;
+    color: #8b8b9b;
+}
+
+.lbName {
+    min-width: 0;
+
+    font-weight: 900;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lbSub {
+    margin-top: 2px;
+    color: #777;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.lbScore {
+    color: #ffd84d;
+    font-size: 18px;
+    font-weight: 1000;
+    text-align: right;
+}
+
+#lbEmpty {
+    padding: 30px 0;
+    text-align: center;
+    color: #777;
+}
+
+#lbActions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px auto 0;
+}
+
+#lbActions button {
+    padding: 10px 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+
+    background: #14141c;
+    color: #fff;
+
+    font-weight: 900;
+    cursor: pointer;
+}
+
+/* ---------- menu: fit short screens ---------- */
+#menuPanel {
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a46 transparent;
+}
+
+@media (max-height: 820px) {
+    #menuPanel { padding: 10px; }
+    .menuHeading { margin-bottom: 8px; }
+    .menuGrid { gap: 7px; }
+    .menuItem { min-height: 62px; padding: 8px 6px; gap: 4px; border-radius: 13px; }
+    .menuItem .mi { font-size: 22px; }
+    .menuItem.slim { min-height: 0; padding: 9px 6px; }
+}
+
+/* ---------- chat: name line ---------- */
+#pubChatName { display: none !important; }
+
+#pubChatAs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 12px;
+    color: #8b8b9b;
+}
+
+#pubChatAs b {
+    color: #7ec8ff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#pubChatAs button {
+    flex: none;
+
+    padding: 4px 10px;
+
+    border: 1px solid #3a3a46;
+    border-radius: 8px;
+
+    background: #15151c;
+    color: #ddd;
+
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+}
+</style>
+
+<!-- menu entries (inserted into the existing HOME menu by the script below) -->
+
+<div id="lbScreen" class="gScreen">
+
+    <button class="screenBack" onclick="closeLeaderboard()">← BACK</button>
+
+    <h1 class="gTitle">🥇 LEADERBOARD</h1>
+
+    <div id="lbSummary" class="gSummary">Loading...</div>
+
+    <div id="lbTabs">
+        <button class="lbTab active" data-tab="net" onclick="lbSetTab('net')">💰 NET WORTH</button>
+        <button class="lbTab" data-tab="reb" onclick="lbSetTab('reb')">🔥 REBIRTHS</button>
+    </div>
+
+    <div id="lbList"></div>
+
+    <div id="lbActions">
+        <button onclick="lbRefresh()">🔄 REFRESH</button>
+        <button onclick="openNameChange()">✏️ CHANGE NAME</button>
+    </div>
+
+    <div class="gNote">
+        Net worth = cash + stock portfolio + property value.<br>
+        Your score is uploaded automatically every few seconds while the page is open.
+    </div>
+
+</div>
+
+<div id="nameOverlay">
+    <div id="nameBox" role="dialog" aria-modal="true" aria-labelledby="nameBoxTitle">
+        <div id="nameBoxTitle">CHOOSE YOUR NAME</div>
+        <div id="nameBoxSub">
+            This is the name shown on the leaderboard and in the public chat.
+        </div>
+        <input id="nameInputField" type="text" maxlength="20" placeholder="Your name" autocomplete="off">
+        <div id="nameError"></div>
+        <div id="nameButtons">
+            <button id="nameCancel" type="button">CANCEL</button>
+            <button id="nameSave" type="button">SAVE NAME</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+
+    "use strict";
+
+    /* Same database as the public chat. Leave in sync with FIREBASE_URL there. */
+    const FIREBASE_URL = "https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app";
+
+    const base = FIREBASE_URL.replace(/\/+$/, "");
+
+    const NAME_MIN = 2;
+    const NAME_MAX = 20;
+    const SUBMIT_MS = 20000;
+    const BOARD_SHOW = 50;
+
+    function $(id) { return document.getElementById(id); }
+
+    /* ---------------------------------------------------------
+       PLAYER IDENTITY
+       --------------------------------------------------------- */
+
+    function makeId() {
+        try {
+            const a = new Uint8Array(9);
+            crypto.getRandomValues(a);
+            return "p" + Array.from(a, function(b) {
+                return b.toString(36).padStart(2, "0");
+            }).join("").slice(0, 14);
+        } catch (e) {
+            return "p" + Math.random().toString(36).slice(2, 16);
+        }
+    }
+
+    let playerId = "";
+    let playerName = "";
+
+    try {
+        playerId = localStorage.getItem("gabePlayerId") || "";
+        playerName = localStorage.getItem("gabePlayerName") || "";
+    } catch (e) {}
+
+    if (!playerId) {
+        playerId = makeId();
+        try { localStorage.setItem("gabePlayerId", playerId); } catch (e) {}
+    }
+
+    window.gabePlayerId = playerId;
+
+    /* name this browser used in the chat before names were required */
+    let legacyChatName = "";
+    try { legacyChatName = localStorage.getItem("pubChatName") || ""; } catch (e) {}
+    legacyChatName = String(legacyChatName).replace(/\s+/g, " ").trim();
+    if (/^anonymous$/i.test(legacyChatName)) { legacyChatName = ""; }
+
+    function cleanName(raw) {
+        return String(raw || "")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function validateName(name) {
+
+        if (name.length < NAME_MIN) {
+            return "Name must be at least " + NAME_MIN + " characters.";
+        }
+
+        if (name.length > NAME_MAX) {
+            return "Name can be at most " + NAME_MAX + " characters.";
+        }
+
+        if (!/^[\p{L}\p{N} _.\-]+$/u.test(name)) {
+            return "Use only letters, numbers, spaces, _ . and -";
+        }
+
+        if (/^anonymous$/i.test(name)) {
+            return "Please pick a real name.";
+        }
+
+        return "";
+    }
+
+    playerName = cleanName(playerName);
+
+    if (validateName(playerName)) {
+        playerName = "";   /* invalid or missing: ask again */
+    }
+
+    /* ---------------------------------------------------------
+       NAME POPUP
+       --------------------------------------------------------- */
+
+    const overlay = $("nameOverlay");
+    const field = $("nameInputField");
+    const errorEl = $("nameError");
+    const saveBtn = $("nameSave");
+    const cancelBtn = $("nameCancel");
+
+    let required = false;   /* true = cannot be closed without a name */
+
+    function openNamePopup(isRequired) {
+
+        required = isRequired;
+
+        $("nameBoxTitle").textContent =
+            isRequired ? "CHOOSE YOUR NAME" : "CHANGE YOUR NAME";
+
+        $("nameBoxSub").textContent =
+            isRequired
+                ? "Pick a name to continue. It is shown on the leaderboard and in the public chat."
+                : "Your new name will replace the old one on the leaderboard and in the chat.";
+
+        cancelBtn.style.display = isRequired ? "none" : "block";
+
+        field.value = playerName;
+        errorEl.textContent = "";
+        saveBtn.disabled = false;
+
+        overlay.style.display = "flex";
+
+        setTimeout(function() {
+            field.focus();
+            field.select();
+        }, 30);
+    }
+
+    function closeNamePopup() {
+        overlay.style.display = "none";
+    }
+
+    window.openNameChange = function() {
+        openNamePopup(false);
+    };
+
+    /* Is this name already used by a different player? */
+    async function nameTaken(name) {
+
+        try {
+
+            const res = await fetch(base + "/leaderboard.json");
+
+            if (!res.ok) { return false; }
+
+            const data = await res.json();
+
+            if (!data) { return false; }
+
+            const lower = name.toLowerCase();
+
+            return Object.keys(data).some(function(id) {
+                return id !== playerId &&
+                    data[id] && typeof data[id].name === "string" &&
+                    data[id].name.toLowerCase() === lower;
+            });
+
+        } catch (e) {
+            return false;   /* server unreachable: don't lock the player out */
+        }
+    }
+
+    /* Rewrites old chat messages to the new name. Messages sent after this update
+       carry the player id; older ones are matched by the previous name. */
+    async function renamePastMessages(oldName, newName) {
+
+        try {
+
+            const res = await fetch(base + "/messages.json");
+
+            if (!res.ok) { return false; }
+
+            const data = await res.json();
+
+            if (!data) { return true; }
+
+            const updates = {};
+            let count = 0;
+
+            Object.keys(data).forEach(function(k) {
+
+                const m = data[k];
+
+                if (!m || typeof m.name !== "string") { return; }
+
+                const mine = m.pid === playerId;
+
+                const legacy = !m.pid && oldName &&
+                    m.name.toLowerCase() === oldName.toLowerCase();
+
+                if ((mine && m.name !== newName) || legacy) {
+                    updates[k + "/name"] = newName;
+                    if (!m.pid) { updates[k + "/pid"] = playerId; }
+                    count++;
+                }
+            });
+
+            if (!count) { return true; }
+
+            const r = await fetch(base + "/messages.json", {
+                method: "PATCH",
+                body: JSON.stringify(updates)
+            });
+
+            return r.ok;
+
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async function saveName() {
+
+        const name = cleanName(field.value);
+
+        const problem = validateName(name);
+
+        if (problem) {
+            errorEl.textContent = problem;
+            return;
+        }
+
+        saveBtn.disabled = true;
+        errorEl.textContent = "Checking...";
+
+        if (name !== playerName && await nameTaken(name)) {
+            errorEl.textContent = "That name is already taken. Try another.";
+            saveBtn.disabled = false;
+            return;
+        }
+
+        const oldName = playerName || legacyChatName;
+
+        playerName = name;
+
+        legacyChatName = "";
+
+        try { localStorage.setItem("gabePlayerName", name); } catch (e) {}
+
+        closeNamePopup();
+
+        applyNameEverywhere();
+
+        submitScore(true);
+
+        if (typeof showToast === "function") {
+            showToast("✅ Name saved\nYou are now " + name + ".");
+        }
+
+        if (oldName !== name) {
+
+            const ok = await renamePastMessages(oldName, name);
+
+            if (ok && typeof window.pubChatReload === "function") {
+                window.pubChatReload();
+            } else if (!ok && typeof showToast === "function") {
+                showToast("⚠️ Old chat messages couldn't be renamed\nThe database rules may not allow editing messages.");
+            }
+        }
+    }
+
+    saveBtn.addEventListener("click", saveName);
+
+    cancelBtn.addEventListener("click", function() {
+        if (!required) { closeNamePopup(); }
+    });
+
+    field.addEventListener("keydown", function(e) {
+
+        if (e.key === "Enter") {
+            e.preventDefault();
+            saveName();
+        }
+
+        if (e.key === "Escape" && !required) {
+            closeNamePopup();
+        }
+
+        e.stopPropagation();
+    });
+
+    /* Show the popup once the loading screen is gone, if there is no name. */
+    function requireNameWhenReady() {
+
+        if (playerName) { return; }
+
+        const timer = setInterval(function() {
+
+            const loading = $("loadingScreen");
+
+            if (!loading || loading.style.display === "none") {
+
+                clearInterval(timer);
+
+                if (!playerName) {
+                    openNamePopup(true);
+                }
+            }
+
+        }, 250);
+    }
+
+
+    /* ---------------------------------------------------------
+       CHAT: use the player's name
+       --------------------------------------------------------- */
+
+    const chatName = $("pubChatName");
+    const chatForm = $("pubChatForm");
+    const chatInput = $("pubChatInput");
+
+    let chatAs = null;
+    let chatAsName = null;
+
+    if (chatForm) {
+
+        chatAs = document.createElement("div");
+        chatAs.id = "pubChatAs";
+
+        const label = document.createElement("span");
+        label.textContent = "Chatting as ";
+
+        chatAsName = document.createElement("b");
+        label.appendChild(chatAsName);
+
+        const change = document.createElement("button");
+        change.type = "button";
+        change.textContent = "✏️ CHANGE";
+        change.addEventListener("click", function() { openNamePopup(false); });
+
+        chatAs.appendChild(label);
+        chatAs.appendChild(change);
+
+        chatForm.insertBefore(chatAs, chatForm.firstChild);
+
+        /* Block sending without a name (capture phase runs before the chat's own handler). */
+        chatForm.addEventListener("submit", function(e) {
+
+            if (!playerName) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                openNamePopup(true);
+                return;
+            }
+
+            chatName.value = playerName;
+
+        }, true);
+    }
+
+    function applyNameEverywhere() {
+
+        if (chatName) {
+            chatName.value = playerName;
+            chatName.readOnly = true;
+            if (playerName) { try { localStorage.setItem("pubChatName", playerName); } catch (e) {} }
+        }
+
+        if (chatAsName) {
+            chatAsName.textContent = playerName || "(no name)";
+        }
+
+        if (chatInput) {
+            chatInput.placeholder = playerName ? "Write a message..." : "Pick a name first...";
+        }
+    }
+
+    applyNameEverywhere();
+
+
+    /* ---------------------------------------------------------
+       SCORE + SUBMISSION
+       --------------------------------------------------------- */
+
+    function currentScore() {
+
+        let worth = 0;
+
+        try {
+            if (typeof window.getEmpireNetWorth === "function") {
+                worth = window.getEmpireNetWorth();      /* cash + property */
+            } else {
+                worth = gabeClicks;
+            }
+        } catch (e) {
+            worth = 0;
+        }
+
+        let portfolio = 0;
+
+        try { portfolio = getPortfolioValue(); } catch (e) {}
+
+        const total = Math.floor(worth + portfolio);
+
+        return isFinite(total) && total > 0 ? total : 0;
+    }
+
+    function currentRebirths() {
+        try { return rebirthLevel || 0; } catch (e) { return 0; }
+    }
+
+    let lastSent = "";
+    let lastSentAt = 0;
+    let sending = false;
+
+    async function submitScore(force) {
+
+        if (!playerName || sending) { return; }
+
+        const score = currentScore();
+        const rebirths = currentRebirths();
+
+        const key = playerName + "|" + score + "|" + rebirths;
+
+        const now = Date.now();
+
+        /* skip if nothing changed (but still ping once a minute) */
+        if (!force && key === lastSent && now - lastSentAt < 60000) { return; }
+
+        sending = true;
+
+        try {
+
+            const res = await fetch(
+                base + "/leaderboard/" + encodeURIComponent(playerId) + ".json",
+                {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        name: playerName,
+                        score: score,
+                        rebirths: rebirths,
+                        ts: { ".sv": "timestamp" }
+                    })
+                }
+            );
+
+            if (res.ok) {
+                lastSent = key;
+                lastSentAt = now;
+            }
+
+        } catch (e) {}
+
+        sending = false;
+    }
+
+    setInterval(function() {
+        if (!document.hidden) { submitScore(false); }
+    }, SUBMIT_MS);
+
+    window.addEventListener("beforeunload", function() {
+
+        if (!playerName) { return; }
+
+        try {
+            fetch(
+                base + "/leaderboard/" + encodeURIComponent(playerId) + ".json",
+                {
+                    method: "PUT",
+                    keepalive: true,
+                    body: JSON.stringify({
+                        name: playerName,
+                        score: currentScore(),
+                        rebirths: currentRebirths(),
+                        ts: { ".sv": "timestamp" }
+                    })
+                }
+            );
+        } catch (e) {}
+    });
+
+
+    /* ---------------------------------------------------------
+       LEADERBOARD SCREEN
+       --------------------------------------------------------- */
+
+    const SUFFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc"];
+
+    function compact(n) {
+
+        n = Number(n) || 0;
+
+        if (n < 1e6) { return Math.floor(n).toLocaleString("en-US"); }
+
+        const tier = Math.min(SUFFIXES.length - 1, Math.floor(Math.log10(n) / 3));
+        const scaled = n / Math.pow(1000, tier);
+
+        return (scaled >= 100 ? scaled.toFixed(0) : scaled >= 10 ? scaled.toFixed(1) : scaled.toFixed(2)) + SUFFIXES[tier];
+    }
+
+    let lbTab = "net";
+    let lbData = [];
+    let lbTimer = null;
+    let lbLoaded = false;
+    let lbFailed = false;
+
+    function el(tag, cls, text) {
+        const e = document.createElement(tag);
+        if (cls) { e.className = cls; }
+        if (text !== undefined) { e.textContent = text; }
+        return e;
+    }
+
+    function renderBoard() {
+
+        const list = $("lbList");
+        const summary = $("lbSummary");
+
+        list.textContent = "";
+
+        if (lbFailed && !lbLoaded) {
+            summary.textContent = "🔴 Can't reach the leaderboard";
+            list.appendChild(el("div", "", "Check your connection or the database rules."));
+            list.lastChild.id = "lbEmpty";
+            return;
+        }
+
+        if (!lbLoaded) {
+            summary.textContent = "Loading...";
+            return;
+        }
+
+        const rows = lbData.slice();
+
+        rows.sort(function(a, b) {
+            if (lbTab === "reb") {
+                return (b.rebirths - a.rebirths) || (b.score - a.score);
+            }
+            return (b.score - a.score) || (b.rebirths - a.rebirths);
+        });
+
+        const myIndex = rows.findIndex(function(r) { return r.id === playerId; });
+
+        summary.textContent = myIndex >= 0
+            ? "YOUR RANK: #" + (myIndex + 1) + " of " + rows.length
+            : rows.length + " PLAYERS";
+
+        if (!rows.length) {
+            const empty = el("div", "", "No scores yet. Be the first!");
+            empty.id = "lbEmpty";
+            list.appendChild(empty);
+            return;
+        }
+
+        const medals = ["🥇", "🥈", "🥉"];
+
+        rows.slice(0, BOARD_SHOW).forEach(function(r, i) {
+
+            const row = el("div", "lbRow" + (r.id === playerId ? " me" : ""));
+
+            row.appendChild(el("div", "lbRank", i < 3 ? medals[i] : "#" + (i + 1)));
+
+            const mid = el("div");
+            mid.style.minWidth = "0";
+
+            mid.appendChild(el("div", "lbName", r.name + (r.id === playerId ? " (you)" : "")));
+
+            mid.appendChild(el(
+                "div",
+                "lbSub",
+                lbTab === "reb"
+                    ? "Net worth $" + compact(r.score)
+                    : r.rebirths + (r.rebirths === 1 ? " rebirth" : " rebirths")
+            ));
+
+            row.appendChild(mid);
+
+            row.appendChild(el(
+                "div",
+                "lbScore",
+                lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
+            ));
+
+            list.appendChild(row);
+        });
+
+        /* If you are outside the shown top list, show your own row at the end. */
+        if (myIndex >= BOARD_SHOW) {
+
+            const r = rows[myIndex];
+
+            const row = el("div", "lbRow me");
+
+            row.appendChild(el("div", "lbRank", "#" + (myIndex + 1)));
+
+            const mid = el("div");
+            mid.appendChild(el("div", "lbName", r.name + " (you)"));
+            row.appendChild(mid);
+
+            row.appendChild(el(
+                "div",
+                "lbScore",
+                lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
+            ));
+
+            list.appendChild(row);
+        }
+    }
+
+    async function fetchBoard() {
+
+        try {
+
+            const res = await fetch(base + "/leaderboard.json");
+
+            if (!res.ok) { throw new Error("HTTP " + res.status); }
+
+            const data = await res.json();
+
+            lbData = [];
+
+            if (data && typeof data === "object") {
+
+                Object.keys(data).forEach(function(id) {
+
+                    const d = data[id];
+
+                    if (!d || typeof d.name !== "string") { return; }
+
+                    const score = Number(d.score);
+                    const rebirths = Number(d.rebirths);
+
+                    lbData.push({
+                        id: id,
+                        name: d.name.slice(0, NAME_MAX),
+                        score: isFinite(score) && score > 0 ? score : 0,
+                        rebirths: isFinite(rebirths) && rebirths > 0 ? Math.floor(rebirths) : 0
+                    });
+                });
+            }
+
+            lbLoaded = true;
+            lbFailed = false;
+
+        } catch (e) {
+            lbFailed = true;
+        }
+
+        renderBoard();
+    }
+
+    window.lbRefresh = async function() {
+        await submitScore(true);
+        fetchBoard();
+    };
+
+    window.lbSetTab = function(tab) {
+
+        lbTab = tab;
+
+        document.querySelectorAll(".lbTab").forEach(function(b) {
+            b.classList.toggle("active", b.getAttribute("data-tab") === tab);
+        });
+
+        renderBoard();
+    };
+
+    window.openLeaderboard = function() {
+
+        if (!playerName) {
+            openNamePopup(true);
+            return;
+        }
+
+        $("lbScreen").style.display = "block";
+
+        renderBoard();
+
+        submitScore(true).then(fetchBoard);
+
+        clearInterval(lbTimer);
+
+        lbTimer = setInterval(function() {
+
+            if ($("lbScreen").style.display !== "block") {
+                clearInterval(lbTimer);
+                return;
+            }
+
+            fetchBoard();
+
+        }, 10000);
+    };
+
+    window.closeLeaderboard = function() {
+        $("lbScreen").style.display = "none";
+        clearInterval(lbTimer);
+    };
+
+
+    /* ---------------------------------------------------------
+       MENU BUTTONS
+       --------------------------------------------------------- */
+
+    (function addMenuButtons() {
+
+        const grid = document.querySelector("#menuPanel .menuGrid");
+        const selfDestructBtn = $("selfDestructButton");
+
+        if (!grid) { return; }
+
+        function item(id, icon, label, handler) {
+
+            const b = document.createElement("button");
+
+            b.id = id;
+            b.className = "menuItem";
+            b.setAttribute("role", "menuitem");
+
+            const i = document.createElement("span");
+            i.className = "mi";
+            i.textContent = icon;
+
+            const t = document.createElement("span");
+            t.textContent = label;
+
+            b.appendChild(i);
+            b.appendChild(t);
+
+            b.addEventListener("click", handler);
+
+            grid.insertBefore(b, selfDestructBtn);
+        }
+
+        item("leaderboardButton", "🥇", "LEADERBOARD", function() { openLeaderboard(); });
+        item("nameMenuButton", "✏️", "CHANGE NAME", function() { openNamePopup(false); });
+
+        /* the existing menu script closes the menu on item click, but it ran before these
+           buttons existed, so close it here too */
+        grid.querySelectorAll("#leaderboardButton, #nameMenuButton").forEach(function(b) {
+            b.addEventListener("click", function() {
+                const menu = $("homeMenu");
+                if (menu) { menu.classList.remove("open"); }
+            });
+        });
+
+    })();
+
+
+    /* ---------------------------------------------------------
+       SELF DESTRUCT: hide the new screens too
+       --------------------------------------------------------- */
+
+    const origSelfDestruct = window.selfDestruct;
+
+    if (typeof origSelfDestruct === "function") {
+
+        window.selfDestruct = function() {
+
+            ["lbScreen", "nameOverlay"].forEach(function(id) {
+                const n = $(id);
+                if (n) { n.style.display = "none"; }
+            });
+
+            clearInterval(lbTimer);
+
+            origSelfDestruct.apply(this, arguments);
+        };
+    }
+
+
+    /* ---------------------------------------------------------
+       START
+       --------------------------------------------------------- */
+
+    requireNameWhenReady();
+
+    if (playerName) {
+        setTimeout(function() { submitScore(true); }, 3000);
+    }
+
+})();
+</script>
+
+<!-- =========================================================
+     OPTIONAL one-line tweak (recommended)
+     In your EMPIRE script, find the line:
+
+         window.getEmpireIncome = totalIncome;
+
+     and add this right below it, so property value counts
+     towards leaderboard net worth:
+
+         window.getEmpireNetWorth = netWorth;
+     ========================================================= -->
 
 
 </body>
