@@ -891,6 +891,12 @@ button:active {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
+ #caseInventoryHeading{max-width:900px;margin:8px auto 4px;text-align:center}
+#caseInventorySummary{margin:0 auto 12px;text-align:center;color:#aaa;font-size:13px}
+#caseInventory{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;width:min(900px,96vw);margin:0 auto 28px}
+.caseInventoryItem{padding:12px;border:1px solid #333;border-left:4px solid #777;border-radius:12px;background:linear-gradient(145deg,#19191f,#0c0c10)}
+.caseInventoryName{font-weight:900}
+.caseInventoryDetail{margin-top:5px;color:#aaa;font-size:12px}
 #casePanels {
     display: flex;
     justify-content: center;
@@ -5180,6 +5186,9 @@ onclick="closeCases()"
 <div id="caseResultSub"></div>
 
 <div id="caseHistory"></div>
+<h2 id="caseInventoryHeading">🎒 CASE INVENTORY</h2>
+<div id="caseInventorySummary">No drops collected yet.</div>
+<div id="caseInventory"></div>
 
 <div id="casePanels"></div>
 
@@ -7450,7 +7459,7 @@ function launchNextPlinkoBall() {
         return;
     }
     plinkoBalls.push({x: plinkoCanvas.width / 2 + (Math.random() - .5) * 8, y: 35,
-        vx: (Math.random() - .5) * 1.5, vy: 1.5, bet: plinkoBetAmount, mode: plinkoMode, targetSlot: choosePlinkoSlot(plinkoMode)});
+        vx: (Math.random() - .5) * 1.5, vy: 1.5, bet: plinkoBetAmount, mode: plinkoMode, targetSlot: choosePlinkoSlot(plinkoMode), frames: 0});
     plinkoBatchRemaining--;
     document.getElementById("plinkoBatchStatus").textContent = "Launched " + (plinkoBatchTotal - plinkoBatchRemaining) + "/" + plinkoBatchTotal + " · " + plinkoBalls.length + " in play";
     if (!plinkoAnimating) { plinkoAnimating = true; requestAnimationFrame(animatePlinko); }
@@ -7462,6 +7471,7 @@ function animatePlinko() {
     if (!plinkoAnimating) return;
     for (let i = plinkoBalls.length - 1; i >= 0; i--) {
         const ball = plinkoBalls[i];
+        ball.frames = (ball.frames || 0) + 1;
         ball.vy = Math.min(5, ball.vy + 0.12);
         ball.x += ball.vx; ball.y += ball.vy; ball.vx *= 0.995;
         if (ball.x < plinkoBallRadius) { ball.x = plinkoBallRadius; ball.vx = Math.abs(ball.vx); }
@@ -7479,7 +7489,7 @@ function animatePlinko() {
                 ball.vy = Math.max(1.5, ball.vy * 0.75);
             }
         });
-        if (ball.y > plinkoCanvas.height - 35) settlePlinkoBall(i);
+        if (ball.y > plinkoCanvas.height - 35 || ball.frames >= 300) settlePlinkoBall(i);
     }
     drawPlinko();
     if (plinkoBalls.length > 0 || plinkoBatchRemaining > 0) requestAnimationFrame(animatePlinko);
@@ -9982,8 +9992,19 @@ const CASE_TIERS = {
 */
 const CASE_TYPES = {
 
-    weapon: {
+    starter: {
+        name: "GABE STARTER CASE",
+        price: 500,
+        blurb: "An affordable case with a fair shot at upgraded drops.",
+        drops: [
+            { tier: "milspec", chance: 70, mult: 0.5 },
+            { tier: "restricted", chance: 24, mult: 1.1 },
+            { tier: "classified", chance: 5, mult: 4 },
+            { tier: "covert", chance: 1, mult: 15 }
+        ]
+    },
 
+    weapon: {
         name: "GABE WEAPON CASE",
 
         price: 1000,
@@ -10015,8 +10036,31 @@ const CASE_TYPES = {
             { tier: "classified", chance: 3,  mult: 6   },
             { tier: "covert",     chance: 1,  mult: 20  }
         ]
-    }
+    },
 
+    neon: {
+        name: "GABE NEON CASE",
+        price: 5000,
+        blurb: "Bright drops, with a rare contraband jackpot.",
+        drops: [
+            { tier: "milspec", chance: 45, mult: 0.3 },
+            { tier: "restricted", chance: 35, mult: 0.8 },
+            { tier: "classified", chance: 16, mult: 2.5 },
+            { tier: "covert", chance: 3.5, mult: 10 },
+            { tier: "contraband", chance: 0.5, mult: 40 }
+        ]
+    },
+
+    jackpot: {
+        name: "GABE JACKPOT CASE",
+        price: 25000,
+        blurb: "A high-stakes case with big payouts and very rare top drops.",
+        drops: [
+            { tier: "classified", chance: 76, mult: 0.4 },
+            { tier: "covert", chance: 22, mult: 2 },
+            { tier: "contraband", chance: 2, mult: 25 }
+        ]
+    }
 };
 
 const CASE_CARD_WIDTH = 104;
@@ -10047,6 +10091,11 @@ function playCaseOpenSound() {
 let caseOpening = false;
 
 let caseHistory = [];
+let caseInventory = [];
+try {
+    const savedInventory = JSON.parse(localStorage.getItem("caseInventory") || "[]");
+    if (Array.isArray(savedInventory)) caseInventory = savedInventory.filter(item => item && CASE_TIERS[item.tier]);
+} catch (e) {}
 
 function pickCaseDrop(caseDef) {
 
@@ -10232,6 +10281,36 @@ function renderCaseHistory() {
     });
 }
 
+function renderCaseInventory() {
+    const container = document.getElementById("caseInventory");
+    const summary = document.getElementById("caseInventorySummary");
+    container.textContent = "";
+    summary.textContent = caseInventory.length ? caseInventory.length + " drop" + (caseInventory.length === 1 ? "" : "s") + " collected" : "No drops collected yet.";
+    const groups = new Map();
+    caseInventory.forEach(item => {
+        const key = (item.caseName || "Case") + "|" + item.tier;
+        const group = groups.get(key) || {caseName: item.caseName || "Case", tier: item.tier, count: 0, lastPayout: 0};
+        group.count++;
+        if (!group.lastPayout) group.lastPayout = item.payout || 0;
+        groups.set(key, group);
+    });
+    for (const group of groups.values()) {
+        const tier = CASE_TIERS[group.tier];
+        const card = document.createElement("div");
+        card.className = "caseInventoryItem";
+        card.style.borderLeftColor = tier.color;
+        const name = document.createElement("div");
+        name.className = "caseInventoryName";
+        name.style.color = tier.color;
+        name.textContent = tier.name;
+        const detail = document.createElement("div");
+        detail.className = "caseInventoryDetail";
+        detail.textContent = group.caseName + " · x" + group.count + " collected · last payout $" + formatNumber(group.lastPayout);
+        card.append(name, detail);
+        container.appendChild(card);
+    }
+}
+
 function openCases() {
 
     document.getElementById("clickerScreen").style.display = "none";
@@ -10252,6 +10331,7 @@ function openCases() {
     }
 
     renderCaseHistory();
+    renderCaseInventory();
 }
 
 function closeCases() {
@@ -10335,12 +10415,16 @@ function openCase(caseKey) {
                 formatNumber(Math.abs(profit)) + ")";
 
             caseHistory.unshift({ tier: drop.tier, payout: payout });
+            caseInventory.unshift({ tier: drop.tier, caseName: def.name, payout: payout, date: Date.now() });
+            if (caseInventory.length > 1000) caseInventory.pop();
+            try { localStorage.setItem("caseInventory", JSON.stringify(caseInventory)); } catch (e) {}
 
             if (caseHistory.length > 12) {
                 caseHistory.pop();
             }
 
             renderCaseHistory();
+            renderCaseInventory();
 
             caseOpening = false;
 
@@ -13198,6 +13282,8 @@ const CHANGELOG_ENTRIES = [
       "Added Texas Hold'Em Poker. Unsure if everything works correctly, especially multiplayer.",
       "Added a new \"NAME\" system for chats and leaderboards. You can change your name if you are not happy with it.",
       "Added the previously mentioned leaderboard.",
+      "Added a new \"INVENTORY\" system for the cases.",
+      "Added a few more cases.",
       "Updated Plinko with a small nerf, the ability to drop multiple balls at once, and a new HIGH RISK mode.",
       "Added this changelog so players can see site updates."
     ]
@@ -14955,5 +15041,3 @@ showMode();
 </html>
 
 
-
-    
