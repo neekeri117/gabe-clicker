@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 6.9 — ADMIN TOOLS -->
+<!-- OUTER/GABE CLICKER SITE VERSION 6.10 — CASES OPENED LEADERBOARD -->
 
 <html lang="en">
 <head>
@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.9</div>
+  <div class="sidebarFoot">V6.10</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4577,7 +4577,7 @@ onclick="closeCasino()"
 ← BACK </button>
 
 <h1 id="casinoTitle">
-    🎰 CASINO 🎰
+    🎰 GABE CASINO 🎰
 </h1>
 
 <div id="casinoBalance">
@@ -4903,7 +4903,7 @@ onclick="closeStockMarket()"
 ← BACK </button>
 
 <h1 id="stockTitle">
-    📈 STOCK MARKET
+    📈 GABE STOCK MARKET
 </h1>
 
 <div id="stockSubtitle">
@@ -5212,7 +5212,7 @@ onclick="closeCases()"
 ← BACK </button>
 
 <h1 id="casesTitle">
-    📦 CASES 📦
+    📦 GABE CASES 📦
 </h1>
 
 <div id="casesBalance">
@@ -12272,6 +12272,7 @@ updateClicker();
 
     let stats = loadStats();
     window.getPlayerPlayTime = function() { return Math.max(0, Number(stats.playTime) || 0); };
+    window.getCasesOpened = function() { return Math.max(0, Math.floor(Number(stats.casesOpened) || 0)); };
 
     let unlocked = {};
 
@@ -13495,6 +13496,13 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-20",
+    title: "Cases Opened Leaderboard",
+    changes: [
+      "Added a Cases Opened leaderboard so everyone can compare their case-opening totals."
+    ]
+  },
+  {
+    date: "2026-10-20",
     title: "v6.8 — Mobile + Plinko",
     changes: [
       "Improved mobile layouts so large balances no longer push Settings off-screen.",
@@ -14236,6 +14244,7 @@ updateChangeLogBadge();
         <button class="lbTab active" data-tab="net" onclick="lbSetTab('net')">💰 NET WORTH</button>
         <button class="lbTab" data-tab="reb" onclick="lbSetTab('reb')">🔥 REBIRTHS</button>
         <button class="lbTab" data-tab="time" onclick="lbSetTab('time')">⏱ PLAYTIME</button>
+        <button class="lbTab" data-tab="cases" onclick="lbSetTab('cases')">📦 CASES OPENED</button>
     </div>
 
     <div id="lbList"></div>
@@ -14676,9 +14685,10 @@ updateChangeLogBadge();
 
         const score = currentScore();
         const rebirths = currentRebirths();
+        const casesOpened = currentCasesOpened();
 
         const playTime = currentPlayTime();
-        const key = playerName + "|" + score + "|" + rebirths + "|" + Math.floor(playTime / 60000);
+        const key = playerName + "|" + score + "|" + rebirths + "|" + casesOpened + "|" + Math.floor(playTime / 60000);
 
         const now = Date.now();
 
@@ -14697,6 +14707,7 @@ updateChangeLogBadge();
                         name: playerName,
                         score: score,
                         rebirths: rebirths,
+                        casesOpened: casesOpened,
                         playTime: playTime,
                         ts: { ".sv": "timestamp" }
                     })
@@ -14707,7 +14718,7 @@ updateChangeLogBadge();
                 const playTimeError = "HTTP " + res.status;
                 const fallback = await fetch(base + "/leaderboard/" + encodeURIComponent(playerId) + ".json", {
                     method: "PATCH",
-                    body: JSON.stringify({ name: playerName, score: score, rebirths: rebirths, ts: { ".sv": "timestamp" } })
+                    body: JSON.stringify({ name: playerName, score: score, rebirths: rebirths, casesOpened: casesOpened, ts: { ".sv": "timestamp" } })
                 });
                 if (!fallback.ok) throw new Error(playTimeError + "; legacy score write HTTP " + fallback.status);
                 lastSubmitError = "Score saved; playtime was not synced. Add playTime to the Firebase leaderboard rules.";
@@ -14742,6 +14753,7 @@ updateChangeLogBadge();
                         name: playerName,
                         score: currentScore(),
                         rebirths: currentRebirths(),
+                        casesOpened: currentCasesOpened(),
                         playTime: currentPlayTime(),
                         ts: { ".sv": "timestamp" }
                     })
@@ -14777,6 +14789,8 @@ updateChangeLogBadge();
         }
     }, 1000);
     function currentPlayTime() { return Math.max(leaderboardPlayTime, readGamePlayTime()); }
+    function currentCasesOpened() { try { return Math.max(0, Math.floor(Number(window.getCasesOpened()) || 0)); } catch (e) { return 0; } }
+    function leaderboardValue(r) { if (lbTab === "time") return "⏱ " + formatPlayTime(r.playTime); if (lbTab === "cases") return "📦 " + compact(r.casesOpened); if (lbTab === "reb") return "🔥 " + r.rebirths; return "$" + compact(r.score); }
     function compact(n) {
 
         n = Number(n) || 0;
@@ -14827,6 +14841,7 @@ updateChangeLogBadge();
             if (lbTab === "reb") {
                 return (b.rebirths - a.rebirths) || (b.score - a.score);
             }
+            if (lbTab === "cases") { return (b.casesOpened - a.casesOpened) || (b.score - a.score); }
             if (lbTab === "time") {
                 return (b.playTime - a.playTime) || (b.score - a.score);
             }
@@ -14866,6 +14881,8 @@ updateChangeLogBadge();
                 "lbSub",
                 lbTab === "time"
                     ? "Playtime"
+                    : lbTab === "cases"
+                        ? "Cases opened"
                     : lbTab === "reb"
                         ? "Net worth $" + compact(r.score)
                         : r.rebirths + (r.rebirths === 1 ? " rebirth" : " rebirths")
@@ -14876,7 +14893,7 @@ updateChangeLogBadge();
             row.appendChild(el(
                 "div",
                 "lbScore",
-                lbTab === "time" ? "⏱ " + formatPlayTime(r.playTime) : lbTab === "time" ? "⏱ " + formatPlayTime(r.playTime) : lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
+                leaderboardValue(r)
             ));
 
             list.appendChild(row);
@@ -14898,7 +14915,7 @@ updateChangeLogBadge();
             row.appendChild(el(
                 "div",
                 "lbScore",
-                lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
+                leaderboardValue(r)
             ));
 
             list.appendChild(row);
@@ -14933,13 +14950,14 @@ updateChangeLogBadge();
                         name: d.name.slice(0, NAME_MAX),
                         score: isFinite(score) && score > 0 ? score : 0,
                         rebirths: isFinite(rebirths) && rebirths > 0 ? Math.floor(rebirths) : 0,
+                        casesOpened: Math.max(0, Math.floor(Number(d.casesOpened) || 0)),
                         playTime: Math.max(isFinite(Number(d.playTime)) && Number(d.playTime) > 0 ? Number(d.playTime) : 0, id === playerId ? currentPlayTime() : 0)
                     });
                 });
             }
 
             if (playerName && !lbData.some(function(r) { return r.id === playerId; })) {
-                lbData.push({ id: playerId, name: playerName, score: currentScore(), rebirths: currentRebirths(), playTime: currentPlayTime() });
+                lbData.push({ id: playerId, name: playerName, score: currentScore(), rebirths: currentRebirths(), casesOpened: currentCasesOpened(), playTime: currentPlayTime() });
             }
             lbLoaded = true;
             lbFailed = false;
@@ -15728,6 +15746,8 @@ html,body{max-width:100%;overflow-x:hidden}
 #caseInventoryDetails[open]>.caseInventoryToggle::after{content:"−"}
 #caseInventory{width:auto;margin:0;padding:12px;border-top:1px solid #2b303a}
 @media(max-width:480px){#caseInventoryDetails>.caseInventoryToggle{gap:7px;padding:10px}#caseInventoryHeading{font-size:14px}#caseInventorySummary{font-size:10px}#caseInventory{padding:9px}}
+</style><style id="cases-leaderboard-layout">
+#lbTabs{flex-wrap:wrap}
 </style></body>
 </html>
 
