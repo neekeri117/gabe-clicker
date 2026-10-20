@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.2</div>
+  <div class="sidebarFoot">V6.3</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -6372,6 +6372,38 @@ function updateShopButtons() {
 let selectedCasinoBet = null;
 
 let rouletteSpinning = false;
+const ROULETTE_SPIN_MS = 2150;
+
+function cancelGameSpinAnimation(element) {
+    if (element && element.__gameSpinAnimation) {
+        element.__gameSpinAnimation.cancel();
+        element.__gameSpinAnimation = null;
+    }
+}
+
+function animateGameSpin(element, fromTransform, toTransform, duration, easing) {
+    cancelGameSpinAnimation(element);
+    if (typeof element.animate === "function") {
+        element.style.removeProperty("transition");
+        element.style.transform = fromTransform;
+        void element.offsetWidth;
+        const animation = element.animate(
+            [{ transform: fromTransform }, { transform: toTransform }],
+            { duration: duration, easing: easing, fill: "forwards" }
+        );
+        element.__gameSpinAnimation = animation;
+        animation.onfinish = function() {
+            element.style.transform = toTransform;
+            cancelGameSpinAnimation(element);
+        };
+        return;
+    }
+    element.style.setProperty("transition", "none", "important");
+    element.style.transform = fromTransform;
+    void element.offsetWidth;
+    element.style.setProperty("transition", "transform " + duration + "ms " + easing, "important");
+    element.style.transform = toTransform;
+}
 
 const rouletteNumbers = [
 
@@ -6628,10 +6660,13 @@ function spinRoulette() {
     wheel.dataset.rotation =
         totalRotation;
 
-    wheel.style.transform =
-        "rotate(" +
-        totalRotation +
-        "deg)";
+    animateGameSpin(
+        wheel,
+        "rotate(" + currentRotation + "deg)",
+        "rotate(" + totalRotation + "deg)",
+        ROULETTE_SPIN_MS,
+        "cubic-bezier(0.12, 0.75, 0.15, 1)"
+    );
 
     document.getElementById(
         "rouletteResult"
@@ -6724,7 +6759,7 @@ function spinRoulette() {
             saveGame();
 
         },
-        2150
+        ROULETTE_SPIN_MS
     );
 }
 
@@ -7394,9 +7429,9 @@ const plinkoCtx =
         "2d"
     );
 
-const plinkoNormalMultipliers = [10, 1.5, 1.25, 0.75, 0.5, 0, 0.5, 0.75, 1.25, 1.5, 10];
+const plinkoNormalMultipliers = [10, 1.6, 1.35, 0.85, 0.6, 0.1, 0.6, 0.85, 1.35, 1.6, 10];
 const plinkoHighRiskMultipliers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30];
-// Outcome odds: normal corner jackpots are 0.1% each; the high-risk jackpot is 1%.
+// Outcome odds: normal corner jackpots are about 0.083% each; the high-risk jackpot is 1%.
 const plinkoNormalSlotWeights = [1, 80, 120, 150, 160, 178, 160, 150, 120, 80, 1];
 const plinkoHighSlotWeights = [99, 100, 100, 100, 100, 100, 100, 100, 100, 91, 10];
 function choosePlinkoSlot(mode) {
@@ -7433,7 +7468,7 @@ function setPlinkoMode(mode) {
     document.getElementById("plinkoHighRiskButton").classList.toggle("selected", plinkoMode === "high");
     document.getElementById("plinkoModeInfo").innerHTML = plinkoMode === "high"
         ? "🔥 HIGH RISK: the 30× jackpot has a 1% chance; all other slots pay 0×."
-        : "🟡 NORMAL: returns more than your bet on about 24.2% of balls; corner jackpots pay 10× (0.1% per corner). Drop up to 50 balls per batch.";
+        : "🟡 NORMAL: boosted payouts; returns more than your bet on about 33.5% of balls. Corner jackpots pay 10× (about 0.083% per corner). Drop up to 50 balls per batch.";
     drawPlinko();
 }
 
@@ -10303,7 +10338,6 @@ function renderCaseReel(caseDef, winningTier, winIndex, winningDrop) {
 function setCaseReelPosition(index, animate, extraOffset) {
 
     const track = document.getElementById("caseReelTrack");
-    const lowGraphics = document.documentElement.classList.contains("lowGraphics");
 
     const windowWidth =
         document.getElementById("caseReelWindow").clientWidth;
@@ -10315,27 +10349,19 @@ function setCaseReelPosition(index, animate, extraOffset) {
     const offset = cardCentre - windowWidth / 2 + (extraOffset || 0);
 
     if (!animate) {
-
-        if (lowGraphics) track.style.setProperty("transition", "none", "important");
-        else track.style.transition = "none";
-
+        cancelGameSpinAnimation(track);
+        track.style.removeProperty("transition");
         track.style.transform = "translateX(" + (-offset) + "px)";
-
         return;
     }
 
-    if (lowGraphics) track.style.setProperty("transition", "none", "important");
-    else track.style.transition = "none";
-
-    track.style.transform = "translateX(0px)";
-
-    void track.offsetWidth;
-
-    const reelTransition = "transform " + (CASE_SPIN_MS / 1000) + "s cubic-bezier(0.35, 0.1, 0.4, 1)";
-    if (lowGraphics) track.style.setProperty("transition", reelTransition, "important");
-    else track.style.transition = reelTransition;
-
-    track.style.transform = "translateX(" + (-offset) + "px)";
+    animateGameSpin(
+        track,
+        "translateX(0px)",
+        "translateX(" + (-offset) + "px)",
+        CASE_SPIN_MS,
+        "cubic-bezier(0.35, 0.1, 0.4, 1)"
+    );
 }
 
 function renderCasePanels() {
@@ -15278,23 +15304,54 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
   const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
   const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
   const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch']);
-  window.exportSaveCode=function(){
-    try{const data={};saveKeys.forEach(function(key){const value=localStorage.getItem(key);if(value!==null)data[key]=value;});const payload={format:'gabe-clicker-save',version:1,createdAt:new Date().toISOString(),data:data};const bytes=new TextEncoder().encode(JSON.stringify(payload));let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode.apply(null,bytes.subarray(i,Math.min(i+0x8000,bytes.length)));const code='GABE-SAVE-V1:'+btoa(binary);const out=document.getElementById('saveExport');out.value=code;out.focus();out.select();let copied=false;try{copied=document.execCommand('copy');}catch(e){}document.getElementById('saveTransferStatus').textContent=copied?'Export code generated and copied. Store it somewhere safe.':'Export code generated. Select the field and copy it.';}catch(e){document.getElementById('saveTransferStatus').textContent='Could not export save: '+e.message;}
+  const saveTransferDb='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
+  function createShortSaveCode(){const bytes=new Uint8Array(6);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
+  window.exportSaveCode=async function(){
+    const status=document.getElementById('saveTransferStatus'),out=document.getElementById('saveExport');
+    const setStatus=function(message,isError){status.textContent=message;status.style.color=isError?'#ff8e8e':'#2bdde5';};
+    try{
+      setStatus('Uploading save…',false);
+      const data={};saveKeys.forEach(function(key){const value=localStorage.getItem(key);if(value!==null)data[key]=value;});
+      const payload={format:'gabe-clicker-save',version:1,createdAt:Date.now(),data:data};
+      let code='',stored=false;
+      for(let attempt=0;attempt<4&&!stored;attempt++){
+        code=createShortSaveCode();
+        const url=saveTransferDb+'/saveTransfers/'+code+'.json';
+        const check=await fetch(url,{cache:'no-store'});
+        if(!check.ok)throw new Error('Firebase read failed (HTTP '+check.status+'). Check the save-transfer rules.');
+        if(await check.json()!==null)continue;
+        const response=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        if(!response.ok)throw new Error('Firebase rejected the upload (HTTP '+response.status+'). Add the save-transfer rules first.');
+        stored=true;
+      }
+      if(!stored)throw new Error('Could not reserve a short code. Please try again.');
+      out.value=code;out.focus();out.select();
+      let copied=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);copied=true;}else copied=document.execCommand('copy');}catch(e){}
+      setStatus(copied?'12-character code copied. Keep it to restore this save.':'12-character code ready. Copy it to restore this save.',false);
+    }catch(e){setStatus('Could not create short code: '+e.message,true);}
   };
-  window.importSaveCode=function(){
+  window.importSaveCode=async function(){
     const status=document.getElementById('saveTransferStatus');
     const setStatus=function(message,isError){status.textContent=message;status.style.color=isError?'#ff8e8e':'#2bdde5';};
     try{
-      let code=(document.getElementById('saveImport').value||'').replace(/\s+/g,'');
+      let code=(document.getElementById('saveImport').value||'').trim().replace(/\s+/g,'');
       if(!code)throw new Error('Paste a save code into the import box first.');
       if(code.length>5000000)throw new Error('Save code is too large.');
-      const prefix='GABE-SAVE-V1:';
-      if(code.startsWith(prefix))code=code.slice(prefix.length);
-      code=code.replace(/-/g,'+').replace(/_/g,'/');
-      while(code.length%4)code+='=';
-      const binary=atob(code);
-      const bytes=Uint8Array.from(binary,function(ch){return ch.charCodeAt(0);});
-      const payload=JSON.parse(new TextDecoder().decode(bytes));
+      let payload;
+      if(/^[0-9a-f]{12}$/i.test(code)){
+        const response=await fetch(saveTransferDb+'/saveTransfers/'+code.toLowerCase()+'.json',{cache:'no-store'});
+        if(!response.ok)throw new Error('Firebase lookup failed (HTTP '+response.status+'). Check the save-transfer rules.');
+        payload=await response.json();
+        if(payload===null)throw new Error('That short code was not found. Check the code and try again.');
+      }else{
+        const prefix='GABE-SAVE-V1:';
+        if(code.startsWith(prefix))code=code.slice(prefix.length);
+        code=code.replace(/-/g,'+').replace(/_/g,'/');
+        while(code.length%4)code+='=';
+        const binary=atob(code);
+        const bytes=Uint8Array.from(binary,function(ch){return ch.charCodeAt(0);});
+        payload=JSON.parse(new TextDecoder().decode(bytes));
+      }
       if(!payload||typeof payload!=='object'||Array.isArray(payload))throw new Error('Save data is invalid.');
       let rawData=payload.data||payload.saveData||payload.save||payload;
       if(typeof rawData==='string')rawData=JSON.parse(rawData);
@@ -15421,6 +15478,14 @@ html.lowGraphics #caseReelTrack{transition:transform 5.2s cubic-bezier(.35,.1,.4
 .achPopup{min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
 .achPopup>div:last-child,.achName,.achDesc{min-width:0;overflow-wrap:anywhere;word-break:normal}
 @media(max-width:480px){.loadingSubtitle{font-size:9px;letter-spacing:.13em}.toast{gap:9px;padding:11px 12px}.toastTitle{font-size:14px}.toastBody{font-size:12px}.achPopup{gap:9px;padding:10px 12px}.achName{font-size:14px}}
+</style>
+<style id="lighter-default-effects">
+/* Keep the normal look while trimming the strongest, most expensive effects. */
+.casinoPanel,.gCard,#empireMarket,#shop,.netWorthCard,.balancePill{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.casinoPanel,.gCard,#empireMarket,#shop{box-shadow:0 7px 20px #0004!important}
+.homeCard:hover{box-shadow:0 8px 18px #0004!important}
+.netWorthCard,.balancePill{box-shadow:0 0 12px #ff9d0014!important}
+#gabeClickerImage{box-shadow:0 0 22px #13c9d477!important}
 </style>
 </body>
 </html>
