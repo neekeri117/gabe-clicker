@@ -3958,6 +3958,27 @@ input:focus-visible {
     outline-offset: -4px;
 }
 
+
+/* =========================================================
+   POKER ADD-ON
+   ========================================================= */
+#pokerPanel { width: min(720px, 96vw); }
+.pokerModes,.pokerActions,.pokerRoomControls {display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0;}
+.pokerModes button,.pokerActions button,.pokerRoomControls button,.pokerSmallButton {border:1px solid #3b6c72;background:#102328;color:#d9fbff;border-radius:8px;padding:9px 12px;cursor:pointer;font-weight:800;}
+.pokerModes button.active {background:#00bcd4;color:#041014;border-color:#8ff5ff;}
+.pokerTable {background:radial-gradient(ellipse at center,#14533d,#08271f 72%);border:2px solid #427b62;border-radius:22px;padding:16px;min-height:190px;color:#fff;}
+.pokerCommunity,.pokerPlayerCards {display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:62px;margin:8px 0;}
+.pokerCard {width:43px;height:59px;border-radius:6px;background:#f6f4ed;color:#171717;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 5px #0008;border:1px solid #ccc;}
+.pokerCard.red {color:#d22b3b}.pokerCard.back {background:repeating-linear-gradient(45deg,#163d69,#163d69 5px,#23598b 5px,#23598b 10px);border:2px solid #d8eaff;color:transparent;}
+.pokerSeats {display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:12px;}
+.pokerSeat {background:#071b17aa;border:1px solid #ffffff25;border-radius:10px;padding:8px;text-align:center;font-size:12px;min-width:0;}
+.pokerSeat.current {border-color:#72f5bd;box-shadow:0 0 0 1px #72f5bd55}.pokerSeat.folded{opacity:.45}
+.pokerStatus {text-align:center;font-weight:800;min-height:24px;margin:12px 0;color:#d8fff0;}
+.pokerMeta {display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#d8f5ec;font-size:13px;margin:8px 0;}
+.pokerField {width:100%;box-sizing:border-box;margin:6px 0;padding:10px;border-radius:8px;border:1px solid #444;background:#080808;color:white;}
+.pokerNote {font-size:12px;color:#aaa;line-height:1.5;margin-top:10px;}
+.pokerActions button:disabled,.pokerModes button:disabled {opacity:.4;cursor:not-allowed}
+
 </style>
 
 </head>
@@ -4670,6 +4691,41 @@ onclick="closeCasino()"
 </div>
 
 
+</div>
+
+
+<!-- POKER -->
+<div class="casinoPanel" id="pokerPanel">
+  <h2>♠ TEXAS HOLD'EM POKER</h2>
+  <div class="pokerModes">
+    <button id="pokerModeSolo" onclick="pokerSetMode('solo')">SOLO PRACTICE</button>
+    <button id="pokerModeBots" onclick="pokerSetMode('bots')" class="active">VS BOTS</button>
+    <button id="pokerModeMulti" onclick="pokerSetMode('multi')">MULTIPLAYER</button>
+  </div>
+  <div id="pokerSoloSetup" style="display:none;text-align:center;color:#ccc;font-size:13px">Free practice: deal a hand and learn what it ranks. No clicks are wagered.</div>
+  <div id="pokerBotsSetup">
+    <label for="pokerBet" style="font-size:12px;color:#aaa">ANTE / BET (GABE CLICKS)</label>
+    <input id="pokerBet" class="pokerField" type="number" min="1" step="1" value="100" placeholder="Bet amount">
+  </div>
+  <div id="pokerMultiSetup" style="display:none">
+    <div class="pokerRoomControls">
+      <button onclick="pokerCreateRoom()">CREATE ROOM</button>
+      <input id="pokerRoomCode" class="pokerField" style="width:130px;margin:0" maxlength="6" placeholder="ROOM CODE">
+      <button onclick="pokerJoinRoom()">JOIN ROOM</button>
+    </div>
+    <div id="pokerRoomStatus" class="pokerNote">Online multiplayer uses play chips, not your Gabe Click balance. Create a room and share its code.</div>
+  </div>
+  <div class="pokerTable">
+    <div class="pokerMeta"><span id="pokerStreet">WAITING TO DEAL</span><span>Pot: <b id="pokerPot">0</b></span></div>
+    <div style="text-align:center;font-size:12px;color:#c7e9d9">COMMUNITY CARDS</div>
+    <div id="pokerCommunity" class="pokerCommunity"></div>
+    <div id="pokerSeats" class="pokerSeats"></div>
+    <div id="pokerStatus" class="pokerStatus">Choose a mode and deal a hand.</div>
+  </div>
+  <div id="pokerSoloControls" class="pokerActions" style="display:none"><button onclick="pokerDealSolo()">DEAL PRACTICE HAND</button></div>
+  <div id="pokerBotControls" class="pokerActions"><button onclick="pokerStartBots()">DEAL HAND</button><button onclick="pokerPlayerAction('fold')" id="pokerFold" disabled>FOLD</button><button onclick="pokerPlayerAction('call')" id="pokerCall" disabled>CHECK / CALL</button><button onclick="pokerPlayerAction('raise')" id="pokerRaise" disabled>RAISE</button></div>
+  <div id="pokerMultiActions" class="pokerActions" style="display:none"><button onclick="pokerMultiStart()" id="pokerMultiDeal">START HAND (HOST)</button><button onclick="pokerPlayerAction('fold')" id="pokerMultiFold" disabled>FOLD</button><button onclick="pokerPlayerAction('call')" id="pokerMultiCall" disabled>CHECK / CALL</button><button onclick="pokerPlayerAction('raise')" id="pokerMultiRaise" disabled>RAISE</button></div>
+  <div class="pokerNote">Texas Hold'em · Best five-card hand wins. Hand rankings: Royal Flush, Straight Flush, Four of a Kind, Full House, Flush, Straight, Three of a Kind, Two Pair, Pair, High Card. Multiplayer uses a shared Firebase room and virtual play chips; it is casual, not secure for real-money play.</div>
 </div>
 
 <!-- PLINKO -->
@@ -14540,6 +14596,76 @@ function closeWebsite() {
          window.getEmpireNetWorth = netWorth;
      ========================================================= -->
 
+
+
+<script>
+/* =========================================================
+   TEXAS HOLD'EM POKER: practice, bots, and shared rooms
+   ========================================================= */
+(function(){
+'use strict';
+const DB='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
+const SUITS=['♠','♥','♦','♣'], RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+const RVAL=Object.fromEntries(RANKS.map((r,i)=>[r,i+2]));
+let mode='bots', deck=[], hand=null, roomCode='', room=null, polling=null, busy=false;
+let pid=''; try { pid=localStorage.getItem('gabePlayerId') || (localStorage.setItem('gabePlayerId','p'+Math.random().toString(36).slice(2,12)),localStorage.getItem('gabePlayerId')); } catch(e) {pid='p'+Math.random().toString(36).slice(2,12)}
+let playerLabel='Player'; try{playerLabel=localStorage.getItem('gabePlayerName')||localStorage.getItem('pubChatName')||'Player'}catch(e){}
+function shuffle(){deck=[];for(const s of SUITS)for(const r of RANKS)deck.push({s,r});for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
+function draw(){return deck.pop()}
+function rankHand(cards){
+ const cs=cards.slice().sort((a,b)=>RVAL[b.r]-RVAL[a.r]), vals=cs.map(c=>RVAL[c.r]);
+ const counts={}; for(const v of vals)counts[v]=(counts[v]||0)+1;
+ const groups=Object.keys(counts).map(Number).sort((a,b)=>counts[b]-counts[a]||b-a);
+ const flushSuit=SUITS.find(s=>cs.filter(c=>c.s===s).length>=5);
+ function straight(vs){const uniq=[...new Set(vs)].sort((a,b)=>b-a);if(uniq.includes(14))uniq.push(1);for(let i=0;i<=uniq.length-5;i++){if(uniq[i]-uniq[i+4]===4)return uniq[i]}return 0}
+ let fv=flushSuit?cs.filter(c=>c.s===flushSuit).map(c=>RVAL[c.r]):[]; let st=straight(vals), fst=flushSuit?straight(fv):0;
+ if(fst>=10)return {score:[9,fst],name:'Royal Flush'};
+ if(fst)return {score:[8,fst],name:'Straight Flush'};
+ if(counts[groups[0]]===4)return {score:[7,groups[0],...vals.filter(v=>v!==groups[0])],name:'Four of a Kind'};
+ const trips=groups.filter(v=>counts[v]>=3), pairs=groups.filter(v=>counts[v]>=2);
+ if(trips.length&&pairs.some(v=>v!==trips[0]))return {score:[6,trips[0],pairs.find(v=>v!==trips[0])],name:'Full House'};
+ if(flushSuit)return {score:[5,...fv.sort((a,b)=>b-a).slice(0,5)],name:'Flush'};
+ if(st)return {score:[4,st],name:'Straight'};
+ if(trips.length)return {score:[3,trips[0],...vals.filter(v=>v!==trips[0])],name:'Three of a Kind'};
+ if(pairs.length>=2){const ps=pairs.slice(0,2).sort((a,b)=>b-a);return {score:[2,...ps,...vals.filter(v=>!ps.includes(v))],name:'Two Pair'}}
+ if(pairs.length)return {score:[1,pairs[0],...vals.filter(v=>v!==pairs[0])],name:'One Pair'};
+ return {score:[0,...vals.slice(0,5)],name:'High Card'};
+}
+function compare(a,b){for(let i=0;i<Math.max(a.score.length,b.score.length);i++){const d=(a.score[i]||0)-(b.score[i]||0);if(d)return d}return 0}
+function bestOf(cards){let best=null;for(let a=0;a<cards.length-4;a++)for(let b=a+1;b<cards.length-3;b++)for(let c=b+1;c<cards.length-2;c++)for(let d=c+1;d<cards.length-1;d++)for(let e=d+1;e<cards.length;e++){const r=rankHand([cards[a],cards[b],cards[c],cards[d],cards[e]]);if(!best||compare(r,best)>0)best=r}return best||rankHand(cards)}
+function cardNode(c,hidden){const n=document.createElement('div');n.className='pokerCard'+(hidden?' back':(c.s==='♥'||c.s==='♦'?' red':''));n.textContent=hidden?'':c.r+c.s;return n}
+function drawCards(el,cards,hidden){el.textContent='';(cards||[]).forEach(c=>el.appendChild(cardNode(c,hidden)))}
+function render(){
+ const seats=document.getElementById('pokerSeats'),community=document.getElementById('pokerCommunity'); seats.textContent='';
+ const state=mode==='multi'?(room&&room.game):hand;
+ if(!state){community.textContent='';document.getElementById('pokerPot').textContent='0';document.getElementById('pokerStreet').textContent='WAITING TO DEAL';return}
+ drawCards(community,state.board||[]);
+ document.getElementById('pokerPot').textContent=String(state.pot||0);document.getElementById('pokerStreet').textContent=String(state.street||'SHOWDOWN').toUpperCase();
+ (state.players||[]).forEach((p,i)=>{const seat=document.createElement('div');seat.className='pokerSeat'+(p.folded?' folded':'')+((state.turn===i&&state.street!=='showdown')?' current':'');const name=document.createElement('strong');name.textContent=p.name+(p.id===pid?' (you)':'');seat.appendChild(name);const stack=document.createElement('div');stack.textContent='Chips: '+Math.max(0,Math.floor(p.stack||0));seat.appendChild(stack);const cards=document.createElement('div');cards.className='pokerPlayerCards';drawCards(cards,p.cards||[],!p.reveal&&p.id!==pid&&state.street!=='showdown');seat.appendChild(cards);const detail=document.createElement('div');detail.textContent=p.folded?'FOLDED':(p.result||'');seat.appendChild(detail);seats.appendChild(seat)});
+ document.getElementById('pokerStatus').textContent=state.status||'';
+ const mine=(state.players||[]).find(p=>p.id===pid), myTurn=!!(mine&&state.street!=='showdown'&&!mine.folded&&(mode!=='multi'||state.players[state.turn]?.id===pid));
+ ['pokerFold','pokerCall','pokerRaise','pokerMultiFold','pokerMultiCall','pokerMultiRaise'].forEach(id=>{const e=document.getElementById(id);if(e)e.disabled=!myTurn});
+ document.getElementById('pokerMultiDeal').disabled=!(room&&room.host===pid&&(!room.game||room.game.street==='showdown'));
+}
+function showMode(){for(const [id,on] of [['pokerSoloSetup',mode==='solo'],['pokerBotsSetup',mode==='bots'],['pokerMultiSetup',mode==='multi'],['pokerSoloControls',mode==='solo'],['pokerBotControls',mode==='bots'],['pokerMultiActions',mode==='multi']])document.getElementById(id).style.display=on?'':'none';for(const m of ['solo','bots','multi'])document.getElementById('pokerMode'+m[0].toUpperCase()+m.slice(1)).classList.toggle('active',mode===m);render()}
+window.pokerSetMode=function(m){mode=m;hand=null;showMode();if(m==='multi'&&room)render();document.getElementById('pokerStatus').textContent=m==='solo'?'Free hand practice — no wager.':m==='bots'?'Play against three bots.':'Create or join a room to play with friends.'};
+function getBet(){const v=Number(document.getElementById('pokerBet').value);return Number.isFinite(v)?Math.floor(v):0}
+window.pokerDealSolo=function(){shuffle();const cards=[draw(),draw(),draw(),draw(),draw(),draw(),draw()];const r=bestOf(cards);hand={street:'showdown',pot:0,board:cards.slice(2),status:'Your best hand: '+r.name,players:[{id:pid,name:playerLabel,stack:0,cards:cards.slice(0,2),reveal:true,result:r.name}]};render()};
+function startLocal(bots){const bet=getBet();if(!Number.isSafeInteger(bet)||bet<1){alert('Enter a valid bet.');return}if(typeof gabeClicks==='undefined'||gabeClicks<bet){alert('Not enough Gabe clicks for that ante.');return}shuffle();gabeClicks-=bet;const players=[{id:pid,name:playerLabel,stack:0,cards:[draw(),draw()],folded:false,bet:bet}];for(let i=0;i<3;i++)players.push({id:'bot'+i,name:['Gabe Bot','Clicker AI','The House'][i],stack:0,cards:[draw(),draw()],folded:false,bet:bet});hand={street:'preflop',pot:bet*players.length,players,board:[],turn:0,bet,status:'Your turn — check/call to see the flop.'};updateCasinoBalance();updateClickDisplay();saveGame();render()}
+window.pokerStartBots=function(){if(mode!=='bots')return;startLocal(true)};
+function advance(state){const streets=['preflop','flop','turn','river','showdown'];const ix=streets.indexOf(state.street);if(ix<1){state.board.push(draw(),draw(),draw())}else if(ix===1||ix===2)state.board.push(draw());if(ix>=3){state.street='showdown';const active=state.players.filter(p=>!p.folded);let winner=null;for(const p of active){p.result=bestOf(p.cards.concat(state.board)).name;if(!winner||compare(bestOf(p.cards.concat(state.board)),bestOf(winner.cards.concat(state.board)))>0)winner=p}if(winner){winner.stack+=state.pot;state.status=winner.id===pid?'You win the pot! Your hand: '+winner.result:winner.name+' wins with '+winner.result+'.';if(winner.id===pid){gabeClicks+=state.pot;updateCasinoBalance();updateClickDisplay();saveGame()}}else state.status='Everyone folded.';return}state.street=streets[ix+1];state.status=state.street==='flop'?'Flop dealt — your action.':state.street==='turn'?'Turn dealt — your action.':'River dealt — your action.';}
+window.pokerPlayerAction=function(action){if(mode==='multi'){pokerMultiAction(action);return}if(!hand||hand.street==='showdown')return;const me=hand.players[0];if(action==='fold'){me.folded=true;hand.street='showdown';hand.status='You folded. Start a new hand to play again.';render();return}if(action==='raise'){const raise=Math.max(1,Math.floor(getBet()/2));if(gabeClicks<raise){hand.status='Not enough clicks to raise.';render();return}gabeClicks-=raise;hand.pot+=raise;hand.players[0].bet+=raise;hand.status='You raised. The bots respond...';updateCasinoBalance();updateClickDisplay();saveGame()}for(let i=1;i<hand.players.length;i++){const p=hand.players[i];if(Math.random()<0.13&&hand.street!=='river')p.folded=true}if(hand.players.filter(p=>!p.folded).length===1){hand.street='showdown';hand.status='Everyone else folded — you win '+hand.pot+' clicks!';gabeClicks+=hand.pot;updateCasinoBalance();updateClickDisplay();saveGame()}else advance(hand);render()};
+async function api(path,method='GET',data){const r=await fetch(DB+'/'+path+'.json',{method,headers:{'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});if(!r.ok)throw Error('Database HTTP '+r.status);return r.json()}
+function newCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
+window.pokerCreateRoom=async function(){mode='multi';showMode();try{roomCode=newCode();room={code:roomCode,host:pid,players:[{id:pid,name:playerLabel,stack:1000,cards:[],folded:false}],game:null,updated:Date.now()};await api('pokerRooms/'+roomCode,'PUT',room);document.getElementById('pokerRoomCode').value=roomCode;document.getElementById('pokerRoomStatus').textContent='Room '+roomCode+' created. Share the code with friends.';startPoll();render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not create room: '+e.message+' (check Firebase database rules).'}};
+window.pokerJoinRoom=async function(){mode='multi';showMode();const code=(document.getElementById('pokerRoomCode').value||'').trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){document.getElementById('pokerRoomStatus').textContent='Enter a 6-character room code.';return}try{const r=await api('pokerRooms/'+code);if(!r)throw Error('Room not found');if(!(r.players||[]).some(p=>p.id===pid)){if(r.players.length>=6)throw Error('Room is full (6 players max)');r.players.push({id:pid,name:playerLabel,stack:1000,cards:[],folded:false});await api('pokerRooms/'+code,'PUT',r)}roomCode=code;room=r;document.getElementById('pokerRoomStatus').textContent='Joined room '+code+'. Everyone starts with 1,000 virtual chips.';startPoll();render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not join: '+e.message}}
+function startPoll(){if(polling)clearInterval(polling);polling=setInterval(async()=>{if(mode!=='multi'||!roomCode)return;try{const latest=await api('pokerRooms/'+roomCode);if(latest){room=latest;render()}}catch(e){}},1500)}
+window.pokerMultiStart=async function(){if(!room||room.host!==pid||busy)return;busy=true;try{const r=await api('pokerRooms/'+roomCode);if(!r||r.host!==pid)throw Error('Only the host can start a hand');const players=(r.players||[]).map(p=>({...p,cards:[],folded:false,bet:50,result:''}));if(players.length<2){document.getElementById('pokerRoomStatus').textContent='Invite at least one friend before starting.';return}shuffle();for(const p of players){if(p.stack<50) p.stack=1000;p.stack-=50;p.cards=[draw(),draw()]}r.game={street:'preflop',pot:players.length*50,players,board:[],deck:deck.slice(),turn:0,bet:50,status:'Host started the hand. Player turns follow the room list.'};r.updated=Date.now();await api('pokerRooms/'+roomCode,'PUT',r);room=r;render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Could not start: '+e.message}finally{busy=false}};
+async function pokerMultiAction(action){if(!room||!room.game||busy)return;busy=true;try{const r=await api('pokerRooms/'+roomCode);const g=r&&r.game;if(!g||g.street==='showdown'||!g.players[g.turn]||g.players[g.turn].id!==pid){document.getElementById('pokerRoomStatus').textContent='It is not your turn.';return}const p=g.players[g.turn];if(action==='fold'){p.folded=true;p.result='FOLDED'}else if(action==='raise'){const raise=50;if(p.stack<raise){g.status='Not enough virtual chips to raise.'}else{p.stack-=raise;g.pot+=raise;g.status=p.name+' raised.'}}else g.status=p.name+' checked/called.';const active=g.players.filter(x=>!x.folded);if(active.length===1){g.street='showdown';active[0].stack+=g.pot;g.status=active[0].name+' wins the pot.'}else{g.turn=(g.turn+1)%g.players.length;let tries=0;while(g.players[g.turn].folded&&tries++<g.players.length)g.turn=(g.turn+1)%g.players.length;const streets=['preflop','flop','turn','river','showdown'];if(g.turn===0){const ix=streets.indexOf(g.street);if(ix===0){g.board.push(g.deck.pop(),g.deck.pop(),g.deck.pop());g.street='flop'}else if(ix===1){g.board.push(g.deck.pop());g.street='turn'}else if(ix===2){g.board.push(g.deck.pop());g.street='river'}else{g.street='showdown';let winner=null;for(const x of active){x.result=bestOf(x.cards.concat(g.board)).name;if(!winner||compare(bestOf(x.cards.concat(g.board)),bestOf(winner.cards.concat(g.board)))>0)winner=x}if(winner){winner.stack+=g.pot;g.status=winner.name+' wins with '+winner.result+'.'}}}g.status+=' Turn: '+g.players[g.turn].name+'.'}r.game=g;r.updated=Date.now();await api('pokerRooms/'+roomCode,'PUT',r);room=r;render()}catch(e){document.getElementById('pokerRoomStatus').textContent='Action failed: '+e.message}finally{busy=false}}
+window.addEventListener('beforeunload',()=>{if(polling)clearInterval(polling)});
+showMode();
+})();
+</script>
 
 </body>
 </html>
