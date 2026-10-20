@@ -14419,12 +14419,25 @@ updateChangeLogBadge();
     const SUFFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc"];
 
     function formatPlayTime(ms) {
-        const t = Math.floor((Number(ms) || 0) / 60000), d = Math.floor(t / 1440), h = Math.floor((t % 1440) / 60), m = t % 60;
-        return d ? d + "d " + h + "h" : h ? h + "h " + m + "m" : m + "m";
+        const seconds = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+        const t = Math.floor(seconds / 60), d = Math.floor(t / 1440), h = Math.floor((t % 1440) / 60), m = t % 60;
+        return d ? d + "d " + h + "h" : h ? h + "h " + m + "m" : t ? t + "m" : seconds + "s";
     }
-    function currentPlayTime() {
+    function readGamePlayTime() {
         try { return Math.max(0, Number(window.getPlayerPlayTime()) || 0); } catch (e) { return 0; }
     }
+    let leaderboardPlayTime = readGamePlayTime();
+    try { leaderboardPlayTime = Math.max(leaderboardPlayTime, Number(localStorage.getItem("gabeLeaderboardPlayTime")) || 0); } catch (e) {}
+    let leaderboardPlayTimeTick = Date.now();
+    setInterval(function() {
+        const now = Date.now(), dt = now - leaderboardPlayTimeTick;
+        leaderboardPlayTimeTick = now;
+        if (!document.hidden && dt > 0 && dt < 5000) {
+            leaderboardPlayTime += dt;
+            try { localStorage.setItem("gabeLeaderboardPlayTime", String(leaderboardPlayTime)); } catch (e) {}
+        }
+    }, 1000);
+    function currentPlayTime() { return Math.max(leaderboardPlayTime, readGamePlayTime()); }
     function compact(n) {
 
         n = Number(n) || 0;
@@ -14522,7 +14535,7 @@ updateChangeLogBadge();
             row.appendChild(el(
                 "div",
                 "lbScore",
-                lbTab === "time" ? "⏱ " + formatPlayTime(r.playTime) : lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
+                lbTab === "time" ? "⏱ " + formatPlayTime(r.playTime) : lbTab === "time" ? "⏱ " + formatPlayTime(r.playTime) : lbTab === "reb" ? "🔥 " + r.rebirths : "$" + compact(r.score)
             ));
 
             list.appendChild(row);
@@ -14579,7 +14592,7 @@ updateChangeLogBadge();
                         name: d.name.slice(0, NAME_MAX),
                         score: isFinite(score) && score > 0 ? score : 0,
                         rebirths: isFinite(rebirths) && rebirths > 0 ? Math.floor(rebirths) : 0,
-                        playTime: isFinite(Number(d.playTime)) && Number(d.playTime) > 0 ? Number(d.playTime) : 0
+                        playTime: Math.max(isFinite(Number(d.playTime)) && Number(d.playTime) > 0 ? Number(d.playTime) : 0, id === playerId ? currentPlayTime() : 0)
                     });
                 });
             }
@@ -14942,3 +14955,5 @@ showMode();
 </html>
 
 
+
+    
