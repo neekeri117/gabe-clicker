@@ -4691,13 +4691,18 @@ onclick="closeCasino()"
     ENTER A BET AND DROP THE BALL
 </div>
 
-<input
-    id="plinkoBet"
-    class="casinoInput"
-    type="number"
-    min="1"
-    placeholder="Bet amount"
->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+  <div>
+    <label for="plinkoBet" style="display:block;color:#aaa;font-size:12px;margin:4px 0;">BET PER BALL</label>
+    <input id="plinkoBet" class="casinoInput" type="number" min="1" placeholder="Bet amount">
+  </div>
+  <div>
+    <label for="plinkoBallCount" style="display:block;color:#aaa;font-size:12px;margin:4px 0;">BALLS TO DROP</label>
+    <select id="plinkoBallCount" class="casinoInput">
+      <option value="1">1 ball</option><option value="5">5 balls</option><option value="10" selected>10 balls</option><option value="25">25 balls</option><option value="50">50 balls</option><option value="100">100 balls</option>
+    </select>
+  </div>
+</div>
 
 <div class="betButtons">
 
@@ -4719,18 +4724,15 @@ onclick="closeCasino()"
 
 </div>
 
-<button
-    id="plinkoDropButton"
-    onclick="dropPlinko()"
->
-    DROP BALL
-</button>
-
-<div class="casinoInfo">
-
-    Possible multipliers range from 0× to 5×.<br>
-    The big payouts are on the edges!
-
+<div class="betButtons" style="margin-top:8px;">
+  <button id="plinkoNormalButton" class="selected" onclick="setPlinkoMode('normal')">🟡 NORMAL</button>
+  <button id="plinkoHighRiskButton" onclick="setPlinkoMode('high')">🔥 HIGH RISK</button>
+</div>
+<button id="plinkoDropButton" onclick="dropPlinko()">DROP BALLS</button>
+<div id="plinkoBatchStatus" style="text-align:center;color:#aaa;font-size:12px;margin-top:8px;min-height:18px;">Ready to drop</div>
+<div class="casinoInfo" id="plinkoModeInfo">
+  Normal: multipliers from 0× to 5×. Drop up to 100 balls with a tiny 35ms launch cooldown.<br>
+  High Risk: only one winning slot — it pays 25×, every other slot pays 0×!
 </div>
 
 
@@ -7243,564 +7245,168 @@ const plinkoCtx =
         "2d"
     );
 
-const plinkoMultipliers = [
-
-    5,
-    2.5,
-    1.5,
-    1,
-    0.5,
-    0,
-    0.5,
-    1,
-    1.5,
-    2.5,
-    5
-
-];
-
+const plinkoNormalMultipliers = [5, 2.5, 1.5, 1, 0.5, 0, 0.5, 1, 1.5, 2.5, 5];
+const plinkoHighRiskMultipliers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25];
+let plinkoMode = "normal";
+let plinkoMultipliers = plinkoNormalMultipliers;
 const plinkoRows = 9;
-
 const plinkoPegRadius = 5;
-
-const plinkoBallRadius = 8;
-
+const plinkoBallRadius = 6;
 let plinkoPegs = [];
-
-let plinkoBall = null;
-
+let plinkoBalls = [];
+let plinkoBall = null; // compatibility with existing reset code
 let plinkoAnimating = false;
-
 let plinkoBetAmount = 0;
+let plinkoLaunchTimer = null;
+let plinkoBatchRemaining = 0;
+let plinkoBatchTotal = 0;
+let plinkoBatchWager = 0;
+let plinkoBatchWins = 0;
+let plinkoBatchNet = 0;
+const PLINKO_LAUNCH_COOLDOWN = 35;
+
+function setPlinkoMode(mode) {
+    plinkoMode = mode === "high" ? "high" : "normal";
+    plinkoMultipliers = plinkoMode === "high" ? plinkoHighRiskMultipliers : plinkoNormalMultipliers;
+    document.getElementById("plinkoNormalButton").classList.toggle("selected", plinkoMode === "normal");
+    document.getElementById("plinkoHighRiskButton").classList.toggle("selected", plinkoMode === "high");
+    document.getElementById("plinkoModeInfo").innerHTML = plinkoMode === "high"
+        ? "🔥 HIGH RISK: one winning slot out of 11 pays 25×. Every other slot pays 0×. Huge payout, brutal odds!"
+        : "🟡 NORMAL: multipliers range from 0× to 5×. Drop up to 100 balls with a tiny 35ms launch cooldown.";
+    drawPlinko();
+}
 
 function createPlinkoBoard() {
-
     plinkoPegs = [];
-
-    const startY = 75;
-
-    const rowSpacing = 38;
-
-    const horizontalSpacing = 34;
-
-    for (
-        let row = 0;
-        row < plinkoRows;
-        row++
-    ) {
-
-        const y =
-            startY +
-            row * rowSpacing;
-
-        const offset =
-            row % 2 === 0
-                ? 0
-                : horizontalSpacing / 2;
-
-        for (
-            let x = 0;
-            x < 10;
-            x++
-        ) {
-
-            const pegX =
-                15 +
-                x *
-                horizontalSpacing +
-                offset;
-
-            if (
-                pegX > 325
-            ) {
-
-                continue;
-            }
-
-            plinkoPegs.push({
-
-                x: pegX,
-                y: y
-
-            });
+    const startY = 75, rowSpacing = 34, horizontalSpacing = 34;
+    for (let row = 0; row < plinkoRows; row++) {
+        const y = startY + row * rowSpacing;
+        const offset = row % 2 === 0 ? 0 : horizontalSpacing / 2;
+        for (let x = 0; x < 10; x++) {
+            const pegX = 15 + x * horizontalSpacing + offset;
+            if (pegX <= 325) plinkoPegs.push({x: pegX, y});
         }
     }
 }
 
 function drawPlinko() {
-
-    plinkoCtx.clearRect(
-        0,
-        0,
-        plinkoCanvas.width,
-        plinkoCanvas.height
-    );
-
-    plinkoCtx.fillStyle =
-        "#090909";
-
-    plinkoCtx.fillRect(
-        0,
-        0,
-        plinkoCanvas.width,
-        plinkoCanvas.height
-    );
-
-    plinkoCtx.fillStyle =
-        "white";
-
-    plinkoCtx.font =
-        "bold 18px Arial";
-
-    plinkoCtx.textAlign =
-        "center";
-
-    plinkoCtx.fillText(
-        "PLINKO",
-        170,
-        28
-    );
-
-    plinkoPegs.forEach(
-        function(peg) {
-
-            plinkoCtx.beginPath();
-
-            plinkoCtx.arc(
-                peg.x,
-                peg.y,
-                plinkoPegRadius,
-                0,
-                Math.PI * 2
-            );
-
-            plinkoCtx.fillStyle =
-                "#eee";
-
-            plinkoCtx.fill();
-
-        }
-    );
-
-    const slotWidth =
-        plinkoCanvas.width /
-        plinkoMultipliers.length;
-
-    for (
-        let i = 0;
-        i < plinkoMultipliers.length;
-        i++
-    ) {
-
-        const x =
-            i *
-            slotWidth;
-
-        plinkoCtx.fillStyle =
-            (i === 0 || i === plinkoMultipliers.length - 1)
-                ? "#6d4f00"
-                : "#1c1c1c";
-
-        plinkoCtx.fillRect(
-            x + 1,
-            385,
-            slotWidth - 2,
-            43
-        );
-
-        plinkoCtx.fillStyle =
-            "#ffd84d";
-
-        plinkoCtx.font =
-            "bold 13px Arial";
-
-        plinkoCtx.textAlign =
-            "center";
-
-        plinkoCtx.fillText(
-            plinkoMultipliers[i] +
-            "×",
-            x +
-            slotWidth / 2,
-            411
-        );
+    plinkoCtx.clearRect(0, 0, plinkoCanvas.width, plinkoCanvas.height);
+    plinkoCtx.fillStyle = "#090909";
+    plinkoCtx.fillRect(0, 0, plinkoCanvas.width, plinkoCanvas.height);
+    plinkoCtx.fillStyle = "white";
+    plinkoCtx.font = "bold 17px Arial";
+    plinkoCtx.textAlign = "center";
+    plinkoCtx.fillText(plinkoMode === "high" ? "HIGH RISK PLINKO" : "PLINKO", 170, 28);
+    plinkoPegs.forEach(peg => {
+        plinkoCtx.beginPath(); plinkoCtx.arc(peg.x, peg.y, plinkoPegRadius, 0, Math.PI * 2);
+        plinkoCtx.fillStyle = "#eee"; plinkoCtx.fill();
+    });
+    const slotWidth = plinkoCanvas.width / plinkoMultipliers.length;
+    for (let i = 0; i < plinkoMultipliers.length; i++) {
+        const x = i * slotWidth;
+        const winning = plinkoMode === "high" && i === plinkoMultipliers.length - 1;
+        plinkoCtx.fillStyle = winning ? "#087b48" : ((plinkoMode === "normal" && (i === 0 || i === plinkoMultipliers.length - 1)) ? "#6d4f00" : "#1c1c1c");
+        plinkoCtx.fillRect(x + 1, 385, slotWidth - 2, 43);
+        plinkoCtx.fillStyle = winning ? "#7dffb3" : "#ffd84d";
+        plinkoCtx.font = "bold 12px Arial";
+        plinkoCtx.fillText(plinkoMultipliers[i] + "×", x + slotWidth / 2, 411);
     }
-
-    if (plinkoBall) {
-
-        plinkoCtx.beginPath();
-
-        plinkoCtx.arc(
-            plinkoBall.x,
-            plinkoBall.y,
-            plinkoBallRadius,
-            0,
-            Math.PI * 2
-        );
-
-        plinkoCtx.fillStyle =
-            "#ffd84d";
-
-        plinkoCtx.fill();
-
-        plinkoCtx.strokeStyle =
-            "white";
-
-        plinkoCtx.lineWidth = 2;
-
-        plinkoCtx.stroke();
-    }
+    plinkoBalls.forEach(ball => {
+        plinkoCtx.beginPath(); plinkoCtx.arc(ball.x, ball.y, plinkoBallRadius, 0, Math.PI * 2);
+        plinkoCtx.fillStyle = ball.mode === "high" ? "#ff5b5b" : "#ffd84d";
+        plinkoCtx.fill(); plinkoCtx.strokeStyle = "white"; plinkoCtx.lineWidth = 1; plinkoCtx.stroke();
+    });
 }
 
-function setPlinkoBet(amount) {
-
-    document.getElementById(
-        "plinkoBet"
-    ).value =
-        amount;
-}
+function setPlinkoBet(amount) { document.getElementById("plinkoBet").value = amount; }
 
 function dropPlinko() {
-
-    if (plinkoAnimating) {
-        return;
-    }
-
-    const bet =
-        parseInt(
-            document.getElementById(
-                "plinkoBet"
-            ).value
-        );
-
-    if (
-        isNaN(bet) ||
-        bet <= 0
-    ) {
-
-        alert(
-            "Enter a valid bet amount!"
-        );
-
-        return;
-    }
-
-    if (
-        bet > gabeClicks
-    ) {
-
-        alert(
-            "You don't have enough money!"
-        );
-
-        return;
-    }
+    if (plinkoLaunchTimer || plinkoBatchRemaining > 0) return;
+    const bet = Math.floor(Number(document.getElementById("plinkoBet").value));
+    const count = Math.max(1, Math.min(100, parseInt(document.getElementById("plinkoBallCount").value, 10) || 1));
+    if (!Number.isFinite(bet) || bet <= 0) { alert("Enter a valid bet amount!"); return; }
+    if (bet * count > gabeClicks) { alert("You need " + formatNumber(bet * count) + " clicks for " + count + " balls at this bet!"); return; }
 
     snapshotCasinoBalance();
-
-    gabeClicks -=
-        bet;
-
-    plinkoBetAmount =
-        bet;
-
-    plinkoAnimating =
-        true;
-
-    document.getElementById(
-        "plinkoDropButton"
-    ).disabled = true;
-
-    document.getElementById(
-        "plinkoResult"
-    ).textContent =
-        "BALL DROPPING...";
-
-    updateClicker();
-
-    saveGame();
-
+    plinkoBatchTotal = count; plinkoBatchRemaining = count; plinkoBatchWager = bet * count;
+    plinkoBatchWins = 0; plinkoBatchNet = 0; plinkoBetAmount = bet;
+    document.getElementById("plinkoDropButton").disabled = true;
+    document.getElementById("plinkoResult").textContent = "DROPPING " + count + " BALL" + (count === 1 ? "" : "S") + "...";
+    gabeClicks -= plinkoBatchWager;
+    updateClicker(); saveGame();
     createPlinkoBoard();
+    launchNextPlinkoBall();
+}
 
-    plinkoBall = {
-
-        x:
-            plinkoCanvas.width / 2,
-
-        y: 35,
-
-        vx:
-            (Math.random() - 0.5) *
-            1.5,
-
-        vy: 1.5
-
-    };
-
-    requestAnimationFrame(
-        animatePlinko
-    );
+function launchNextPlinkoBall() {
+    if (plinkoBatchRemaining <= 0) {
+        plinkoLaunchTimer = null;
+        if (plinkoBalls.length === 0) finishPlinkoBatch();
+        return;
+    }
+    plinkoBalls.push({x: plinkoCanvas.width / 2 + (Math.random() - .5) * 8, y: 35,
+        vx: (Math.random() - .5) * 1.5, vy: 1.5, bet: plinkoBetAmount, mode: plinkoMode});
+    plinkoBatchRemaining--;
+    document.getElementById("plinkoBatchStatus").textContent = "Launched " + (plinkoBatchTotal - plinkoBatchRemaining) + "/" + plinkoBatchTotal + " · " + plinkoBalls.length + " in play";
+    if (!plinkoAnimating) { plinkoAnimating = true; requestAnimationFrame(animatePlinko); }
+    if (plinkoBatchRemaining > 0) plinkoLaunchTimer = setTimeout(launchNextPlinkoBall, PLINKO_LAUNCH_COOLDOWN);
+    else plinkoLaunchTimer = null;
 }
 
 function animatePlinko() {
-
-    if (
-        !plinkoAnimating ||
-        !plinkoBall
-    ) {
-
-        return;
-    }
-
-    plinkoBall.vy +=
-        0.12;
-
-    if (
-        plinkoBall.vy > 5
-    ) {
-
-        plinkoBall.vy = 5;
-    }
-
-    plinkoBall.x +=
-        plinkoBall.vx;
-
-    plinkoBall.y +=
-        plinkoBall.vy;
-
-    plinkoBall.vx *=
-        0.995;
-
-    if (
-        plinkoBall.x <
-        plinkoBallRadius
-    ) {
-
-        plinkoBall.x =
-            plinkoBallRadius;
-
-        plinkoBall.vx =
-            Math.abs(
-                plinkoBall.vx
-            );
-    }
-
-    if (
-        plinkoBall.x >
-        plinkoCanvas.width -
-        plinkoBallRadius
-    ) {
-
-        plinkoBall.x =
-            plinkoCanvas.width -
-            plinkoBallRadius;
-
-        plinkoBall.vx =
-            -Math.abs(
-                plinkoBall.vx
-            );
-    }
-
-    plinkoPegs.forEach(
-        function(peg) {
-
-            const dx =
-                plinkoBall.x -
-                peg.x;
-
-            const dy =
-                plinkoBall.y -
-                peg.y;
-
-            const distance =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
-
-            const collisionDistance =
-                plinkoBallRadius +
-                plinkoPegRadius;
-
-            if (
-                distance <
-                    collisionDistance &&
-                distance > 0
-            ) {
-
-                const nx =
-                    dx / distance;
-
-                const ny =
-                    dy / distance;
-
-                const overlap =
-                    collisionDistance -
-                    distance;
-
-                plinkoBall.x +=
-                    nx *
-                    overlap;
-
-                plinkoBall.y +=
-                    ny *
-                    overlap;
-
-                const direction =
-                    nx >= 0
-                        ? 1
-                        : -1;
-
-                plinkoBall.vx =
-                    direction *
-                    (
-                        1.2 +
-                        Math.random() *
-                        1.5
-                    );
-
-                plinkoBall.vy =
-                    Math.max(
-                        1.5,
-                        plinkoBall.vy *
-                        0.75
-                    );
+    if (!plinkoAnimating) return;
+    for (let i = plinkoBalls.length - 1; i >= 0; i--) {
+        const ball = plinkoBalls[i];
+        ball.vy = Math.min(5, ball.vy + 0.12);
+        ball.x += ball.vx; ball.y += ball.vy; ball.vx *= 0.995;
+        if (ball.x < plinkoBallRadius) { ball.x = plinkoBallRadius; ball.vx = Math.abs(ball.vx); }
+        if (ball.x > plinkoCanvas.width - plinkoBallRadius) { ball.x = plinkoCanvas.width - plinkoBallRadius; ball.vx = -Math.abs(ball.vx); }
+        plinkoPegs.forEach(peg => {
+            const dx = ball.x - peg.x, dy = ball.y - peg.y, distance = Math.sqrt(dx*dx + dy*dy);
+            const collisionDistance = plinkoBallRadius + plinkoPegRadius;
+            if (distance < collisionDistance && distance > 0) {
+                const nx = dx / distance, ny = dy / distance, overlap = collisionDistance - distance;
+                ball.x += nx * overlap; ball.y += ny * overlap;
+                ball.vx = (nx >= 0 ? 1 : -1) * (1.2 + Math.random() * 1.5);
+                ball.vy = Math.max(1.5, ball.vy * 0.75);
             }
-
-        }
-    );
-
-    drawPlinko();
-
-    if (
-        plinkoBall.y >
-        plinkoCanvas.height -
-        35
-    ) {
-
-        finishPlinko();
-
-        return;
+        });
+        if (ball.y > plinkoCanvas.height - 35) settlePlinkoBall(i);
     }
-
-    requestAnimationFrame(
-        animatePlinko
-    );
+    drawPlinko();
+    if (plinkoBalls.length > 0 || plinkoBatchRemaining > 0) requestAnimationFrame(animatePlinko);
+    else { plinkoAnimating = false; finishPlinkoBatch(); }
 }
 
-function finishPlinko() {
-
-    if (!plinkoBall) {
-        return;
-    }
-
-    const slotWidth =
-        plinkoCanvas.width /
-        plinkoMultipliers.length;
-
-    let slot =
-        Math.floor(
-            plinkoBall.x /
-            slotWidth
-        );
-
-    if (
-        slot < 0
-    ) {
-
-        slot = 0;
-    }
-
-    if (
-        slot >=
-        plinkoMultipliers.length
-    ) {
-
-        slot =
-            plinkoMultipliers.length -
-            1;
-    }
-
-    const multiplier =
-        plinkoMultipliers[
-            slot
-        ];
-
-    const winnings =
-        Math.floor(
-            plinkoBetAmount *
-            multiplier
-        );
-
-    gabeClicks +=
-        winnings;
-
-    plinkoAnimating =
-        false;
-
-    plinkoBall =
-        null;
-
-    if (
-        multiplier < 1
-    ) {
-
-        document.getElementById(
-            "plinkoResult"
-        ).textContent =
-            "💀 " +
-            multiplier +
-            "× — YOU LOST $" +
-            formatNumber(plinkoBetAmount - winnings) +
-            "!";
-
-    } else if (
-        multiplier === 1
-    ) {
-
-        document.getElementById(
-            "plinkoResult"
-        ).textContent =
-            "🤝 1× — BET RETURNED.";
-
-    } else {
-
-        document.getElementById(
-            "plinkoResult"
-        ).textContent =
-            "🎉 " +
-            multiplier +
-            "× — YOU WON $" +
-            formatNumber(winnings) +
-            "!";
-    }
-
-    gameResult(
-        "plinko",
-        plinkoBetAmount,
-        winnings,
-        multiplier >= 5
-    );
-
-    /* Check the casino kick rule after every drop. */
+function settlePlinkoBall(index) {
+    const ball = plinkoBalls[index];
+    const slotWidth = plinkoCanvas.width / plinkoMultipliers.length;
+    let slot = Math.max(0, Math.min(plinkoMultipliers.length - 1, Math.floor(ball.x / slotWidth)));
+    // Resolve against the mode the ball was launched in, even if the player changes mode mid-drop.
+    const multipliers = ball.mode === "high" ? plinkoHighRiskMultipliers : plinkoNormalMultipliers;
+    const multiplier = multipliers[slot];
+    const winnings = Math.floor(ball.bet * multiplier);
+    gabeClicks += winnings;
+    plinkoBatchNet += winnings - ball.bet;
+    if (multiplier > 1) plinkoBatchWins++;
+    gameResult("plinko", ball.bet, winnings, multiplier >= 5);
     recordCasinoWin();
-
-    document.getElementById(
-        "plinkoDropButton"
-    ).disabled =
-        false;
-
+    plinkoBalls.splice(index, 1);
+    document.getElementById("plinkoBatchStatus").textContent = "" + (plinkoBatchTotal - plinkoBatchRemaining - plinkoBalls.length) + "/" + plinkoBatchTotal + " settled · " + plinkoBalls.length + " in play";
     updateClicker();
+}
 
-    saveGame();
-
-    drawPlinko();
+function finishPlinkoBatch() {
+    plinkoAnimating = false; plinkoBall = null;
+    const net = plinkoBatchNet;
+    document.getElementById("plinkoResult").textContent = (net >= 0 ? "🎉 BATCH PROFIT +" : "💀 BATCH LOSS ") + formatNumber(Math.abs(net)) + " clicks · " + plinkoBatchTotal + " balls · " + (plinkoBatchWins) + " big win(s)";
+    document.getElementById("plinkoBatchStatus").textContent = "Batch complete · wagered " + formatNumber(plinkoBatchWager) + " clicks";
+    document.getElementById("plinkoDropButton").disabled = false;
+    updateClicker(); saveGame(); drawPlinko();
 }
 
 createPlinkoBoard();
-
 drawPlinko();
-
 
 /* =========================================================
    STOCK MARKET
@@ -10046,13 +9652,14 @@ function performReset() {
 
 
     plinkoPegs = [];
-
+    plinkoBalls = [];
     plinkoBall = null;
-
-    plinkoAnimating =
-        false;
-
+    plinkoAnimating = false;
     plinkoBetAmount = 0;
+    plinkoBatchRemaining = 0;
+    plinkoBatchTotal = 0;
+    if (plinkoLaunchTimer) clearTimeout(plinkoLaunchTimer);
+    plinkoLaunchTimer = null;
 
 
     /*
