@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 6.12 — EXPANDED CASE SELECTION -->
+<!-- OUTER/GABE CLICKER SITE VERSION 6.16 — CASE REEL SKIN CARDS -->
 
 <html lang="en">
 <head>
@@ -4147,7 +4147,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.12</div>
+  <div class="sidebarFoot">V6.16</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4577,7 +4577,7 @@ onclick="closeCasino()"
 ← BACK </button>
 
 <h1 id="casinoTitle">
-    🎰 GABE CASINO 🎰
+    🎰 CASINO 🎰
 </h1>
 
 <div id="casinoBalance">
@@ -4903,7 +4903,7 @@ onclick="closeStockMarket()"
 ← BACK </button>
 
 <h1 id="stockTitle">
-    📈 GABE STOCK MARKET
+    📈 STOCK MARKET
 </h1>
 
 <div id="stockSubtitle">
@@ -5212,7 +5212,7 @@ onclick="closeCases()"
 ← BACK </button>
 
 <h1 id="casesTitle">
-    📦 GABE CASES 📦
+    📦 CASES 📦
 </h1>
 
 <div id="casesBalance">
@@ -5369,7 +5369,7 @@ alt=""
 
     <button class="screenBack" onclick="closeStats()">← BACK</button>
 
-    <h1 class="gTitle">📊 GABE STATISTICS</h1>
+    <h1 class="gTitle">📊 STATISTICS</h1>
 
     <div id="statsList" class="statsPanel"></div>
 
@@ -10254,7 +10254,7 @@ const CASE_REEL_CARDS = 64;
 const CASE_SPIN_MS = 5200;
 
 function formatCaseMoney(value) {
-    return Number(value).toLocaleString("en-US", {minimumFractionDigits:Number.isInteger(Number(value))?0:2,maximumFractionDigits:2});
+    return Number(value).toLocaleString("en-US", {minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 /* Keep the original case-opening audio beside the HTML file. */
@@ -10274,6 +10274,86 @@ let caseOpening = false;
 
 let caseHistory = [];
 let caseInventory = [];
+const CASE_SKIN_DATA_URL = "https://raw.githubusercontent.com/Ksorgh/CSGO-API/main/public/api/en/crates.json";
+const CASE_SKIN_CASES = {
+    starter: "cs:go weapon case",
+    weapon: "kilowatt case",
+    scrap: "esl one cologne 2014 dust ii souvenir package",
+    neon: "esl one cologne 2014 nuke souvenir package"
+};
+const CASE_RARITY_TIERS = {
+    "consumer grade": "consumer", "industrial grade": "industrial",
+    "mil-spec grade": "milspec", "restricted": "restricted",
+    "classified": "classified", "covert": "covert"
+};
+function normalizeCaseItemRarity(value) {
+    return String(value || "").trim().toLowerCase();
+}
+function renderCaseSkinContents() {
+    Object.keys(CASE_SKIN_CASES).forEach(function(caseKey) {
+        const target = document.getElementById("caseWeapons_" + caseKey);
+        if (!target) return;
+        const def = CASE_TYPES[caseKey];
+        const pools = def && def.skinPools;
+        if (!pools) { target.textContent = "Skin pictures are unavailable right now. Reopen the page while online to load them."; return; }
+        target.textContent = "";
+        def.drops.forEach(function(drop) {
+            const skins = pools[drop.tier] || [];
+            if (!skins.length) return;
+            const heading = document.createElement("h4");
+            heading.textContent = CASE_TIERS[drop.tier].name + " · " + skins.length;
+            heading.style.color = CASE_TIERS[drop.tier].color;
+            target.appendChild(heading);
+            const row = document.createElement("div");
+            row.className = "caseWeaponGridRow";
+            skins.forEach(function(skin) {
+                const card = document.createElement("div");
+                card.className = "caseWeaponItem";
+                const image = document.createElement("img");
+                image.src = skin.image;
+                image.alt = skin.name;
+                image.loading = "lazy";
+                image.decoding = "async";
+                image.onerror = function() { this.style.visibility = "hidden"; };
+                const label = document.createElement("span");
+                label.textContent = skin.name;
+                card.append(image, label);
+                row.appendChild(card);
+            });
+            target.appendChild(row);
+        });
+        if (!target.childElementCount) target.textContent = "No skin artwork is listed for this container.";
+    });
+}
+async function loadCaseSkinData() {
+    try {
+        const response = await fetch(CASE_SKIN_DATA_URL, {cache: "force-cache"});
+        if (!response.ok) throw new Error("Could not load the CS2 item list");
+        const crates = await response.json();
+        Object.keys(CASE_SKIN_CASES).forEach(function(caseKey) {
+            const wanted = CASE_SKIN_CASES[caseKey];
+            const crate = crates.find(function(item) { return String(item.name || "").trim().toLowerCase() === wanted; });
+            if (!crate) return;
+            const pools = {};
+            (crate.contains || []).forEach(function(item) {
+                const tier = CASE_RARITY_TIERS[normalizeCaseItemRarity(item.rarity && item.rarity.name)];
+                if (!tier || !item.image) return;
+                (pools[tier] || (pools[tier] = [])).push({name:item.name, image:item.image});
+            });
+            if (crate.contains_rare && CASE_TYPES[caseKey].drops.some(function(drop) { return drop.tier === "special"; })) {
+                pools.special = crate.contains_rare.filter(function(item) { return !!item.image; }).map(function(item) { return {name:item.name, image:item.image}; });
+            }
+            CASE_TYPES[caseKey].skinPools = pools;
+        });
+        renderCaseSkinContents();
+    } catch (error) {
+        Object.keys(CASE_SKIN_CASES).forEach(function(caseKey) {
+            const target = document.getElementById("caseWeapons_" + caseKey);
+            if (target) target.textContent = "Skin pictures need an internet connection to load.";
+        });
+    }
+}
+loadCaseSkinData();
 try {
     const savedInventory = JSON.parse(localStorage.getItem("caseInventory") || "[]");
     if (Array.isArray(savedInventory)) caseInventory = savedInventory.filter(item => item && CASE_TIERS[item.tier]);
@@ -10294,11 +10374,19 @@ function pickCaseDrop(caseDef) {
         roll -= drop.chance;
 
         if (roll < 0) {
-            return drop;
+            return addRandomSkinImage(caseDef, drop);
         }
     }
 
-    return caseDef.drops[caseDef.drops.length - 1];
+    return addRandomSkinImage(caseDef, caseDef.drops[caseDef.drops.length - 1]);
+}
+
+function addRandomSkinImage(caseDef, drop) {
+    if (drop.image) return drop;
+    const pool = caseDef.skinPools && caseDef.skinPools[drop.tier];
+    if (!pool || !pool.length) return drop;
+    const skin = pool[Math.floor(Math.random() * pool.length)];
+    return Object.assign({}, drop, {itemName:skin.name, image:skin.image});
 }
 
 /* Colours that scroll past on the reel. Rare colours are shown more
@@ -10331,9 +10419,9 @@ function randomReelDrop(caseDef) {
     let roll = Math.random() * total;
     for (const drop of caseDef.drops) {
         roll -= Math.sqrt(drop.chance);
-        if (roll < 0) return drop;
+        if (roll < 0) return addRandomSkinImage(caseDef, drop);
     }
-    return caseDef.drops[0];
+    return addRandomSkinImage(caseDef, caseDef.drops[0]);
 }
 
 function renderCaseReel(caseDef, winningTier, winIndex, winningDrop) {
@@ -10422,7 +10510,8 @@ function renderCasePanels() {
         let html =
             "<h2>" + def.name + "</h2>" +
             '<div class="casePrice">$' + formatCaseMoney(def.price) + "</div>" +
-            '<div class="caseBlurb">' + def.blurb + "</div>";
+            '<div class="caseBlurb">' + def.blurb + "</div>" +
+            '<button type="button" class="caseOpenButton" id="openCase_' + key + '" onclick="openCase(\'' + key + '\')">OPEN CASE — $' + formatCaseMoney(def.price) + '</button>';
 
         if (!def.stickerCapsule && def.marketSource) {
             html += '<div class="caseMarketNote">Market listing price (may change; key not included). <a href="'+def.marketSource+'" target="_blank" rel="noopener">Price source</a></div>';
@@ -10448,13 +10537,10 @@ function renderCasePanels() {
                 const tier = CASE_TIERS[drop.tier];
                 html += '<div class="caseOddsRow"><div class="caseOddsDot" style="background:'+tier.color+'"></div><div style="color:'+tier.color+'">'+tier.name+'</div><div>'+drop.chance+'%</div><div>'+drop.mult+'×</div></div>';
             });
+            if (CASE_SKIN_CASES[key]) {
+                html += '<details class="caseWeaponContents"><summary>See every possible skin</summary><div class="caseWeaponContentsBody" id="caseWeapons_'+key+'">Loading CS2 item artwork…</div></details>';
+            }
         }
-
-        html +=
-            '<button class="caseOpenButton" id="openCase_' + key + '" ' +
-            'onclick="openCase(\'' + key + '\')">' +
-            "OPEN CASE — $" + formatCaseMoney(def.price) +
-            "</button>";
 
         panel.innerHTML = html;
 
@@ -10488,7 +10574,7 @@ function renderCaseHistory() {
 
         chip.style.background = CASE_TIERS[entry.tier].color;
 
-        chip.textContent = "+$" + formatNumber(entry.payout);
+        chip.textContent = "+$" + formatCaseMoney(entry.payout);
 
         container.appendChild(chip);
     });
@@ -10502,8 +10588,9 @@ function renderCaseInventory() {
     const groups = new Map();
     caseInventory.forEach(item => {
         const key = (item.caseName || "Case") + "|" + item.tier + "|" + (item.itemName || "");
-        const group = groups.get(key) || {caseName: item.caseName || "Case", itemName: item.itemName || "", tier: item.tier, count: 0, lastPayout: 0};
+        const group = groups.get(key) || {caseName: item.caseName || "Case", itemName: item.itemName || "", image: item.image || "", tier: item.tier, count: 0, lastPayout: 0};
         group.count++;
+        if (!group.image && item.image) group.image = item.image;
         if (!group.lastPayout) group.lastPayout = item.payout || 0;
         groups.set(key, group);
     });
@@ -10517,10 +10604,11 @@ function renderCaseInventory() {
         const sourceCase = Object.values(CASE_TYPES).find(def => def.name === group.caseName);
         const stickerDrop = sourceCase && sourceCase.drops.find(drop => drop.itemName === group.itemName);
         const stickerImage = stickerDrop && stickerDrop.image;
-        if (stickerImage) {
+        const dropImage = stickerImage || group.image;
+        if (dropImage) {
             const image = document.createElement("img");
             image.className = "caseInventorySticker";
-            image.src = stickerImage;
+            image.src = dropImage;
             image.alt = group.itemName;
             image.loading = "lazy";
             card.appendChild(image);
@@ -10584,7 +10672,7 @@ function openCase(caseKey) {
 
     const jitter = 0.85 + Math.random() * 0.3;
 
-    const payout = drop.price !== undefined ? Math.round(drop.price * 100) / 100 : Math.round(def.price * drop.mult * jitter);
+    const payout = drop.price !== undefined ? Math.round(drop.price * 100) / 100 : Math.round(def.price * drop.mult * jitter * 100) / 100;
 
     caseOpening = true;
 
@@ -10617,6 +10705,8 @@ function openCase(caseKey) {
     setTimeout(
         function() {
 
+            try {
+
             gabeClicks += payout;
 
             gameResult(
@@ -10641,7 +10731,7 @@ function openCase(caseKey) {
                 formatCaseMoney(Math.abs(profit)) + ")";
 
             caseHistory.unshift({ tier: drop.tier, payout: payout });
-            caseInventory.unshift({ tier: drop.tier, caseName: def.name, itemName: drop.itemName || "", payout: payout, date: Date.now() });
+            caseInventory.unshift({ tier: drop.tier, caseName: def.name, itemName: drop.itemName || "", image: drop.image || "", payout: payout, date: Date.now() });
             if (caseInventory.length > 1000) caseInventory.pop();
             try { localStorage.setItem("caseInventory", JSON.stringify(caseInventory)); } catch (e) {}
 
@@ -10652,13 +10742,16 @@ function openCase(caseKey) {
             renderCaseHistory();
             renderCaseInventory();
 
-            caseOpening = false;
-
-            setCaseButtonsDisabled(false);
-
-            updateClicker();
-
-            saveGame();
+            } catch (error) {
+                console.error("Case opening cleanup recovered from an error:", error);
+                result.textContent = drop.itemName || "Case opened";
+                document.getElementById("caseResultSub").textContent = "Your case opening is complete. You can open another case.";
+            } finally {
+                caseOpening = false;
+                setCaseButtonsDisabled(false);
+                updateClicker();
+                saveGame();
+            }
 
         },
         CASE_SPIN_MS + 150
@@ -13504,9 +13597,11 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-20",
-    title: "More CS2 Cases",
+    title: "CS2 Case Update",
     changes: [
-      "Added the classic CS:GO Weapon Case and two 2014 souvenir packages, including the ESL One Cologne Nuke package."
+      "Added the CS:GO Weapon Case, Kilowatt Case, and two 2014 souvenir packages, including the ESL One Cologne Nuke package.",
+      "Every skin shown on the case reel now has its matching picture and name; the full drop gallery is available when you want it.",
+      "Case buttons stay usable after opening, and prices keep their cents."
     ]
   },
   {
@@ -15523,14 +15618,14 @@ body{padding:74px 0 0 220px!important;background:radial-gradient(ellipse at 68% 
 .saveTransfer button:hover{border-color:#38dfe8!important;transform:translateY(-1px)}
 #saveTransferStatus{min-height:18px;margin-top:8px;padding:8px 10px;border-radius:8px;color:#2bdde5;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
 #casePanels{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));align-items:stretch;gap:18px;width:min(1240px,100%);margin:18px auto!important}
-.caseStorePanel{width:auto!important;max-width:none!important;height:520px;min-width:0;display:flex;flex-direction:column;padding:20px!important;box-sizing:border-box}
+.caseStorePanel{width:auto!important;max-width:none!important;height:auto;min-height:520px;min-width:0;display:flex;flex-direction:column;padding:20px!important;box-sizing:border-box}
 .caseStorePanel h2{display:flex;align-items:center;justify-content:center;min-height:58px;margin:0 0 10px!important;font-size:clamp(18px,1.65vw,24px)!important;line-height:1.15;overflow-wrap:anywhere}
 .caseStorePanel .casePrice{flex:none}
 .caseStorePanel .caseBlurb{min-height:38px;display:flex;align-items:center;justify-content:center;text-align:center}
 .caseStorePanel .caseOddsRow{flex:none;padding:6px 0;font-size:12px;gap:7px}
 .caseStorePanel .caseOddsHeader{padding:4px 0}
 .caseStorePanel .caseOpenButton{margin-top:auto;flex:none}
-@media(max-width:700px){#casePanels{grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px}.caseStorePanel{height:470px;padding:16px!important}.caseStorePanel h2{font-size:19px!important}}
+@media(max-width:700px){#casePanels{grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px}.caseStorePanel{height:auto;min-height:470px;padding:16px!important}.caseStorePanel h2{font-size:19px!important}}
 .caseStickerContents{min-height:28px;margin:8px 0 10px;border:1px solid #34313e;border-radius:9px;background:#10121a;overflow:hidden}
 .caseStickerContents summary{padding:8px 10px;color:#d9c1ff;font-size:11px;font-weight:850;cursor:pointer;list-style-position:inside}
 .caseStickerContents[open]{height:174px;min-height:174px;display:flex;flex-direction:column}
@@ -15543,12 +15638,21 @@ body{padding:74px 0 0 220px!important;background:radial-gradient(ellipse at 68% 
 .caseMarketNote{min-height:24px;margin:-7px 0 4px;color:#8992a2;text-align:center;font-size:9px;line-height:1.3}
 .caseMarketNote a{color:#c990ff;text-decoration:underline}
 .caseStickerContents[open]{height:132px;min-height:132px}
-@media(max-width:700px){.caseStorePanel{height:500px}}
+@media(max-width:700px){.caseStorePanel{height:auto;min-height:500px}}
 .caseCardSticker{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:7px;box-sizing:border-box;text-align:center}
 .caseCardSticker img{width:100%;height:72px;object-fit:contain;filter:drop-shadow(0 3px 5px #0009)}
 .caseCardSticker span{max-width:100%;color:#fff;font-size:9px;font-weight:850;line-height:1.1;text-shadow:0 1px 3px #000;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .caseInventoryItem{display:flex;align-items:center;gap:12px;min-height:74px}
 .caseInventorySticker{width:62px;height:62px;flex:none;object-fit:contain;border-radius:8px;background:#0d1119}
+.caseWeaponContents{margin:12px 0 4px;border:1px solid #34313d;border-radius:10px;background:#10131a;text-align:left;overflow:hidden}
+.caseWeaponContents>summary{padding:10px 12px;cursor:pointer;color:#d4b3ec;font-weight:800;font-size:12px}
+.caseWeaponContentsBody{padding:10px;border-top:1px solid #34313d;max-height:390px;overflow:auto}
+.caseWeaponContentsBody h4{margin:8px 0;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.caseWeaponGridRow{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-bottom:12px}
+.caseWeaponItem{min-width:0;padding:7px;border:1px solid #2e3440;border-radius:9px;background:#151a23;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:6px;text-align:center}
+.caseWeaponItem img{width:100%;height:64px;object-fit:contain;filter:drop-shadow(0 4px 5px #0008)}
+.caseWeaponItem span{font-size:10px;line-height:1.25;color:#d7dce5;overflow-wrap:anywhere}
+.caseStorePanel .caseOpenButton{position:sticky;top:8px;bottom:auto;z-index:8;width:100%;flex:none;margin:8px 0 12px!important;box-shadow:0 5px 18px #0009}
 .caseInventoryName,.caseInventoryDetail{min-width:0;overflow-wrap:anywhere}
 .settingsHint{margin:6px 0 10px;color:#9ca6b4;font-size:12px;line-height:1.45}
 html.lowGraphics *,html.lowGraphics *::before,html.lowGraphics *::after{animation:none!important;transition:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;text-shadow:none!important;scroll-behavior:auto!important}
