@@ -4081,6 +4081,10 @@ alt=""
                 <span class="mi">👆</span><span>GABE CLICKER</span>
             </button>
 
+            <button id="gabentaleMenuButton" class="menuItem" role="menuitem" onclick="launchGabentale()">
+                <span class="mi">❤️</span><span>GABENTALE</span>
+            </button>
+
             <button id="casinoMenuButton" class="menuItem" role="menuitem" onclick="openCasinoFromMenu()">
                 <span class="mi">🎰</span><span>CASINO</span>
             </button>
@@ -4108,6 +4112,8 @@ alt=""
             <button id="statsButton" class="menuItem" role="menuitem" onclick="openStats()">
                 <span class="mi">📊</span><span>STATISTICS</span>
             </button>
+
+            <button id="ascMenuButton" class="menuItem" role="menuitem" onclick="openAscension()"><span class="mi">✨</span><span>ASCENSION</span></button>
 
             <button id="selfDestructButton" class="menuItem slim" role="menuitem" onclick="selfDestruct()">
                 <span class="mi">💥</span><span>SELF DESTRUCT</span>
@@ -4146,8 +4152,8 @@ alt=""
 </nav>
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
-  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div>
-  <div class="sidebarFoot">V6.18</div>
+  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="ascension" onclick="openAscension()"><span>✦</span>Ascension</button><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button></div>
+  <div class="sidebarFoot">V6.19</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -6317,6 +6323,7 @@ function doRebirth() {
         "• You keep your offline vault & its upgrades\n" +
         "• You keep your Lucky Charm, achievements & statistics\n" +
         "• You keep your businesses, real estate & empire upgrades\n" +
+        "• You earn Ascension Points (spend them on permanent upgrades)\n" +
         "• Permanent multiplier becomes " +
         (getRebirthMultiplier() + 0.25).toFixed(2) +
         "×\n\n" +
@@ -11422,7 +11429,7 @@ updateClicker();
     }
 
     function offlineEff() {
-        return OFFLINE_EFF[Math.min(OFFLINE_EFF.length - 1, offState.eff || 0)] / 100;
+        return OFFLINE_EFF[Math.min(OFFLINE_EFF.length - 1, offState.eff || 0)] / 100 * (window.gabeOfflineMult ? window.gabeOfflineMult() : 1);
     }
 
     function totalIncome() {
@@ -11447,7 +11454,7 @@ updateClicker();
 
     /* cost of buying k more levels of a business (current level lv) */
     function bizBulkCost(b, lv, k) {
-        return Math.ceil(b.cost * Math.pow(BIZ_RATIO, lv) * (Math.pow(BIZ_RATIO, k) - 1) / (BIZ_RATIO - 1));
+        return Math.ceil(b.cost * (window.gabeCostMult ? window.gabeCostMult() : 1) * Math.pow(BIZ_RATIO, lv) * (Math.pow(BIZ_RATIO, k) - 1) / (BIZ_RATIO - 1));
     }
 
     function bizMaxAffordable(b, lv, cash) {
@@ -11456,7 +11463,7 @@ updateClicker();
 
         if (room <= 0) { return 0; }
 
-        const first = b.cost * Math.pow(BIZ_RATIO, lv);
+        const first = b.cost * (window.gabeCostMult ? window.gabeCostMult() : 1) * Math.pow(BIZ_RATIO, lv);
 
         if (cash < Math.ceil(first)) { return 0; }
 
@@ -13661,6 +13668,16 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+  {
+    date: "2026-10-21",
+    title: "Ascension Update",
+    changes: [
+      "New Ascension page: earn points from rebirths and spend them on permanent Clicking, Empire, Collector and Investor upgrades, with respec.",
+      "New Empire Research projects boost income, cut business costs and improve offline earnings.",
+      "Cross-game milestones (cases, skins, stocks, casino, achievements, empire, clicks) award points, cash and titles.",
+      "Ascension data is included in save export/import. Existing saves are upgraded automatically."
+    ]
+  },
      {
     date: "2026-10-21",
     title: "Casino Patches",
@@ -14123,7 +14140,9 @@ updateChangeLogBadge();
 
 <!-- =========================================================
      PLAYER NAMES + PUBLIC LEADERBOARD
-     Paste this whole block right before </body>,
+     Paste this whole block right before 
+
+</body>,
      AFTER the PUBLIC CHAT block. No other code needs to change
      (see the optional one-line tweak at the bottom).
      ========================================================= -->
@@ -15562,9 +15581,9 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
   window.setLowGraphics=function(enabled){const on=!!enabled;document.documentElement.classList.toggle('lowGraphics',on);try{localStorage.setItem('gabeLowGraphics',on?'1':'0');}catch(e){}const b=document.getElementById('lowGraphicsButton');if(b){b.textContent='Low graphics: '+(on?'On':'Off');b.setAttribute('aria-pressed',String(on));}};
   window.toggleLowGraphics=function(){window.setLowGraphics(!document.documentElement.classList.contains('lowGraphics'));};
   try{window.setLowGraphics(localStorage.getItem('gabeLowGraphics')==='1');}catch(e){window.setLowGraphics(false);}
-  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
+  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName','gabeAscend','gabeAscSkins'];
   const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
-  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch']);
+  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch','gabeAscend']);
   const saveTransferDb='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
   function createShortSaveCode(){const bytes=new Uint8Array(6);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
   window.exportSaveCode=async function(){
@@ -16051,6 +16070,188 @@ html,body{max-width:100%;overflow-x:hidden}
   show(idx);
 })();
 </script>
+<style id="gabentaleStyles">#gabentaleRoot{--gti:#f6f0dc;--gtmuted:#a6b1c7;--gtred:#ff526b;--gtgold:#ffd46b;--gtcyan:#65f2df;position:fixed;inset:0;z-index:1000000;display:none;overflow:auto;isolation:isolate;background:#08090e;color:var(--gti);font:15px ui-monospace,SFMono-Regular,Consolas,monospace}#gabentaleRoot *{box-sizing:border-box}#gabentaleRoot.gt-open{display:block}#gabentaleRoot button{font:inherit!important;color:var(--gti)!important;border:2px solid #aab2c2!important;border-radius:4px!important;background:linear-gradient(180deg,#20283b,#111726)!important;box-shadow:0 3px 0 #080b12, inset 0 1px #ffffff12!important;cursor:pointer;transition:transform .12s,border-color .12s,background .12s,filter .12s}#gabentaleRoot button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.65)}#gabentaleRoot button:hover:not(:disabled),#gabentaleRoot button:focus-visible{border-color:var(--gtgold)!important;background:linear-gradient(180deg,#303951,#1d263a)!important;outline:2px solid #ffd76b55;transform:translateY(-1px)}#gabentaleRoot .gt-frame{position:relative;min-height:100%;padding:14px clamp(12px,3vw,44px) 22px;display:flex;flex-direction:column;align-items:center;background:radial-gradient(ellipse at 50% 3%,#202e51 0,transparent 54%),linear-gradient(165deg,#0c101a,#08090e 70%)}#gabentaleRoot .gt-frame:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.15;background-image:radial-gradient(#9baed0 1px,transparent 1px);background-size:31px 31px;mask-image:linear-gradient(#000,transparent 75%)}#gabentaleRoot .gt-top{position:relative;width:min(980px,100%);display:flex;align-items:center;justify-content:flex-end;gap:12px;border-bottom:1px solid #454d60;padding:0 0 11px;color:#aeb6c8;font-size:11px;letter-spacing:.13em}#gabentaleRoot .gt-brand{color:var(--gtcyan);font-weight:1000;letter-spacing:.22em;text-shadow:0 0 15px #65f2df66}#gabentaleRoot .gt-close{padding:8px 12px;font-size:11px}#gabentaleRoot .gt-title{position:relative;margin:22px 0 5px;text-align:center;font-size:clamp(32px,6vw,56px);line-height:1;letter-spacing:.12em;color:#fff;text-shadow:3px 3px #a82650,0 0 32px #62e8e044}#gabentaleRoot .gt-subtitle{position:relative;margin:0 0 17px;color:#c0c8d8;text-align:center;font-size:11px;letter-spacing:.15em}#gabentaleRoot .gt-card{position:relative;width:min(930px,100%);min-height:360px;padding:clamp(12px,2.5vw,22px);border:1px solid #727f9c;background:linear-gradient(145deg,#151b2a,#0c1019 67%);box-shadow:0 0 0 5px #08090e,0 0 0 6px #3d465d,0 24px 80px #000b,inset 0 1px #ffffff17}#gabentaleRoot .gt-roombar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;padding:0 2px;color:#a8b4ca;font-size:10px;letter-spacing:.14em;text-transform:uppercase}#gabentaleRoot .gt-roomname{color:var(--gtcyan);font-weight:900;text-shadow:0 0 12px #65f2df44}#gabentaleRoot .gt-map{width:min(100%,850px);margin:auto;position:relative;overflow:hidden;border:3px solid #74809c;background:#171c2a;box-shadow:0 0 0 2px #121725,0 12px 32px #0009,inset 0 0 35px #000a;isolation:isolate}#gabentaleRoot .gt-grid{position:relative;z-index:0;display:grid;grid-template-columns:repeat(15,minmax(0,1fr));grid-template-rows:repeat(9,clamp(25px,4.2vw,44px));image-rendering:pixelated}#gabentaleRoot .gt-props{position:absolute;inset:0;z-index:2;display:grid;grid-template-columns:repeat(15,minmax(0,1fr));grid-template-rows:repeat(9,clamp(25px,4.2vw,44px));pointer-events:none}#gabentaleRoot .gt-tile{position:relative;background-color:#293148;background-image:linear-gradient(135deg,#ffffff09,transparent 48%),linear-gradient(45deg,transparent 48%,#050a1470);border:1px solid #a9b4d00a;box-shadow:inset 0 0 0 1px #080d1a20}#gabentaleRoot .gt-tile:nth-child(4n){background-color:#2c344d}#gabentaleRoot .gt-tile:nth-child(7n){background-image:linear-gradient(90deg,transparent 48%,#a8b5d014 50%,transparent 52%),linear-gradient(0deg,transparent 48%,#a8b5d010 50%,transparent 52%)}#gabentaleRoot .gt-wall{z-index:1;background-color:#303b55;background-image:repeating-linear-gradient(0deg,transparent 0 13px,#171e30 13px 16px),repeating-linear-gradient(90deg,transparent 0 25px,#1c2437 25px 28px),linear-gradient(145deg,#66718b,#37435d 55%,#29344c);border:1px solid #8290aa;box-shadow:inset 2px 2px #ffffff22,inset -3px -3px #131b2b88,0 1px 2px #060911}#gabentaleRoot .gt-wall:after{content:"";position:absolute;inset:3px;border-top:1px solid #d6e0f019;border-left:1px solid #d6e0f012;pointer-events:none}#gabentaleRoot .gt-object{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;font-size:clamp(17px,2.8vw,27px);filter:drop-shadow(2px 4px 2px #000b);animation:gtBob 2.4s ease-in-out infinite}#gabentaleRoot .gt-object:before{content:"";position:absolute;z-index:-1;width:220%;height:190%;border-radius:50%;background:radial-gradient(ellipse,#65f2df38,transparent 68%)}#gabentaleRoot .gt-object.gt-terminal{animation-delay:.4s}#gabentaleRoot .gt-object.gt-terminal:before{background:radial-gradient(ellipse,#61e9db44,transparent 68%)}#gabentaleRoot .gt-object.gt-ghost:before{background:radial-gradient(ellipse,#d991ff38,transparent 68%)}#gabentaleRoot .gt-object.gt-gate{animation:none}#gabentaleRoot .gt-gabe{position:relative;z-index:3;display:flex;align-items:center;justify-content:center;overflow:visible;filter:drop-shadow(2px 4px 2px #000b);transition:grid-column .08s,grid-row .08s}#gabentaleRoot .gt-gabe svg{height:clamp(34px,5vw,48px);width:auto;overflow:visible;image-rendering:pixelated;animation:gtIdle 1.8s steps(2,end) infinite}#gabentaleRoot .gt-nameTag{position:absolute;bottom:calc(100% - 2px);left:50%;transform:translateX(-50%);padding:2px 4px;background:#101626dd;color:#e7ecf7;font-size:7px;font-weight:900;letter-spacing:.08em;white-space:nowrap;border:1px solid #6b7895}#gabentaleRoot .gt-mapCaption{display:flex;justify-content:space-between;gap:12px;align-items:center;width:min(100%,850px);margin:9px auto 0;color:#a3acc0;font-size:10px;letter-spacing:.04em}#gabentaleRoot .gt-interact{color:var(--gtgold);font-weight:bold}#gabentaleRoot .gt-touchpad{display:flex;justify-content:center;gap:7px;margin:9px auto 2px}#gabentaleRoot .gt-touchpad button{width:42px;height:36px;padding:0;font-size:15px;color:#d7e4ff!important}#gabentaleRoot .gt-panel{width:min(850px,100%);margin:14px auto 0;padding:14px 16px;border:1px solid #515c75;background:linear-gradient(135deg,#171f30,#0d121d);box-shadow:inset 0 1px #ffffff12,0 4px 14px #0005}#gabentaleRoot .gt-panelHead{color:var(--gtgold);font-weight:900;font-size:10px;letter-spacing:.14em;margin-bottom:7px}#gabentaleRoot .gt-dialogue{min-height:38px;color:#f4f1e9;font-size:clamp(14px,2vw,17px);line-height:1.6;white-space:pre-line}#gabentaleRoot .gt-choices{display:flex;gap:9px;flex-wrap:wrap;margin-top:11px}#gabentaleRoot .gt-choice{padding:10px 13px;text-align:left;font-size:11px;font-weight:800}#gabentaleRoot .gt-choice:before{content:"♥ ";color:var(--gtred)}#gabentaleRoot .gt-hint{color:#909bb0;font-size:9px;text-align:center;margin:10px 0 0;letter-spacing:.05em}#gabentaleRoot .gt-battleHud{display:flex;gap:13px;align-items:center;flex-wrap:wrap;margin:0 auto 9px;width:min(100%,500px);font-size:11px;color:#e7e9f0}#gabentaleRoot .gt-hp{color:#ff8790;font-weight:900}#gabentaleRoot .gt-meter{width:115px;height:9px;border:1px solid #75717c;padding:1px;background:#201c28}#gabentaleRoot .gt-meter i{display:block;height:100%;background:linear-gradient(90deg,#ff5966,#ffc065);box-shadow:0 0 8px #ff596677}#gabentaleRoot .gt-arena{height:190px;position:relative;border:2px solid #e8e3d7;margin:12px auto;width:min(100%,470px);overflow:hidden;background:radial-gradient(ellipse,#364061 0,#20263a 40%,#0b0d15 84%);box-shadow:inset 0 0 35px #0008}#gabentaleRoot .gt-heart{position:absolute;z-index:2;font-size:19px;line-height:1;color:var(--gtred);filter:drop-shadow(0 0 8px #ff485a)}#gabentaleRoot .gt-bullet{position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;box-shadow:0 0 10px #fff,0 0 20px #8eeeff66}#gabentaleRoot .gt-battleMsg{text-align:center;min-height:22px;color:#e8e8ef;font-size:12px}#gabentaleRoot .gt-controls{color:#a1a8b8;text-align:center;font-size:10px;margin:7px 0;letter-spacing:.06em}#gabentaleRoot .gt-actionRow{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:12px}#gabentaleRoot .gt-action{min-width:100px;padding:10px 14px;font-weight:900;font-size:11px;letter-spacing:.07em}#gabentaleRoot .gt-action.gt-primary{border-color:var(--gtgold)!important;color:var(--gtgold)!important}#gabentaleRoot .gt-end{padding:32px 18px;text-align:center;border-color:var(--gtgold)}#gabentaleRoot .gt-endTitle{color:var(--gtgold);font-size:clamp(22px,4vw,34px);font-weight:1000;letter-spacing:.08em;margin-bottom:14px;text-shadow:0 0 22px #ffd76b33}#gabentaleRoot .gt-endText{max-width:560px;margin:auto;color:#f3f0e8;line-height:1.8}#gabentaleRoot .gt-foot{margin:13px 0 0;color:#858da0;text-align:center;font-size:10px;letter-spacing:.08em}
+@keyframes gtBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}@keyframes gtIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}@media(max-width:560px){#gabentaleRoot .gt-frame{padding:10px}#gabentaleRoot .gt-top{font-size:9px}#gabentaleRoot .gt-title{margin-top:16px}#gabentaleRoot .gt-card{min-height:0;padding:10px}#gabentaleRoot .gt-grid,#gabentaleRoot .gt-props{grid-template-rows:repeat(9,clamp(24px,7vw,34px))}#gabentaleRoot .gt-roombar{font-size:9px}#gabentaleRoot .gt-mapCaption{font-size:9px}#gabentaleRoot .gt-arena{height:170px}}@media(prefers-reduced-motion:reduce){#gabentaleRoot *,#gabentaleRoot *:before,#gabentaleRoot *:after{animation:none!important;transition:none!important}}
+</style>
+<div id="gabentaleRoot" aria-hidden="true"><div class="gt-frame"><div class="gt-top"><button class="gt-close" onclick="closeGabentale()">CLOSE</button></div><h1 class="gt-title">GABENTALE</h1><main class="gt-card" id="gtCard" aria-live="polite"></main></div></div>
+<script id="gabentaleGame">(()=>{'use strict';
+const root=document.getElementById('gabentaleRoot'),card=document.getElementById('gtCard');
+const board=['###############','#.............#','#..T..#...G.D.#','#.....#.......#','#.............#','#.##.....##...#','#.............#','#..@..........#','###############'];
+const fresh=()=>({phase:'map',x:3,y:7,kind:0,ticket:false,ghostResolved:false,mercy:0,hp:20,enemy:28,acts:0,turns:0,ending:''});let s=fresh(),spawnTimer=null,bulletTimers=[],bulletsInFlight=0,patternDone=false,turnReady=false;
+try{const saved=JSON.parse(localStorage.getItem('gabentale-save-v2')||'null');if(saved)s={...fresh(),...saved};if(s.phase==='battle')s.phase='map'}catch(e){}
+function save(){try{localStorage.setItem('gabentale-save-v2',JSON.stringify(s))}catch(e){}}
+function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n}
+function button(txt,fn,cls='gt-action'){const b=el('button',cls,txt);b.type='button';b.onclick=fn;return b}
+function clearTimers(){clearInterval(spawnTimer);spawnTimer=null;bulletTimers.forEach(clearInterval);bulletTimers=[];bulletsInFlight=0;patternDone=false;turnReady=false}
+function cardBase(){card.className='gt-card';card.replaceChildren()}
+function addPanel(title,text,choices){const p=el('section','gt-panel');p.append(el('div','gt-panelHead',title),el('div','gt-dialogue',text));if(choices&&choices.length){const row=el('div','gt-choices');choices.forEach(c=>row.append(button(c.label,c.run,'gt-choice')));p.append(row)}card.append(p)}
+function roomBar(name,progress){const h=el('div','gt-roombar');h.append(el('span','gt-roomname',name),el('span','',progress));card.append(h)}
+function renderMap(message='Find the terminal. Talk to the Queue Ghost.'){
+ clearTimers();s.phase='map';save();cardBase();roomBar('01 · SERVER GROTTO',s.ticket?'SUPPORT TICKET READ':'TASK: FIND THE EXIT');
+ const map=el('div','gt-map'),grid=el('div','gt-grid'),props=el('div','gt-props');
+ for(let y=0;y<board.length;y++)for(let x=0;x<board[y].length;x++){const tile=el('div','gt-tile'+(board[y][x]==='#'?' gt-wall':(x+y)%7===0?' gt-tileSeam':''));grid.append(tile)}
+ const put=(x,y,cls,icon,label)=>{const o=el('div','gt-object '+cls,icon);o.style.gridColumn=String(x+1);o.style.gridRow=String(y+1);o.setAttribute('aria-label',label);props.append(o)};
+ put(3,2,'gt-terminal','🖥️','Support terminal');put(10,2,'gt-ghost','👻','Queue Ghost');put(12,2,'gt-gate',s.ghostResolved?'🚪':'🔒','Elevator');
+ const gabe=el('div','gt-gabe');gabe.style.gridColumn=String(s.x+1);gabe.style.gridRow=String(s.y+1);gabe.setAttribute('aria-label','Gabe');gabe.innerHTML='<span class="gt-nameTag">GABE</span><svg viewBox="0 0 32 40" aria-hidden="true" shape-rendering="crispEdges"><ellipse cx="16" cy="37" rx="11" ry="2.5" fill="#050812aa"/><path d="M7 5V3h3V1h13v2h3v5H7z" fill="#30252a"/><path d="M8 7h16v11H8z" fill="#d7ad87"/><path d="M8 15h16v4H8z" fill="#9c674f"/><rect x="11" y="10" width="2" height="2" fill="#20242d"/><rect x="20" y="10" width="2" height="2" fill="#20242d"/><path d="M5 19h22v13H5z" fill="#3d5c85"/><path d="M9 19h14v5H9z" fill="#5278a6"/><path d="M5 21H2v9h4M27 21h3v9h-4" fill="#d7ad87"/><path d="M8 31h7v6H7zM18 31h7v6h-8z" fill="#292a35"/><path d="M7 36h8v2H6M17 36h8v2h-8" fill="#151821"/><rect x="15" y="21" width="3" height="3" fill="#65f2df"/></svg>';props.append(gabe);map.append(grid,props);card.append(map);
+ let near=nearThing();let cap=el('div','gt-mapCaption');cap.append(el('span','gt-interact',near?`E · ${near.label}`:'WASD / ARROWS · MOVE'));card.append(cap);
+ const pad=el('div','gt-touchpad');[['←',-1,0],['↑',0,-1],['↓',0,1],['→',1,0]].forEach(([label,dx,dy])=>pad.append(button(label,()=>step(dx,dy),'gt-action')));card.append(pad);
+ const detail=near?({terminal:'A glowing support ticket waits on the terminal.',ghost:'The Queue Ghost is waiting by the far wall.',gate:s.ghostResolved?'The elevator doors stand open.':'The elevator is locked.'}[near.id]):message;addPanel(near?'NEARBY':'OBJECTIVE',detail,near?[{label:'INTERACT',run:interact}]:null);
+ card.append(el('div','gt-hint','WASD / ARROWS TO MOVE'));
+}
+function nearThing(){const things=[{x:3,y:2,id:'terminal',label:'READ SUPPORT TICKET'},{x:10,y:2,id:'ghost',label:'TALK TO QUEUE GHOST'},{x:12,y:2,id:'gate',label:'USE ELEVATOR'}];return things.find(o=>Math.abs(s.x-o.x)+Math.abs(s.y-o.y)<=1)||null}
+function step(dx,dy){if(s.phase!=='map')return;const x=s.x+dx,y=s.y+dy;if(y<1||y>7||x<1||x>13||board[y][x]==='#'||[[3,2],[10,2],[12,2]].some(([ox,oy])=>x===ox&&y===oy))return;s.x=x;s.y=y;save();const gabe=card.querySelector('.gt-gabe');if(gabe){gabe.style.gridColumn=String(x+1);gabe.style.gridRow=String(y+1)}const near=nearThing(),hint=card.querySelector('.gt-interact');if(hint)hint.textContent=near?'E · '+near.label:'WASD / ARROWS · WALK';const panel=card.querySelector('.gt-dialogue');if(panel)panel.textContent=near?'Press E or tap INTERACT to use this.':'Explore the server grotto. Find the terminal and talk to the Queue Ghost.';const panelHead=card.querySelector('.gt-panelHead');if(panelHead)panelHead.textContent=near?'NEARBY':'GABE'}
+function interact(){const o=nearThing();if(!o){renderMap('There is nothing close enough to interact with.');return}if(o.id==='terminal')terminal();else if(o.id==='ghost')ghost();else gate()}
+function terminal(){if(s.ticket){renderMap('The terminal’s ticket has already been saved. The ghost is waiting by the elevator.');return}s.phase='dialog';cardBase();roomBar('SUPPORT TERMINAL','TICKET #000001');addPanel('A VERY OLD SUPPORT TICKET','“I have been waiting so long, I forgot what I needed help with.” The ticket is signed: QUEUE GHOST.',[{label:'READ THE WHOLE TICKET ALOUD',run:()=>{s.ticket=true;s.kind+=2;renderMap('The ticket printer whirs. A little voice echoes from the far side of the room: “You read it?”')}},{label:'SAVE IT FOR LATER',run:()=>{s.ticket=true;renderMap('Gabe saves the ticket. Maybe the Queue Ghost can explain the rest.')}}]);}
+function startBattle(){s.phase='battle';s.hp=20;s.enemy=28;s.acts=0;s.turns=0;renderBattle('The Queue Ghost blocks the exit. Choose your move.')}
+function ghost(){s.phase='dialog';cardBase();roomBar('THE WAITING ROOM',s.ticket?'THE GHOST NOTICED YOU':'A NEW FACE');addPanel('QUEUE GHOST',s.ticket?'“You read my ticket. No one has done that in… I don’t know. A long time.”':'“Are you here about my ticket? I’m not sure I remember what it said.”',[{label:s.ticket?'LISTEN TO ITS STORY':'ASK IT TO TELL YOU MORE',run:()=>{s.kind++;startBattle()}},{label:'GIVE THE GHOST SOME SPACE',run:()=>renderMap('The ghost nods. You can come back whenever you are ready.')}]);}
+function gate(){if(!s.ghostResolved){renderMap('The elevator is locked. A glowing sign says: PLEASE RESOLVE THE QUEUE BEFORE LEAVING.');return}s.phase='endingChoice';cardBase();roomBar('THE ELEVATOR','EXIT FOUND');addPanel('ONE LAST CHOICE','The elevator hums awake. The Queue Ghost hands Gabe a tiny golden ticket. How should this story end?',[{label:'REBOOT THE SERVERS FOR EVERYONE',run:()=>finish('bright')},{label:'KEEP THE TICKET & LEAVE',run:()=>finish('quiet')},{label:'HIT THE BIG RED BUTTON',run:()=>finish('chaos')}]);}
+function renderBattle(msg){clearTimers();s.phase='battle';save();cardBase();roomBar('ENCOUNTER · QUEUE GHOST','TURN '+(s.turns+1));const hud=el('div','gt-battleHud');hud.append(el('span','gt-hp','♥ '+s.hp+' / 20 HP'),el('span','','GABE'));const meter=el('div','gt-meter'),fill=el('i');fill.style.width=Math.max(0,s.enemy/28*100)+'%';meter.append(fill);hud.append(meter,el('span','','GHOST '+s.enemy+' HP'));card.append(hud);const arena=el('div','gt-arena');arena.id='gtArena';const heart=el('div','gt-heart','♥');heart.id='gtHeart';heart.style.cssText='left:calc(50% - 9px);top:calc(50% - 9px)';arena.append(heart);card.append(arena,el('div','gt-battleMsg',msg+' · DODGE!'),el('div','gt-controls','SURVIVE THE PATTERN TO TAKE YOUR TURN · ARROWS / WASD OR TOUCH PAD'));const pad=el('div','gt-touchpad');[['←','ArrowLeft'],['↑','ArrowUp'],['↓','ArrowDown'],['→','ArrowRight']].forEach(([label,key])=>pad.append(button(label,()=>move({key,preventDefault(){}}),'gt-action')));card.append(pad);const row=el('div','gt-actionRow');row.id='gtActionRow';const f=button('FIGHT',fight,'gt-action gt-primary'),a=button('ACT',act,'gt-action'),m=button('MERCY',mercy,'gt-action');f.disabled=a.disabled=m.disabled=true;row.append(f,a,m);card.append(row);firePattern()}
+function maybeFinishWave(){if(!patternDone||bulletsInFlight>0||s.phase!=='battle'||turnReady)return;turnReady=true;const msg=document.querySelector('#gabentaleRoot .gt-battleMsg');if(msg)msg.textContent='Pattern cleared. Your turn — choose one action.';document.querySelectorAll('#gtActionRow button').forEach(b=>b.disabled=false)}
+function firePattern(){const arena=document.getElementById('gtArena');let count=0;bulletsInFlight=0;patternDone=false;spawnTimer=setInterval(()=>{if(s.phase!=='battle'||!arena.isConnected){clearTimers();return}const b=el('i','gt-bullet'),x0=Math.random()*(arena.clientWidth-14);let x=x0,y=-14,settled=false;arena.append(b);bulletsInFlight++;const drift=(Math.random()-.5)*1.1;let t;const settle=()=>{if(settled)return;settled=true;clearInterval(t);b.remove();bulletsInFlight=Math.max(0,bulletsInFlight-1);maybeFinishWave()};t=setInterval(()=>{if(!b.isConnected){settle();return}y+=3.3;x+=drift;b.style.cssText=`left:${x}px;top:${y}px`;const h=document.getElementById('gtHeart');if(h){const r=h.getBoundingClientRect(),q=b.getBoundingClientRect();if(r.left<q.right&&r.right>q.left&&r.top<q.bottom&&r.bottom>q.top){s.hp=Math.max(0,s.hp-2);const hp=document.querySelector('#gabentaleRoot .gt-hp');if(hp)hp.textContent='♥ '+s.hp+' / 20 HP';const msg=document.querySelector('#gabentaleRoot .gt-battleMsg');if(msg)msg.textContent='Hit by a stray support ticket! —2 HP';settle();if(s.hp===0)showDefeat();return}}if(y>arena.clientHeight)settle()},28);bulletTimers.push(t);if(++count>=6){clearInterval(spawnTimer);spawnTimer=null;patternDone=true;maybeFinishWave()}},430)}
+function move(e){if(s.phase!=='battle')return;const v={ArrowLeft:[-12,0],a:[-12,0],ArrowRight:[12,0],d:[12,0],ArrowUp:[0,-12],w:[0,-12],ArrowDown:[0,12],s:[0,12]}[e.key];if(!v)return;e.preventDefault();const h=document.getElementById('gtHeart'),a=document.getElementById('gtArena');if(!h||!a)return;h.style.left=Math.max(2,Math.min(a.clientWidth-20,h.offsetLeft+v[0]))+'px';h.style.top=Math.max(2,Math.min(a.clientHeight-20,h.offsetTop+v[1]))+'px'}
+function fight(){if(!turnReady)return;turnReady=false;s.turns++;s.enemy=Math.max(0,s.enemy-8);if(s.enemy===0){clearTimers();s.ghostResolved=true;renderMap('The ghost leaves its number behind and drifts toward the elevator. The lock clicks open.')}else renderBattle('Gabe attacks the waiting number. It loses its place — and 8 HP.')}
+function act(){if(!turnReady)return;turnReady=false;s.turns++;s.acts++;s.kind++;renderBattle(s.acts>=2?'Gabe listens carefully. The Queue Ghost seems ready to be spared.':'Gabe reads the whole ticket aloud. The Ghost looks surprised.')}
+function mercy(){if(!turnReady)return;turnReady=false;s.turns++;if(s.kind>=1||s.acts>=2){clearTimers();s.mercy=1;s.ghostResolved=true;renderMap('The Queue Ghost thanks Gabe and floats toward the elevator. The lock clicks open.')}else renderBattle('The Ghost is still nervous. Try ACT, or show it the ticket first.')}
+function showDefeat(){clearTimers();s.phase='defeat';cardBase();roomBar('ENCOUNTER · QUEUE GHOST','GABE NEEDS A BREAK');addPanel('GAME OVER','The support queue got the better of Gabe this time. Take a breath, then try again.',[{label:'RETRY ENCOUNTER',run:startBattle},{label:'RETURN TO MAP',run:()=>{s.hp=20;renderMap('Gabe catches his breath. The Queue Ghost is still waiting.')}}])}
+function finish(kind){clearTimers();s.phase='ending';s.ending=kind;save();cardBase();card.classList.add('gt-end');let title,text;if(kind==='bright'){title='THE GOOD PATCH';text='The lights return across the Underworks. The Queue Ghost goes home. Gabe adds “check the server room” to the release notes.'}else if(kind==='quiet'){title='ONE LAST TICKET';text='Gabe keeps the golden ticket. The Ghost is free, and somewhere a future game gets a very strange secret item.'}else{title='HOTFIX: EVERYTHING';text='The red button reboots every server at once. The queue clears. So does the calendar. Gabe calls it a successful launch.'}card.append(el('div','gt-endTitle',title),el('p','gt-endText',text),el('p','gt-hint','THE END'));const row=el('div','gt-actionRow');row.append(button('PLAY AGAIN',()=>{s=fresh();renderMap()},'gt-action gt-primary'),button('CLOSE GAME',window.closeGabentale,'gt-action'));card.append(row)}
+window.launchGabentale=()=>{root.classList.add('gt-open');root.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';if(s.phase==='battle')s.phase='map';if(s.phase==='ending')finish(s.ending);else renderMap()};window.closeGabentale=()=>{clearTimers();root.classList.remove('gt-open');root.setAttribute('aria-hidden','true');document.body.style.overflow=''};document.addEventListener('keydown',e=>{if(!root.classList.contains('gt-open'))return;if(e.key==='Escape'){window.closeGabentale();return}if(s.phase==='map'){const d={ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0],ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1]}[e.key];if(d){e.preventDefault();step(d[0],d[1])}else if(e.key==='e'||e.key==='E'||e.key==='Enter'){e.preventDefault();interact()}}else if(s.phase==='battle')move(e)});
+})();</script>
+<style id="ascStyle">
+#ascScreen{display:none;position:fixed;inset:74px 0 0 220px;z-index:500;overflow:auto;padding:22px;color:#edf4fa;background:#0b0d13}
+@media(max-width:900px){#ascScreen{left:76px}}@media(max-width:620px){#ascScreen{inset:64px 0 0 62px;padding:12px}}
+#ascScreen h1{margin:0 0 4px;font-size:28px;letter-spacing:2px}#ascScreen .sub{color:#8fa3b8;margin-bottom:14px}
+.ascTabs{display:flex;gap:8px;margin:12px 0}.ascTabs button,.ascBtn{background:#101d2e;color:#cfe;border:1px solid #38e1e855;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer}
+.ascTabs button.on{background:#2bdde5;color:#04121a}.ascBtn:disabled{opacity:.4;cursor:not-allowed}.ascBtn.danger{border-color:#ff6b6b88;color:#ff9b9b}
+.ascGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ascCard{background:#121826;border:1px solid #243247;border-radius:12px;padding:12px}.ascCard.locked{opacity:.45}
+.ascCard h3{margin:0 0 4px;font-size:15px}.ascCard p{margin:0 0 8px;color:#9fb2c6;font-size:13px}
+.ascBar{height:8px;background:#1b2536;border-radius:6px;overflow:hidden;margin:6px 0}.ascBar i{display:block;height:100%;background:linear-gradient(90deg,#2bdde5,#ffd84d)}
+.ascPts{color:#ffd84d;font-weight:900}.ascToast{position:fixed;right:18px;bottom:18px;z-index:99999;background:#101d2e;border:1px solid #ffd84d;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700}
+</style>
+<div id="ascScreen" class="gScreen">
+ <h1>✨ ASCENSION</h1><div class="sub" id="ascSub"></div>
+ <div class="ascTabs"><button data-t="over">Overview</button><button data-t="tree">Ascension Tree</button><button data-t="res">Empire Research</button></div>
+ <div id="ascBody"></div>
+</div>
+<script>
+/* ===== ASCENSION EXPANSION: permanent tree, empire research, cross-game milestones =====
+   Save key: gabeAscend (JSON, versioned). Currency stays gabeClicks. */
+(function(){
+"use strict";
+const KEY="gabeAscend";
+let S={v:1,bonus:0,nodes:{},res:{},ms:{},titles:[],title:"",lastRb:null};
+try{const o=JSON.parse(localStorage.getItem(KEY));if(o&&typeof o==="object")S=Object.assign(S,o);}catch(e){}
+S.nodes=S.nodes||{};S.res=S.res||{};S.ms=S.ms||{};S.titles=Array.isArray(S.titles)?S.titles:[];
+const BR={click:["🖱️","Clicking",1],empire:["🏢","Empire",2],collect:["📦","Collector",3],invest:["📈","Investor",4]};
+/* id,branch,name,desc,max,baseCost,reqRebirth */
+const NODES=[
+["cp","click","Strong Fingers","+5% click income per level",10,1,1],
+["crit","click","Critical Mass","+10% critical-click rewards per level",5,1,1],
+["dbl","click","Double Tap","+2% chance per level that a click pays double",5,2,1],
+["bless","click","Gabe's Blessing ★","+25% click income (milestone)",1,5,5],
+["corp","empire","Corporate Synergy","+4% empire income per level",10,1,2],
+["lean","empire","Lean Management","-2% business level cost per level",10,1,2],
+["night","empire","Night Shift","+10% offline earning efficiency per level",5,2,2],
+["tycoon","empire","Empire Mastery ★","+10% empire income (milestone)",1,5,5],
+["stip","collect","Collector's Stipend","+0.5% empire income per level for every 10 skins owned (max +10%/level)",10,1,3],
+["bounty","collect","Skin Hunter","Each new unique skin pays $1,000 x level",5,2,3],
+["sharp","invest","Sharp Trader","+3% bonus on profitable stock sales per level",10,1,4],
+["nw","invest","Net Worth Edge","+0.5% income per level per digit of net worth above 6 digits (max 5 levels)",5,2,4]];
+const ND={};NODES.forEach(n=>ND[n[0]]=n);
+const lv=id=>S.nodes[id]||0, cost=(n,l)=>n[5]+Math.floor(l/3);
+const rb=()=>typeof rebirthLevel==="number"?rebirthLevel:0;
+const earned=()=>rb()+2*Math.floor(rb()/5)+(S.bonus||0);
+function spent(){let t=0;NODES.forEach(n=>{for(let l=0;l<lv(n[0]);l++)t+=cost(n,l);});return t;}
+const points=()=>earned()-spent();
+const unlocked=()=>rb()>=1||S.bonus>0;
+/* research: id,name,desc,cost,effect */
+const RES=[["auto","Automated Operations","+5% business income",1e5,"inc",.05],["bulk","Bulk Procurement","3% cheaper business levels",5e5,"cost",.03],
+["mkt","Global Marketing","+10% business income",2.5e6,"inc",.10],["srv","Server Optimization","+10% offline efficiency",1e7,"off",.10],
+["ai","Logistics AI","+15% business income",5e7,"inc",.15],["lean2","Lean Supply Chain","5% cheaper business levels",2.5e8,"cost",.05],
+["qm","Quantum Marketing","+25% business income",1e9,"inc",.25],["grid","Data Center Grid","+25% offline efficiency",5e9,"off",.25]];
+const rs=t=>RES.reduce((a,r)=>a+(S.res[r[0]]&&r[4]===t?r[5]:0),0);
+const J=k=>{try{return JSON.parse(localStorage.getItem(k))||{};}catch(e){return{};}};
+const inv=()=>typeof caseInventory!=="undefined"&&Array.isArray(caseInventory)?caseInventory:[];
+const nw=()=>Math.max(1,Number(window.getEmpireNetWorth?window.getEmpireNetWorth():0)||1);
+/* ---- multipliers ---- */
+const clickMult=()=>(1+.05*lv("cp"))*(lv("bless")?1.25:1);
+const incMult=()=>(1+.04*lv("corp"))*(lv("tycoon")?1.1:1)*(1+rs("inc"))*(1+.005*lv("stip")*Math.min(20,Math.floor(inv().length/10)))*(1+.005*lv("nw")*Math.max(0,Math.log10(nw())-6));
+window.gabeCostMult=()=>Math.max(.4,(1-.02*lv("lean"))*(1-rs("cost")));
+window.gabeOfflineMult=()=>(1+.1*lv("night"))*(1+rs("off"));
+const oldInc=window.gabeIncomeMult;window.gabeIncomeMult=function(){return (oldInc?oldInc():1)*incMult();};
+const oldClick=window.gabeComputeClick;
+window.gabeComputeClick=function(){const c=oldClick();let a=c.amount*clickMult();
+ if(c.cls)a*=1+.1*lv("crit");
+ if(Math.random()<.02*lv("dbl")){a*=2;c.label=c.label||"✨ DOUBLE TAP +$"+formatMoney(a);}
+ c.amount=a;return c;};
+const oldSold=window.stockSold;
+window.stockSold=function(amount,profit){if(oldSold)oldSold(amount,profit);if(profit>0&&lv("sharp"))gabeClicks+=profit*.03*lv("sharp");};
+/* ---- milestones (cross-game) ---- */
+const st=()=>J("gabeStats"),achN=()=>Object.keys(J("gabeAch")).length;
+const levels=()=>Object.values(J("empireBiz")).reduce((a,b)=>a+(Number(b)||0),0);
+const skins=()=>new Set(inv().map(i=>i&&(i.name||i.skin||i.id||JSON.stringify(i)))).size;
+const METRICS=[["📦","Cases opened",()=>st().casesOpened||0,[10,100,500]],["🎨","Unique skins owned",skins,[5,25,75]],
+["📈","Stock trades",()=>st().stocksTraded||0,[10,100,500]],["💹","Realized stock profit",()=>st().stockProfit||0,[1e4,1e6,1e8]],
+["🎰","Casino wins",()=>st().casinoWins||0,[10,100,1000]],["🏆","Achievements unlocked",achN,[5,15,30]],
+["🏢","Total business levels",levels,[50,250,1000]],["🖱️","Total clicks",()=>st().totalClicks||0,[1e3,1e4,1e5]],["🔥","Rebirths",rb,[1,5,10]]];
+const REW=["pts1","cash","pts2"],TITLES=["Rookie","Veteran","Legend"];
+const MS=[];METRICS.forEach((m,mi)=>m[3].forEach((g,i)=>MS.push({id:mi+"_"+i,icon:m[0],name:m[1],get:m[2],goal:g,type:REW[i],title:i===2?m[1]+" "+TITLES[2]:""})));
+const inc=()=>(Number(window.getEmpireIncome?window.getEmpireIncome():0)||0)*incMult();
+const rewText=m=>(m.type==="cash"?"💵 cash bonus":"✨ "+(m.type==="pts1"?1:2)+" Ascension Point"+(m.type==="pts2"?"s":""))+(m.title?" + title":"");
+function toast(t){const d=document.createElement("div");d.className="ascToast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),4500);}
+function claim(){let changed=false;
+ MS.forEach(m=>{if(S.ms[m.id]||m.get()<m.goal)return;S.ms[m.id]=1;changed=true;let msg="🏁 Milestone: "+m.name+" "+fmt(m.goal);
+  if(m.type==="cash"){const c=Math.max(5000,Math.floor(inc()*600));gabeClicks+=c;msg+=" — +$"+fmt(c);}else{const p=m.type==="pts1"?1:2;S.bonus+=p;msg+=" — +"+p+" Ascension Point";}
+  if(m.title&&!S.titles.includes(m.title))S.titles.push(m.title);toast(msg);});
+ if(rb()>=5&&!S.titles.includes("Ascended")){S.titles.push("Ascended");changed=true;}
+ if(S.lastRb===null)S.lastRb=rb();
+ if(rb()>S.lastRb){const gain=earned()-(S.lastRb+2*Math.floor(S.lastRb/5)+S.bonus);toast("✨ Rebirth! +"+gain+" Ascension Point"+(gain>1?"s":""));S.lastRb=rb();changed=true;}
+ if(changed)save();}
+const bountySeen=new Set(JSON.parse(localStorage.getItem("gabeAscSkins")||"null")||[]);let first=bountySeen.size===0;
+function bounty(){const cur=[...new Set(inv().map(i=>i&&(i.name||i.skin||i.id||JSON.stringify(i))))];
+ let n=0;cur.forEach(k=>{if(!bountySeen.has(k)){bountySeen.add(k);n++;}});
+ if(n&&!first&&lv("bounty")){const c=n*1000*lv("bounty");gabeClicks+=c;toast("🎨 Skin Hunter: +$"+fmt(c));}
+ if(n||first){first=false;try{localStorage.setItem("gabeAscSkins",JSON.stringify([...bountySeen]));}catch(e){}}}
+const fmt=n=>n>=1e6?n.toExponential(2).replace("e+","e"):Math.floor(n).toLocaleString("en-US");
+function save(){try{S.v=1;localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const oldSave=window.saveGame;window.saveGame=function(){oldSave();save();};
+const oldReset=window.performReset;window.performReset=function(){oldReset();S={v:1,bonus:0,nodes:{},res:{},ms:{},titles:[],title:"",lastRb:0};try{localStorage.removeItem("gabeAscSkins");}catch(e){}bountySeen.clear();save();render();};
+/* ---- UI ---- */
+let tab="over";const $=id=>document.getElementById(id),B=()=>$("ascBody");
+function bar(p){return '<div class="ascBar"><i style="width:'+Math.min(100,Math.max(0,p*100))+'%"></i></div>';}
+function render(){if($("ascScreen").style.display==="none")return;
+ $("ascSub").innerHTML='Ascension Points: <span class="ascPts">'+points()+'</span> · earned '+earned()+' · spent '+spent()+' · Rebirths '+rb()+(S.title?' · Title: <b>'+S.title+'</b>':'');
+ document.querySelectorAll(".ascTabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
+ let h="";
+ if(tab==="over"){
+  const nxt=MS.filter(m=>!S.ms[m.id]).sort((a,b)=>b.get()/b.goal-a.get()/a.goal).slice(0,3);
+  h+='<h3>Next milestones</h3><div class="ascGrid">'+nxt.map(m=>'<div class="ascCard"><h3>'+m.icon+' '+m.name+'</h3><p>'+fmt(Math.min(m.get(),m.goal))+' / '+fmt(m.goal)+' — reward: '+rewText(m)+'</p>'+bar(m.get()/m.goal)+'</div>').join("")+'</div>';
+  h+='<h3>Next Ascension unlock</h3><div class="ascCard"><p>'+(unlocked()?Object.values(BR).filter(b=>b[2]>rb()).map(b=>b[1]+" branch at rebirth "+b[2]).concat(rb()<5?["Milestone upgrades + \"Ascended\" title at rebirth 5"]:[]).join(" · ")||"All branches unlocked. Bonus points every 5th rebirth.":"Rebirth once to unlock Ascension.")+'</p></div>';
+  h+='<h3>Titles</h3><div>'+(S.titles.length?S.titles.map(t=>'<button class="ascBtn" data-title="'+t+'" style="margin:3px">'+(S.title===t?"✔ ":"")+t+'</button>').join(""):'<span class="sub">Earn titles from milestones.</span>')+'</div>';
+ }else if(tab==="tree"){
+  if(!unlocked())h+='<div class="ascCard"><p>🔒 Rebirth once to unlock the Ascension tree.</p></div>';
+  else{h+='<button class="ascBtn danger" id="ascRespec">Respec all points</button>';
+   Object.keys(BR).forEach(k=>{const b=BR[k],open=rb()>=b[2];h+='<h3>'+b[0]+' '+b[1]+(open?'':' 🔒 (rebirth '+b[2]+')')+'</h3><div class="ascGrid">'+NODES.filter(n=>n[1]===k).map(n=>{const l=lv(n[0]),mx=l>=n[4],c=cost(n,l),ok=open&&rb()>=n[6]&&!mx&&points()>=c;
+    return '<div class="ascCard'+(open&&rb()>=n[6]?'':' locked')+'"><h3>'+n[2]+' <small>'+l+'/'+n[4]+'</small></h3><p>'+n[3]+(rb()<n[6]?' (rebirth '+n[6]+')':'')+'</p>'+bar(l/n[4])+'<button class="ascBtn" data-buy="'+n[0]+'"'+(ok?'':' disabled')+'>'+(mx?'MAXED':'Buy · '+c+' pt')+'</button></div>';}).join("")+'</div>';});}
+ }else{
+  h+='<p class="sub">Spend money on empire-wide research. Bonuses apply to the existing Empire income, costs and offline earnings.</p><div class="ascGrid">'+RES.map(r=>{const d=S.res[r[0]];return '<div class="ascCard"><h3>🔬 '+r[1]+'</h3><p>'+r[2]+'</p><button class="ascBtn" data-res="'+r[0]+'"'+(d||gabeClicks<r[3]?' disabled':'')+'>'+(d?'RESEARCHED':'Research · $'+fmt(r[3]))+'</button></div>';}).join("")+'</div>';}
+ B().innerHTML=h;}
+document.addEventListener("click",function(e){const t=e.target.closest("#ascScreen button");if(!t)return;
+ if(t.dataset.t){tab=t.dataset.t;}
+ else if(t.dataset.buy){const n=ND[t.dataset.buy],c=cost(n,lv(n[0]));if(points()>=c&&lv(n[0])<n[4]){S.nodes[n[0]]=lv(n[0])+1;save();}}
+ else if(t.dataset.res){const r=RES.find(x=>x[0]===t.dataset.res);if(r&&!S.res[r[0]]&&gabeClicks>=r[3]){gabeClicks-=r[3];S.res[r[0]]=1;save();if(window.saveGame)saveGame();}}
+ else if(t.dataset.title){S.title=S.title===t.dataset.title?"":t.dataset.title;save();skin();}
+ else if(t.id==="ascRespec"){showConfirm("RESPEC?\n\nAll Ascension nodes are refunded as points. Nothing else is lost.",function(){S.nodes={};save();render();},{yesText:"RESPEC",danger:true});return;}
+ render();});
+function skin(){const s=document.querySelector(".sidebarIdentity small");if(s&&S.title)s.dataset.asc=S.title;}
+window.openAscension=function(){if(window.showSiteHome)showSiteHome();const h=$("siteHome");if(h)h.style.display="none";$("ascScreen").style.display="block";
+ document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(b=>b.classList.toggle("active",b.dataset.page==="ascension"));render();};
+window.closeAscension=function(){$("ascScreen").style.display="none";};
+document.addEventListener("click",function(e){const b=e.target.closest(".siteNavLink,.siteSideLink,.homeCard,.menuItem");if(b&&!b.closest("#ascScreen")&&b.dataset.page!=="ascension")closeAscension();},true);
+setInterval(function(){claim();bounty();render();},2000);claim();bounty();
+})();
+</script>
+
 </body>
 </html>
 
