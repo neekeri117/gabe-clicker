@@ -4183,7 +4183,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>DUEL</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div><div class="sidebarMinigames" aria-label="Minigames"><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button><button class="siteSideLink" data-page="galaxy" onclick="openGalaxy()"><span>✦</span>Galaxy</button><button class="siteSideLink" data-page="toalet" onclick="openToaletGame()"><span>🎮</span>Toalet Peli</button></div>
-  <div class="sidebarFoot">V7.1</div>
+  <div class="sidebarFoot">V7.2</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -10836,7 +10836,7 @@ function openCase(caseKey) {
                 caseHistory.unshift({tier:item.tier,payout:entry.payout});
                 caseInventory.unshift({tier:item.tier,caseName:def.name,itemName:item.itemName||"",image:item.image||"",payout:entry.payout,date:Date.now()});
             }
-            if (caseInventory.length > 1000) caseInventory.length = 1000;
+
             if (caseHistory.length > 12) caseHistory.length = 12;
             try { localStorage.setItem("caseInventory", JSON.stringify(caseInventory)); } catch (e) {}
             const tier = CASE_TIERS[drop.tier], profit = totalPayout - def.price * quantity;
@@ -13713,6 +13713,13 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+  {
+    date: "2026-10-22",
+    title: "v7.2 · Expanded Case Inventory",
+    changes: [
+      "Removed the built-in 1,000-drop limit from case inventory."
+    ]
+  },
   {
     date: "2026-10-22",
     title: "v7.1 · Galaxy & DUEL Casino",
