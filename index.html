@@ -4182,8 +4182,8 @@ alt=""
 </nav>
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
-  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>DUEL</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button></div><div class="sidebarMinigames" aria-label="Minigames"><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button><button class="siteSideLink" data-page="galaxy" onclick="openGalaxy()"><span>✦</span>Galaxy</button><button class="siteSideLink" data-page="toalet" onclick="openToaletGame()"><span>🎮</span>Toalet Peli</button></div>
-  <div class="sidebarFoot">V7.2</div>
+  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>DUEL</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigames"><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button><button class="siteSideLink" data-page="galaxy" onclick="openGalaxy()"><span>✦</span>Galaxy</button><button class="siteSideLink" data-page="toalet" onclick="openToaletGame()"><span>🎮</span>Toalet Peli</button></div>
+  <div class="sidebarFoot">V8.0</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4192,7 +4192,7 @@ alt=""
     <button class="homeCard cardCasino" onclick="openCasinoFromMenu()"><span class="cardIcon">🎰</span><strong>DUEL CASINO</strong><p>Roulette · Blackjack · Poker · Plinko. The house occasionally loses.</p><small>Wagered: $0.00</small></button>
     <button class="homeCard cardStocks" onclick="openStockMarket()"><span class="cardIcon">📈</span><strong>STOCKS</strong><p>Buy low, sell high, cry at the HL3 ticker.</p><small>Portfolio: $0.00</small></button>
     <button class="homeCard cardCases" onclick="openCases()"><span class="cardIcon">📦</span><strong>CASES</strong><p>CS2-grade unboxing. Knives are real, probably.</p><small>Open a case to test your luck</small></button>
-    <button class="homeCard cardEmpire" onclick="openEmpire()"><span class="cardIcon">🏢</span><strong>EMPIRE</strong><p>From kebab kiosk to space program.</p><small>Income: +$0.00/s</small></button>
+    <button class="homeCard cardEmpire" onclick="openEmpire()"><span class="cardIcon">🏢</span><strong>EMPIRE</strong><p>From kebab kiosk to space program.</p><small>Income: +$0.00/s</small></button><button class="homeCard cardResearch" onclick="openProgression()"><span class="cardIcon">R</span><strong>PROGRESSION</strong><p>Build your research paths and take on daily challenges.</p><small>Permanent bonuses · Shared cash</small></button>
     <button class="homeCard cardAchievements" onclick="openAchievements()"><span class="cardIcon">🏆</span><strong>ACHIEVEMENTS</strong><p>Proof you have too much free time.</p><small>Milestones and rewards</small></button>
     <button class="homeCard cardStatistics" onclick="openStats()"><span class="cardIcon">📊</span><strong>STATISTICS</strong><p>Numbers that judge your lifestyle.</p><small id="siteClicks">Clicks: 0</small></button>
     <button class="homeCard cardChat" onclick="document.getElementById('pubChat').scrollIntoView({behavior:'smooth',block:'end'})"><span class="cardIcon">💬</span><strong>CHAT</strong><p>The friend group. Unmoderated, as intended.</p><small>Public room</small></button>
@@ -4207,7 +4207,12 @@ alt=""
  <section class="gx-worlds" id="gxWorlds"></section>
 </main>
 <main id="toaletGameScreen" aria-label="Toalet Peli game"><div class="tp-head"><div><strong>TOALET PELI</strong><span>COMMUNITY GAME · BY OLIVER</span></div><a href="https://kakkatykki.github.io/TOALET_PELI/" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a></div><iframe title="Toalet Peli" src="https://kakkatykki.github.io/TOALET_PELI/" loading="lazy" allow="fullscreen; autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe></main>
-<main id="socialScreen" class="socialScreen" aria-label="Social workspace">
+<main id="progressionScreen" class="gScreen" aria-label="Progression and research">
+ <header class="pg-header"><div><div class="pg-kicker">GABE INDUSTRIES · DEVELOPMENT DIVISION</div><h1 class="gTitle">PROGRESSION LAB</h1><p>Invest your shared cash in permanent upgrades. Research survives rebirth.</p><span class="pg-saveMark">LOCAL PROGRESS SAVES AUTOMATICALLY</span></div><div class="pg-cash"><span>AVAILABLE CASH</span><strong id="pgCash">$0</strong><small id="pgMultiplier">Click ×1.00 · Passive ×1.00</small></div></header>
+ <section class="pg-brief"><div><small>RESEARCH COMPLETE</small><strong id="pgOwned">0 / 18</strong></div><div class="pg-briefTrack"><i id="pgTrack"></i></div><div><small>REBIRTH LEVEL</small><strong id="pgRebirth">0</strong></div></section>
+ <section class="pg-section"><div class="pg-sectionTitle"><div><span class="pg-kicker">RETURNING CHALLENGES</span><h2>DAILY OBJECTIVES</h2></div><span id="pgDayLabel" class="pg-day"></span></div><div id="pgQuestGrid" class="pg-questGrid"></div></section>
+ <section class="pg-section"><div class="pg-sectionTitle"><div><span class="pg-kicker">CHOOSE YOUR ADVANTAGE</span><h2>RESEARCH PATHS</h2></div><p>Each path has three linked upgrades. The last tiers require rebirths or achievement milestones.</p></div><div id="pgBranches" class="pg-branches"></div></section>
+</main><main id="socialScreen" class="socialScreen" aria-label="Social workspace">
   <nav class="socialTabs" aria-label="Social tools"><button class="socialTab active" data-social-tab="chat" onclick="openSocial('chat')">➤ &nbsp;Chat</button><button class="socialTab" data-social-tab="leaderboard" onclick="openSocial('leaderboard')">♜ &nbsp;Leaderboard</button><button class="socialTab" data-social-tab="achievements" onclick="openSocial('achievements')">♙ &nbsp;Achievements</button><button class="socialTab" data-social-tab="stats" onclick="openSocial('stats')">▥ &nbsp;Stats</button><button class="socialTab" data-social-tab="changelog" onclick="openSocial('changelog')">▤ &nbsp;Changelog</button></nav>
   <section id="socialNameBar" class="socialNameBar"><label for="socialNameInput">Name:</label><input id="socialNameInput" type="text" maxlength="20" placeholder="Enter player name"><button type="button" onclick="socialSaveName()">Save</button></section>
   <section id="socialChatPanel" class="socialChatPanel"><div id="socialChatHost"></div></section>
@@ -5661,7 +5666,7 @@ let rebirthLevel =
 
 /* Permanent click multiplier from rebirths (1.00 + 0.25 per rebirth) */
 function getRebirthMultiplier() {
-    return 1 + rebirthLevel * 0.25;
+    return (1 + rebirthLevel * 0.25) * (window.gabeAscensionResearchMultiplier ? window.gabeAscensionResearchMultiplier() : 1);
 }
 
 /* Cost to rebirth scales: 50k * 5^level */
@@ -10154,6 +10159,10 @@ function performReset() {
         Recreate stock market.
     */
 
+    localStorage.removeItem('gabeResearch');
+    localStorage.removeItem('gabeDailyQuests');
+    if (window.resetProgressionData) window.resetProgressionData();
+
     initializeStocks();
 
     createPlinkoBoard();
@@ -11478,7 +11487,9 @@ updateClicker();
     }
 
     function totalIncome() {
-        return bizBusinessIncome() + rentIncome() + botIncome();
+        const empireMult = window.gabeEmpireResearchMultiplier ? window.gabeEmpireResearchMultiplier() : 1;
+        const botMult = window.gabeAutomationResearchMultiplier ? window.gabeAutomationResearchMultiplier() : 1;
+        return (bizBusinessIncome() + rentIncome()) * empireMult + botIncome() * botMult;
     }
 
     /* used by achievements and Gabe events */
@@ -13496,6 +13507,8 @@ updateClicker();
         unlocked = {};
         luckLevel = 0;
 
+        if (window.resetProgressionData) window.resetProgressionData();
+
         achQueue.length = 0;
 
         comboCount = 0;
@@ -13713,6 +13726,14 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+  {
+    date: "2026-10-22",
+    title: "v8.0 · Progression Overhaul",
+    changes: [
+      "Added six permanent research paths that boost clicks, automation, Empire income, rebirths, and research costs.",
+      "Added daily objectives with cash rewards and cross-game progress. Research and objective claims are included in save export/import."
+    ]
+  },
   {
     date: "2026-10-22",
     title: "v7.2 · Expanded Case Inventory",
@@ -14205,28 +14226,7 @@ updateChangeLogBadge();
 
 
 
-<style id="galaxyFinalPolish">
-/* Galaxy markers are buttons in the rest of the site; isolate them from those global button skins and hover transforms. */
-#galaxyScreen .gx-system .gx-node{position:absolute;display:block;width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;padding:0!important;margin:0!important;border:1px solid #dbe8ff88!important;border-radius:50%!important;transform:translate(-50%,-50%)!important;translate:none!important;background:radial-gradient(circle at 34% 28%,#fff9 0 2px,transparent 3px),radial-gradient(circle at 34% 30%,var(--p-light,#d6eaff),var(--p-mid,#6485ad) 48%,var(--p-dark,#18233c) 78%)!important;box-shadow:inset -8px -8px 12px #050817a8,0 0 18px var(--p-glow,#9ecbff55)!important;color:transparent!important;font-size:0!important;line-height:0!important;overflow:visible!important;transition:border-color .2s,filter .2s,box-shadow .2s!important;}
-#galaxyScreen .gx-system .gx-node:hover,#galaxyScreen .gx-system .gx-node:focus-visible{transform:translate(-50%,-50%)!important;translate:none!important;filter:brightness(1.18)!important;border-color:#fff!important;box-shadow:inset -8px -8px 12px #050817a8,0 0 25px var(--p-glow,#9ecbff99)!important;}
-#galaxyScreen .gx-system .gx-node:active{transform:translate(-50%,-50%)!important;translate:none!important}
-#galaxyScreen .gx-system .gx-node:after{content:"";position:absolute;inset:27% -13%;border:1px solid #eaf4ff88;border-radius:50%;transform:rotate(-24deg);opacity:0;pointer-events:none}
-#galaxyScreen .gx-system .gx-node[data-planet="0"]{--p-light:#e2f4ff;--p-mid:#8ea9b9;--p-dark:#35415a;--p-glow:#bfdcff66}
-#galaxyScreen .gx-system .gx-node[data-planet="1"]{--p-light:#ffd0a0;--p-mid:#bb534d;--p-dark:#481b3c;--p-glow:#ff8d7155}
-#galaxyScreen .gx-system .gx-node[data-planet="2"]{--p-light:#e2ddd0;--p-mid:#8990a0;--p-dark:#3b4053;--p-glow:#b8c5dd55}
-#galaxyScreen .gx-system .gx-node[data-planet="2"]:after{opacity:.8}
-#galaxyScreen .gx-system .gx-node[data-planet="3"]{--p-light:#d5fcff;--p-mid:#55a1c7;--p-dark:#203866;--p-glow:#79dfff66}
-#galaxyScreen .gx-system .gx-node[data-planet="4"]{--p-light:#f8d79b;--p-mid:#bd8b5f;--p-dark:#57415e;--p-glow:#efc17c55}
-#galaxyScreen .gx-system .gx-node[data-planet="5"]{--p-light:#e0c5ff;--p-mid:#805db5;--p-dark:#29264f;--p-glow:#c39bff66}
-#galaxyScreen .gx-system .gx-node[data-planet="5"]:after,#galaxyScreen .gx-system .gx-node[data-planet="7"]:after{opacity:.8}
-#galaxyScreen .gx-system .gx-node[data-planet="6"]{--p-light:#b6fff2;--p-mid:#328fa7;--p-dark:#1c2e69;--p-glow:#73f4df66}
-#galaxyScreen .gx-system .gx-node[data-planet="7"]{--p-light:#b7ffe0;--p-mid:#3b9d92;--p-dark:#183b65;--p-glow:#70ffd066}
-#galaxyScreen .gx-system .gx-node.next{animation:gxPlanetFloat 5s ease-in-out infinite,gxNextGlow 2.8s ease-in-out infinite!important}
-#galaxyScreen .gx-system .gx-node.owned{border-color:#8dffce!important}
-#galaxyScreen .gx-system .gx-node.locked{filter:saturate(.45) brightness(.65)!important}
-#galaxyScreen .gx-system .gx-node.next{filter:saturate(1.2) brightness(1.1)!important}
-@media(prefers-reduced-motion:reduce){#galaxyScreen .gx-system .gx-node{animation:none!important}}
-</style>
+
 </body>,
      AFTER the PUBLIC CHAT block. No other code needs to change
      (see the optional one-line tweak at the bottom).
@@ -15637,10 +15637,10 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
 <script>
 /* Dashboard wiring: retain the site's existing game screens and actions. */
 (function(){
-  const ids=['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','achScreen','statsScreen','lbScreen','socialScreen','galaxyScreen','toaletGameScreen'];
+  const ids=['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','achScreen','statsScreen','lbScreen','socialScreen','galaxyScreen','toaletGameScreen','progressionScreen'];
   function active(page){document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(function(b){b.classList.toggle('active',b.dataset.page===page);});}
   window.showSiteHome=function(){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='block';active('home');};
-  window.switchSitePage=function(page){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='none';if(page==='home'){window.showSiteHome();return;}if(page==='clicker')window.openClicker();else if(page==='casino')window.openCasinoFromMenu();else if(page==='stocks')window.openStockMarket();else if(page==='cases')window.openCases();else if(page==='empire')window.openEmpire();else if(page==='social')window.openSocial('chat');else if(page==='galaxy')window.openGalaxy();else if(page==='toalet')window.openToaletGame();active(page);};
+  window.switchSitePage=function(page){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='none';if(page==='home'){window.showSiteHome();return;}if(page==='clicker')window.openClicker();else if(page==='casino')window.openCasinoFromMenu();else if(page==='stocks')window.openStockMarket();else if(page==='cases')window.openCases();else if(page==='empire')window.openEmpire();else if(page==='progression')window.openProgression();else if(page==='social')window.openSocial('chat');else if(page==='galaxy')window.openGalaxy();else if(page==='toalet')window.openToaletGame();active(page);};
   document.addEventListener('click',function(e){const b=e.target.closest('.siteNavLink,.siteSideLink');if(b){active(b.dataset.page);if(b.classList.contains('siteSideLink')&&b.dataset.page!=='social'){const s=document.getElementById('socialScreen');if(s)s.style.display='none';}}});
   const chat=document.getElementById('pubChat');if(chat){document.getElementById('socialChatHost').appendChild(chat);chat.classList.remove('collapsed');}
   ['lbScreen','achScreen','statsScreen'].forEach(function(id){const el=document.getElementById(id);if(el)document.getElementById('socialDynamicHost').appendChild(el);});
@@ -15666,9 +15666,9 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
   window.setLowGraphics=function(enabled){const on=!!enabled;document.documentElement.classList.toggle('lowGraphics',on);try{localStorage.setItem('gabeLowGraphics',on?'1':'0');}catch(e){}const b=document.getElementById('lowGraphicsButton');if(b){b.textContent='Low graphics: '+(on?'On':'Off');b.setAttribute('aria-pressed',String(on));}};
   window.toggleLowGraphics=function(){window.setLowGraphics(!document.documentElement.classList.contains('lowGraphics'));};
   try{window.setLowGraphics(localStorage.getItem('gabeLowGraphics')==='1');}catch(e){window.setLowGraphics(false);}
-  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
+  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','gabeResearch','gabeDailyQuests','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
   const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
-  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch']);
+  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch','gabeResearch','gabeDailyQuests']);
   const saveTransferDb='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
   function createShortSaveCode(){const bytes=new Uint8Array(6);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
   window.exportSaveCode=async function(){
@@ -16229,6 +16229,7 @@ window.selectGalaxySystem=chooseSystem;
 function render(){if(!worlds)return;const earned=state.owned.length,inc=planetIncome(),system=systems[selected];cashNode.textContent='$'+fmt(gabeClicks);incomeNode.textContent='+$'+fmt(inc)+' / sec';progressText.textContent=earned+' / '+planets.length+' WORLDS COLONIZED';progressBar.style.width=(earned/planets.length*100)+'%';nextText.textContent=earned<planets.length?'NEXT: '+planets[earned].name:'ALL WORLDS CLAIMED';scene.dataset.system=system.theme;sceneName.textContent=system.name;sceneDetail.textContent=system.detail;star.textContent='';document.querySelectorAll('.gx-systemTab').forEach((b,i)=>b.classList.toggle('active',i===selected));worlds.replaceChildren();nodes.replaceChildren();system.indices.forEach((i,slot)=>{const p=planets[i],owned=state.owned.includes(i),next=i===earned,locked=i>earned;const card=document.createElement('article');card.className='gx-world'+(owned?' owned':'')+(next?' next':'');card.dataset.planet=i;const top=document.createElement('div');top.className='gx-worldTop';const icon=document.createElement('span');icon.className='gx-worldIcon';icon.textContent=String(i+1).padStart(2,'0');icon.dataset.planet=i;const title=document.createElement('div');const h=document.createElement('h2');h.textContent=p.name;const typ=document.createElement('small');typ.textContent=p.type;title.append(h,typ);top.append(icon,title);const desc=document.createElement('p');desc.textContent=p.desc;const bottom=document.createElement('div');bottom.className='gx-worldBottom';const yieldLabel=document.createElement('span');yieldLabel.className='gx-yield';yieldLabel.textContent='+$'+fmt(p.yield)+'/s';if(owned){bottom.append(yieldLabel,Object.assign(document.createElement('span'),{className:'gx-ownedLabel',textContent:'COLONIZED'}))}else{const b=document.createElement('button');b.textContent=locked?'LOCKED · $'+fmt(p.cost):'CLAIM · $'+fmt(p.cost);b.disabled=locked||gabeClicks<p.cost;b.onclick=()=>claim(i);bottom.append(yieldLabel,b)}card.append(top,desc,bottom);worlds.append(card);const node=document.createElement('button');node.type='button';node.className='gx-node'+(owned?' owned':'')+(next?' next':'')+(locked?' locked':'');node.dataset.planet=i;node.style.setProperty('--slot',slot);node.style.setProperty('--count',system.indices.length);const angle=(-90+slot*360/system.indices.length)*Math.PI/180,rx=system.indices.length===2?32:35,ry=system.indices.length===2?25:34;node.style.left=(50+Math.cos(angle)*rx)+'%';node.style.top=(52+Math.sin(angle)*ry)+'%';node.style.animationDelay=(slot*.28)+'s';node.title=p.name+' · '+(owned?'Colonized':next?'Ready to claim':'Locked');node.setAttribute('aria-label',node.title);node.onclick=()=>{const target=document.getElementById('gxWorld-'+i);if(target)target.scrollIntoView({behavior:'smooth',block:'center'});if(typeof showToast==='function')showToast(p.name+' · '+(owned?'Colony active':next?'Ready to claim':'Explore the previous world first'))};nodes.append(node)});worlds.querySelectorAll('.gx-world').forEach((card,j)=>{card.id='gxWorld-'+system.indices[j]})}
 function claim(i){if(i!==state.owned.length||gabeClicks<planets[i].cost)return;gabeClicks-=planets[i].cost;state.owned.push(i);save();saveGame();updateClicker();render();if(typeof showToast==='function')showToast(planets[i].name+' colony established! +$'+fmt(planets[i].yield)+'/s')}
 window.openGalaxy=function(){['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','siteHome','socialScreen','galaxyScreen','toaletGameScreen'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none'});document.querySelectorAll('.gScreen').forEach(e=>e.style.display='none');screen.style.display='block';document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(b=>b.classList.toggle('active',b.dataset.page==='galaxy'));render()};
+function syncQuestCards(){resetDailyIfNeeded();questNode.querySelectorAll(".pg-quest").forEach(card=>{const q=quests.find(x=>x.id===card.dataset.quest);if(!q)return;const progress=questProgress(q),done=progress>=q.goal,claimed=daily.claimed.includes(q.id);card.classList.toggle("complete",done&&!claimed);card.classList.toggle("claimed",claimed);card.querySelector(".pg-questTrack i").style.width=Math.min(100,progress/q.goal*100)+"%";card.querySelector(".pg-questFoot span").textContent=fmt(Math.min(progress,q.goal))+" / "+fmt(q.goal);const b=card.querySelector(".pg-questFoot button");b.disabled=!done||claimed;b.textContent=claimed?"CLAIMED":done?"CLAIM REWARD":"IN PROGRESS"})}
 function syncHud(){const earned=state.owned.length;cashNode.textContent='$'+fmt(gabeClicks);incomeNode.textContent='+$'+fmt(planetIncome())+' / sec';progressText.textContent=earned+' / '+planets.length+' WORLDS COLONIZED';progressBar.style.width=(earned/planets.length*100)+'%';nextText.textContent=earned<planets.length?'NEXT: '+planets[earned].name:'ALL WORLDS CLAIMED';worlds.querySelectorAll('.gx-world').forEach(card=>{const i=Number(card.dataset.planet),b=card.querySelector('button');if(b)b.disabled=i!==earned||gabeClicks<planets[i].cost})}
 function tick(){if(!screen)return;const inc=planetIncome();if(inc>0){gabeClicks+=inc;saveGame();updateClicker()}if(screen.style.display==='block')syncHud()}
 screen=document.getElementById('galaxyScreen');worlds=document.getElementById('gxWorlds');nodes=document.getElementById('gxPlanetNodes');cashNode=document.getElementById('gxCash');incomeNode=document.getElementById('gxIncome');progressText=document.getElementById('gxProgressText');progressBar=document.getElementById('gxProgressBar');nextText=document.getElementById('gxNextText');scene=document.getElementById('gxScene');sceneName=document.getElementById('gxSceneName');sceneDetail=document.getElementById('gxSceneDetail');star=document.getElementById('gxStar');render();setInterval(tick,1000);
@@ -16257,6 +16258,86 @@ screen=document.getElementById('galaxyScreen');worlds=document.getElementById('g
 #galaxyScreen .gx-system .gx-node.next{filter:saturate(1.2) brightness(1.1)!important}
 @media(prefers-reduced-motion:reduce){#galaxyScreen .gx-system .gx-node{animation:none!important}}
 </style>
+<style id="progressionLabStyles">
+#progressionScreen{padding:clamp(16px,3vw,40px)!important;background:radial-gradient(ellipse at 72% 0,#23355355,transparent 48%),#0a0e15!important}.pg-header{max-width:1240px;margin:0 auto 17px;display:flex;justify-content:space-between;align-items:center;gap:20px}.pg-header>div:first-child>p{margin:7px 0 0;color:#95a2b5;font-size:13px}.pg-header .gTitle{margin:4px 0!important;font-size:clamp(25px,3.4vw,38px)!important}.pg-kicker{color:#56dce3;font-size:9px;font-weight:900;letter-spacing:.18em}.pg-cash{min-width:210px;padding:12px 16px;border:1px solid #3a4659;border-radius:13px;background:#121923}.pg-cash span,.pg-cash small{display:block;color:#8f9db0;font-size:9px;letter-spacing:.12em}.pg-cash strong{display:block;color:#ffe07a;font:800 21px ui-monospace,monospace;margin:4px 0}.pg-cash small{letter-spacing:0;color:#7de0bc;font-size:8px}.pg-saveMark{display:inline-block;margin-top:7px;color:#7de0bc;font-size:9px;letter-spacing:.1em}.pg-brief{max-width:1240px;margin:0 auto 22px;display:grid;grid-template-columns:130px 1fr 120px;gap:14px;align-items:center;padding:12px 15px;border:1px solid #252e3b;border-radius:13px;background:#111720}.pg-brief>div:not(.pg-briefTrack){display:flex;flex-direction:column;gap:3px}.pg-brief small{color:#8190a6;font-size:9px;letter-spacing:.13em}.pg-brief strong{color:#eef4ff;font:800 14px ui-monospace,monospace}.pg-briefTrack,.pg-questTrack{height:7px;overflow:hidden;border:1px solid #344155;border-radius:10px;background:#0a1019}.pg-briefTrack i,.pg-questTrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,#20c9db,#7f79ff,#f2cd67);transition:width .3s}.pg-section{max-width:1240px;margin:0 auto 26px}.pg-sectionTitle{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:0 0 11px}.pg-sectionTitle h2{margin:3px 0 0;color:#f0f4fb;font-size:18px;letter-spacing:.06em}.pg-sectionTitle>p{max-width:460px;margin:0;color:#8693a7;font-size:11px;text-align:right;line-height:1.45}.pg-day{color:#9aa8bc;font:10px ui-monospace,monospace;letter-spacing:.12em}.pg-questGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.pg-quest{padding:13px;border:1px solid #263448;border-radius:13px;background:linear-gradient(145deg,#141e2d,#10151f);transition:border-color .2s,background .2s}.pg-quest.complete{border-color:#548c7c}.pg-quest.claimed{border-color:#314b45;background:#111a1a}.pg-questHead,.pg-questFoot{display:flex;justify-content:space-between;align-items:center;gap:8px}.pg-questHead strong{color:#eff4ff;font-size:12px}.pg-questHead span{color:#77e1b7;font:800 11px ui-monospace,monospace}.pg-quest p{margin:8px 0;color:#94a1b3;font-size:11px}.pg-questFoot{margin-top:8px;color:#8897aa;font:10px ui-monospace,monospace}.pg-questFoot button,.pg-node button{padding:7px 10px!important;border-radius:8px!important;font-size:9px!important;letter-spacing:.06em}.pg-questFoot button:disabled{opacity:.55}.pg-branches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pg-branch{min-width:0;padding:15px;border:1px solid #263344;border-radius:15px;background:linear-gradient(145deg,#141b28,#0f141d);box-shadow:0 8px 22px #0003}.pg-branch>header{display:flex;align-items:center;gap:10px}.pg-branchMark{width:34px;height:34px;display:grid;place-items:center;border:1px solid #3e5069;border-radius:10px;background:#1b2939;color:#70dfe3;font:800 11px ui-monospace,monospace}.pg-branch>header small{color:#8394ad;font-size:8px;letter-spacing:.15em}.pg-branch h3{margin:2px 0;color:#f3f5f9;font-size:14px}.pg-branchLevel{margin-left:auto;color:#92a2ba;font:11px ui-monospace,monospace}.pg-branchDesc{min-height:30px;margin:10px 0;color:#9aa6b7;font-size:10px;line-height:1.45}.pg-nodePath{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.pg-nodePath:before{content:"";position:absolute;z-index:0;left:10%;right:10%;top:17px;border-top:1px solid #354154}.pg-node{position:relative;z-index:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:10px 9px;border:1px solid #2c384a;border-radius:11px;background:#111720;transition:border-color .2s,box-shadow .2s,transform .2s}.pg-node.ready{border-color:#61794f}.pg-node.purchased{border-color:#43806e;background:linear-gradient(145deg,#132623,#111921)}.pg-node.locked{opacity:.78}.pg-node>small{color:#8b9ab0;font:9px ui-monospace,monospace;letter-spacing:.12em}.pg-node>strong{min-height:28px;color:#edf2f9;font-size:10px;line-height:1.35}.pg-node>span:not(.pg-nodeReq){min-height:28px;color:#9caabc;font-size:9px;line-height:1.4}.pg-nodeReq{min-height:25px;color:#8492a5;font-size:8px;line-height:1.35}.pg-node.ready .pg-nodeReq{color:#81e0bb}.pg-node.purchased .pg-nodeReq{color:#75dfb3}.pg-node button{width:100%;min-height:32px;padding:6px 4px!important;white-space:normal;line-height:1.25}.pg-node button:disabled{filter:saturate(.4)}.pg-node.pg-pop{animation:pgPop .45s ease-out}@keyframes pgPop{50%{box-shadow:0 0 24px #69f0bb66;transform:translateY(-3px)}}.cardResearch .cardIcon{font:900 18px ui-monospace,monospace;color:#7ee5df}@media(prefers-reduced-motion:reduce){.pg-node,.pg-quest,.pg-briefTrack i,.pg-questTrack i{animation:none!important;transition:none!important}}html.lowGraphics .pg-node,html.lowGraphics .pg-quest{animation:none!important;transition:none!important}@media(max-width:900px){#progressionScreen{left:76px!important;padding:18px 14px!important}.pg-branches{grid-template-columns:1fr}}@media(max-width:620px){#progressionScreen{inset:64px 0 0 62px!important;padding:14px 9px!important}.pg-header{align-items:stretch;flex-direction:column}.pg-cash{min-width:0}.pg-brief{grid-template-columns:100px 1fr 75px;padding:9px;gap:8px}.pg-sectionTitle{align-items:flex-start;flex-direction:column}.pg-sectionTitle>p{text-align:left}.pg-questGrid{grid-template-columns:1fr}.pg-nodePath{gap:5px}.pg-node{padding:8px 6px}.pg-node>strong{font-size:9px}.pg-node button{font-size:8px!important}.pg-branch{padding:11px}}
+</style>
+<script id="progressionLab">
+(()=>{'use strict';
+const branches=[
+ {id:'click',name:'Clicking Protocol',tag:'ACTIVE EARNINGS',summary:'Make every tap count. Bonuses multiply with your rebirth and combo rewards.',nodes:[
+  {name:'Tactile Calibration',cost:5000,effect:'Click earnings ×1.20',factor:1.20},
+  {name:'Precision Driver',cost:250000,effect:'Click earnings ×1.35',factor:1.35,rebirth:1},
+  {name:'Gaben Resonance',cost:30000000,effect:'Click earnings ×1.60',factor:1.60,rebirth:3}
+ ]},
+ {id:'automation',name:'Automation Lab',tag:'BOT & OFFLINE',summary:'Upgrade the Gabe Bot’s output and strengthen the automation you already own.',nodes:[
+  {name:'Idle Current',cost:15000,effect:'Bot output ×1.15',factor:1.15},
+  {name:'Parallel Tasks',cost:1000000,effect:'Bot output ×1.30',factor:1.30,rebirth:1},
+  {name:'Autonomous Stack',cost:100000000,effect:'Bot output ×1.55',factor:1.55,rebirth:3}
+ ]},
+ {id:'empire',name:'Empire Management',tag:'BUSINESSES & PROPERTY',summary:'Improve the businesses and real estate that power your empire.',nodes:[
+  {name:'Lean Operations',cost:25000,effect:'Business and rent income ×1.12',factor:1.12},
+  {name:'Regional Logistics',cost:2500000,effect:'Business and rent income ×1.30',factor:1.30,rebirth:1},
+  {name:'Global Infrastructure',cost:250000000,effect:'Business and rent income ×1.55',factor:1.55,rebirth:3}
+ ]},
+ {id:'research',name:'Research Institute',tag:'RESEARCH ECONOMY',summary:'Invest in better methods. Each institute tier lowers the cost of remaining research.',nodes:[
+  {name:'Open Lab Notes',cost:50000,effect:'Research costs −5%',discount:.05},
+  {name:'Peer Review',cost:5000000,effect:'Research costs −10%',discount:.10,rebirth:1},
+  {name:'Breakthrough Grant',cost:500000000,effect:'Research costs −15%',discount:.15,rebirth:5}
+ ]},
+ {id:'mastery',name:'Achievement Mastery',tag:'CROSS-GAME SYNERGY',summary:'Turn lifetime milestones into a small permanent boost across the whole game.',nodes:[
+  {name:'Milestone Momentum',cost:100000,effect:'All earnings ×1.05',factor:1.05,achievements:2},
+  {name:'Proven Record',cost:10000000,effect:'All earnings ×1.10',factor:1.10,achievements:6,rebirth:1},
+  {name:'Hall of Legends',cost:1000000000,effect:'All earnings ×1.25',factor:1.25,achievements:12,rebirth:4}
+ ]},
+ {id:'ascension',name:'Ascension Core',tag:'PERMANENT PRESTIGE',summary:'Deep research amplifies the permanent multiplier earned from rebirth.',nodes:[
+  {name:'Core Ignition',cost:100000, effect:'Rebirth multiplier ×1.05',factor:1.05,rebirth:1},
+  {name:'Stable Orbit',cost:25000000,effect:'Rebirth multiplier ×1.12',factor:1.12,rebirth:4},
+  {name:'Infinite Loop',cost:2500000000,effect:'Rebirth multiplier ×1.25',factor:1.25,rebirth:10}
+ ]}
+];
+const quests=[
+ {id:'clicks',label:'Warm Up',detail:'Click Gabe 100 times today.',metric:'totalClicks',goal:100,reward:2500},
+ {id:'earned',label:'Revenue Sprint',detail:'Earn $100,000 today.',metric:'moneyEarned',goal:100000,reward:20000},
+ {id:'wins',label:'Table Regular',detail:'Win 5 casino games today.',metric:'casinoWins',goal:5,reward:40000}
+];
+const freshResearch=()=>({purchased:[]});let research=freshResearch(),daily=null,screen,branchesNode,questNode;
+try{const parsed=JSON.parse(localStorage.getItem('gabeResearch')||'null');if(parsed&&Array.isArray(parsed.purchased))research={purchased:parsed.purchased.filter(id=>branches.some(b=>b.nodes.some((_,i)=>b.id+'_'+i===id)))}}catch(e){}
+function readStats(){try{const d=JSON.parse(localStorage.getItem('gabeStats')||'{}');return d.stats||d||{}}catch(e){return {}}}
+function achievementCount(){try{const d=JSON.parse(localStorage.getItem('gabeAch')||'{}');const a=d.unlocked||d.achievements||d;if(Array.isArray(a))return a.filter(Boolean).length;return Object.values(a).filter(v=>v===true||v==='1'||v===1).length}catch(e){return 0}}
+function snapshot(){const s=readStats();return{totalClicks:Number(s.totalClicks)||0,moneyEarned:Number(s.moneyEarned)||0,casinoWins:Number(s.casinoWins)||0}}
+function dateKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function saveResearch(){try{localStorage.setItem('gabeResearch',JSON.stringify(research))}catch(e){}}
+function saveDaily(){try{localStorage.setItem('gabeDailyQuests',JSON.stringify(daily))}catch(e){}}
+function resetDailyIfNeeded(){const day=dateKey();if(!daily||daily.day!==day){daily={day,baseline:snapshot(),claimed:[]};saveDaily()}}
+try{daily=JSON.parse(localStorage.getItem('gabeDailyQuests')||'null')}catch(e){}if(!daily||!daily.baseline||!Array.isArray(daily.claimed))daily=null;resetDailyIfNeeded();
+function branchLevel(id){return branches.find(b=>b.id===id).nodes.filter((_,i)=>research.purchased.includes(id+'_'+i)).length}
+function product(ids){return ids.reduce((out,id)=>out*branches.find(b=>b.id===id).nodes.reduce((m,n,i)=>m*(research.purchased.includes(id+'_'+i)?(n.factor||1):1),1),1)}
+function clickMult(){return product(['click','mastery'])}
+function automationMult(){return product(['automation','mastery'])}
+function empireMult(){return product(['empire','mastery'])}
+function ascensionMult(){return product(['ascension'])}
+function researchDiscount(){return Math.min(.35,branches.find(b=>b.id==='research').nodes.reduce((m,n,i)=>m+(research.purchased.includes('research_'+i)?(n.discount||0):0),0))}
+window.gabeResearchClickMultiplier=clickMult;window.gabeAutomationResearchMultiplier=automationMult;window.gabeEmpireResearchMultiplier=empireMult;window.gabeAscensionResearchMultiplier=ascensionMult;
+function fmt(n){return typeof formatNumber==='function'?formatNumber(n):Math.floor(n).toLocaleString('en-US')}
+function effectiveCost(node){return Math.max(1,Math.floor(node.cost*(1-researchDiscount())))}
+function requirement(node,branch,index){if(index>0&&!research.purchased.includes(branch.id+'_'+(index-1)))return'Complete the previous tier';if((rebirthLevel||0)<(node.rebirth||0))return'Requires rebirth level '+node.rebirth;if(node.achievements&&achievementCount()<node.achievements)return'Requires '+node.achievements+' achievements';return''}
+function canBuy(node,branch,index){return!research.purchased.includes(branch.id+'_'+index)&&!requirement(node,branch,index)&&gabeClicks>=effectiveCost(node)}
+function renderBranches(){branchesNode.replaceChildren();branches.forEach(branch=>{const card=document.createElement('article');card.className='pg-branch';const head=document.createElement('header');head.innerHTML='<span class="pg-branchMark">'+String(branches.indexOf(branch)+1).padStart(2,'0')+'</span><div><small>'+branch.tag+'</small><h3>'+branch.name+'</h3></div><span class="pg-branchLevel">'+branchLevel(branch.id)+' / 3</span>';card.append(head);const desc=document.createElement('p');desc.className='pg-branchDesc';desc.textContent=branch.summary;card.append(desc);const path=document.createElement('div');path.className='pg-nodePath';branch.nodes.forEach((node,index)=>{const id=branch.id+'_'+index,purchased=research.purchased.includes(id),reason=requirement(node,branch,index),cost=effectiveCost(node),available=canBuy(node,branch,index);const item=document.createElement('article');item.className='pg-node'+(purchased?' purchased':'')+(available?' ready':'')+(reason?' locked':'');item.dataset.research=id;const tier=document.createElement('small');tier.textContent='TIER 0'+(index+1);const title=document.createElement('strong');title.textContent=node.name;const effect=document.createElement('span');effect.textContent=node.effect;const req=document.createElement('span');req.className='pg-nodeReq';req.textContent=purchased?'RESEARCHED':reason?reason:available?'READY TO RESEARCH':'NEED $'+fmt(cost-gabeClicks)+' MORE';const buy=document.createElement('button');buy.type='button';buy.disabled=purchased||!available;buy.textContent=purchased?'COMPLETE':'RESEARCH · $'+fmt(cost);buy.onclick=()=>purchase(id);item.append(tier,title,effect,req,buy);path.append(item)});card.append(path);branchesNode.append(card)})}
+function questProgress(q){resetDailyIfNeeded();return Math.max(0,(snapshot()[q.metric]||0)-((daily.baseline||{})[q.metric]||0))}
+function renderQuests(){questNode.replaceChildren();quests.forEach(q=>{const progress=questProgress(q),done=progress>=q.goal,claimed=daily.claimed.includes(q.id),card=document.createElement('article');card.className='pg-quest'+(claimed?' claimed':done?' complete':'');card.dataset.quest=q.id;const head=document.createElement('div');head.className='pg-questHead';const title=document.createElement('strong');title.textContent=q.label;const reward=document.createElement('span');reward.textContent='+$'+fmt(q.reward);head.append(title,reward);const detail=document.createElement('p');detail.textContent=q.detail;const track=document.createElement('div');track.className='pg-questTrack';const fill=document.createElement('i');fill.style.width=Math.min(100,progress/q.goal*100)+'%';track.append(fill);const foot=document.createElement('div');foot.className='pg-questFoot';const val=document.createElement('span');val.textContent=fmt(Math.min(progress,q.goal))+' / '+fmt(q.goal);const claim=document.createElement('button');claim.type='button';claim.disabled=!done||claimed;claim.textContent=claimed?'CLAIMED':done?'CLAIM REWARD':'IN PROGRESS';claim.onclick=()=>claimQuest(q.id);foot.append(val,claim);card.append(head,detail,track,foot);questNode.append(card)})}
+function syncQuestCards(){resetDailyIfNeeded();questNode.querySelectorAll(".pg-quest").forEach(card=>{const q=quests.find(x=>x.id===card.dataset.quest);if(!q)return;const progress=questProgress(q),done=progress>=q.goal,claimed=daily.claimed.includes(q.id);card.classList.toggle("complete",done&&!claimed);card.classList.toggle("claimed",claimed);card.querySelector(".pg-questTrack i").style.width=Math.min(100,progress/q.goal*100)+"%";card.querySelector(".pg-questFoot span").textContent=fmt(Math.min(progress,q.goal))+" / "+fmt(q.goal);const b=card.querySelector(".pg-questFoot button");b.disabled=!done||claimed;b.textContent=claimed?"CLAIMED":done?"CLAIM REWARD":"IN PROGRESS"})}
+function syncHud(){if(!screen)return;const cash=document.getElementById('pgCash'),sum=document.getElementById('pgMultiplier'),owned=document.getElementById('pgOwned'),track=document.getElementById('pgTrack'),reb=document.getElementById('pgRebirth');if(cash)cash.textContent='$'+fmt(gabeClicks);if(sum)sum.textContent='Click ×'+clickMult().toFixed(2)+' · Bot ×'+automationMult().toFixed(2)+' · Empire ×'+empireMult().toFixed(2);if(owned)owned.textContent=research.purchased.length+' / 18';if(track)track.style.width=(research.purchased.length/18*100)+'%';if(reb)reb.textContent=String(rebirthLevel||0);const day=document.getElementById('pgDayLabel');if(day)day.textContent='RESETS '+daily.day;document.querySelectorAll('.pg-node').forEach(el=>{const b=el.querySelector('button');if(!b||b.textContent==='COMPLETE')return;const id=el.dataset.research;if(!id)return;const branch=branches.find(x=>x.nodes.some((_,i)=>x.id+'_'+i===id)),index=branch.nodes.findIndex((_,i)=>branch.id+'_'+i===id),node=branch.nodes[index],ready=canBuy(node,branch,index);el.classList.toggle('ready',ready);el.classList.toggle('locked',!!requirement(node,branch,index));b.disabled=!ready;b.textContent='RESEARCH · $'+fmt(effectiveCost(node));const status=el.querySelector('.pg-nodeReq');if(status)status.textContent=requirement(node,branch,index)||(ready?'READY TO RESEARCH':'NEED $'+fmt(effectiveCost(node)-gabeClicks)+' MORE')});syncQuestCards()}
+function render(){if(!screen)return;document.getElementById('pgDayLabel').textContent='RESETS '+daily.day;renderBranches();renderQuests();syncHud()}
+function purchase(id){for(const branch of branches){const index=branch.nodes.findIndex((_,i)=>branch.id+'_'+i===id);if(index<0)continue;const node=branch.nodes[index],cost=effectiveCost(node);if(!canBuy(node,branch,index))return;gabeClicks-=cost;research.purchased.push(id);saveResearch();if(typeof saveGame==='function')saveGame();if(typeof updateClicker==='function')updateClicker();render();const bought=document.querySelector('[data-research="'+id+'"]');if(bought){bought.classList.add('pg-pop');setTimeout(()=>bought.classList.remove('pg-pop'),500)}if(typeof showToast==='function')showToast(node.name+' researched · '+node.effect);return}}
+function claimQuest(id){const q=quests.find(x=>x.id===id);if(!q||daily.claimed.includes(id)||questProgress(q)<q.goal)return;daily.claimed.push(id);gabeClicks+=q.reward;saveDaily();if(typeof saveGame==='function')saveGame();if(typeof updateClicker==='function')updateClicker();render();if(typeof showToast==='function')showToast('Daily objective complete · +$'+fmt(q.reward))}
+window.openProgression=function(){['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','siteHome','socialScreen','galaxyScreen','toaletGameScreen'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none'});document.querySelectorAll('.gScreen').forEach(e=>e.style.display='none');screen.style.display='block';document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(b=>b.classList.toggle('active',b.dataset.page==='progression'));render()};
+window.resetProgressionData=function(){research=freshResearch();daily={day:dateKey(),baseline:snapshot(),claimed:[]};saveResearch();saveDaily()};
+const oldClick=window.gabeComputeClick;if(typeof oldClick==='function'){window.gabeComputeClick=function(){const result=oldClick.apply(this,arguments)||{};result.amount=(Number(result.amount)||0)*clickMult();if(result.label&&typeof formatMoney==='function')result.label=result.label.replace(/\+\$[\d,]+(?:\.\d+)?/,'+$'+formatMoney(result.amount));return result}}
+const oldUpdate=window.updateClicker;if(typeof oldUpdate==='function'){window.updateClicker=function(){const result=oldUpdate.apply(this,arguments);const power=document.getElementById('clickPower');if(power){const base=clickPower*getRebirthMultiplier()*(window.gabeResearchClickMultiplier?window.gabeResearchClickMultiplier():1);power.textContent='+$'+formatMoney(base)+' PER CLICK'+(rebirthLevel>0?' (base $'+formatNumber(clickPower)+' × '+getRebirthMultiplier().toFixed(2)+')':'')}syncHud();return result}}
+const oldSave=window.saveGame;if(typeof oldSave==='function'){window.saveGame=function(){const result=oldSave.apply(this,arguments);saveResearch();saveDaily();return result}}
+screen=document.getElementById('progressionScreen');branchesNode=document.getElementById('pgBranches');questNode=document.getElementById('pgQuestGrid');render();
+})();
+</script>
 </body>
 </html>
 
