@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 6.17 — CASE INVENTORY CLEANUP -->
+<!-- OUTER/GABE CLICKER SITE VERSION 7.0 — GALACTIC EXPANSION -->
 
 <html lang="en">
 <head>
@@ -4026,6 +4026,15 @@ input:focus-visible {
 @media(prefers-reduced-motion:reduce){.loadingCard,.loadingPulseDot{animation:none!important}}
 </style>
 
+<style id="galaxyStyles">
+#galaxyScreen{position:fixed;z-index:480;inset:74px 0 0 220px;display:none;overflow:auto;padding:clamp(16px,3vw,36px);background:radial-gradient(ellipse at 65% 10%,#182a4f 0,transparent 45%),linear-gradient(140deg,#0b101b,#080b12 70%);color:#edf3ff;font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+.gx-header{display:flex;justify-content:space-between;align-items:center;gap:20px;max-width:1160px;margin:0 auto 22px}.gx-eyebrow{font-size:10px;color:#70ddf2;font-weight:900;letter-spacing:.22em}.gx-header h1{margin:5px 0;font-size:clamp(24px,4vw,40px);letter-spacing:.05em}.gx-header p{margin:0;color:#9caac0;font-size:13px}.gx-wallet{min-width:170px;padding:13px 17px;border:1px solid #384866;border-radius:14px;background:#111a2a;box-shadow:0 10px 30px #0005}.gx-wallet span,.gx-wallet small{display:block;color:#9eacc2;font-size:9px;letter-spacing:.14em}.gx-wallet strong{display:block;margin:4px 0;color:#ffe06e;font:800 22px ui-monospace,monospace}.gx-wallet small{color:#62e1ae;letter-spacing:0}.gx-progress{max-width:1160px;margin:0 auto 18px}.gx-progress>div:first-child{display:flex;justify-content:space-between;color:#aab7cb;font-size:10px;font-weight:900;letter-spacing:.12em;margin-bottom:7px}.gx-progressTrack{height:7px;background:#172033;border:1px solid #34415b;border-radius:9px;overflow:hidden}.gx-progressTrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,#44d6ed,#a77bff,#ffe078);box-shadow:0 0 14px #59d9ed66;transition:width .3s}
+.gx-system{position:relative;height:clamp(190px,27vw,280px);max-width:1160px;margin:0 auto 22px;border:1px solid #263753;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#142442,#0b1120 65%,#080c15);box-shadow:inset 0 0 50px #0008,0 12px 30px #0004}.gx-system:before{content:"";position:absolute;inset:0;opacity:.55;background-image:radial-gradient(#c9dcff 1px,transparent 1.5px),radial-gradient(#7793bd 1px,transparent 1.5px);background-size:47px 53px,71px 67px;background-position:9px 12px,31px 19px}.gx-star{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:52px;color:#fff2ab;text-shadow:0 0 16px #ffe78b,0 0 48px #ffb64f;z-index:2}.gx-planet{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff5c7,#ffc95f 40%,#be553d 78%);box-shadow:0 0 30px #ffba5388;color:#fff;font-size:23px}.gx-orbit{position:absolute;left:50%;top:50%;border:1px solid #8ea5cc38;border-radius:50%;transform:translate(-50%,-50%)}.gx-orbit1{width:28%;height:62%}.gx-orbit2{width:58%;height:90%}.gx-nodes{position:absolute;inset:0}.gx-node{position:absolute;transform:translate(-50%,-50%);width:40px;height:40px;border:1px solid #99b8ed77;border-radius:50%;display:grid;place-items:center;background:#18253ddd;box-shadow:0 0 20px #6ab7ff2a;font-size:22px;transition:.2s}.gx-node.owned{background:#173c39;border-color:#68e7bb;box-shadow:0 0 20px #48edb366}.gx-node.next{border-color:#ffe078;box-shadow:0 0 22px #ffe07877;animation:gxPulse 1.5s ease-in-out infinite}.gx-node.locked{filter:grayscale(1);opacity:.43}.gx-worlds{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:12px;max-width:1160px;margin:0 auto}.gx-world{position:relative;min-height:156px;padding:15px;border:1px solid #2a3851;border-radius:15px;background:linear-gradient(145deg,#151e2e,#101521);box-shadow:0 8px 20px #0003;overflow:hidden}.gx-world.owned{border-color:#357966;background:linear-gradient(145deg,#142a2c,#101820)}.gx-world.next{border-color:#8d7437;box-shadow:0 0 20px #ffd76b14}.gx-worldTop{display:flex;align-items:center;gap:10px}.gx-worldIcon{width:42px;height:42px;display:grid;place-items:center;border:1px solid #ffffff18;border-radius:50%;font-size:24px;background:#1c2940}.gx-world h2{margin:0;font-size:15px}.gx-world small{color:#92a3bd;font-size:10px}.gx-world p{min-height:32px;margin:10px 0;color:#aab5c7;font-size:11px;line-height:1.45}.gx-worldBottom{display:flex;justify-content:space-between;align-items:center;gap:8px}.gx-yield{color:#65e5b1;font-size:10px;font-weight:800}.gx-world button{padding:8px 10px;border:1px solid #3d6784;border-radius:8px;background:linear-gradient(135deg,#17415a,#29356b);color:#eaf8ff;font-size:10px;font-weight:900;cursor:pointer}.gx-world button:disabled{opacity:.42;cursor:not-allowed}.gx-world .gx-ownedLabel{color:#66e5b4;font-size:10px;font-weight:900;letter-spacing:.1em}
+@keyframes gxPulse{50%{transform:translate(-50%,-50%) scale(1.12)}}@media(max-width:900px){#galaxyScreen{left:76px;padding:15px 14px 20px}}@media(max-width:620px){#galaxyScreen{inset:64px 0 0 62px;padding:13px 9px}.gx-header{align-items:flex-start;flex-direction:column}.gx-wallet{width:100%}.gx-system{height:190px;border-radius:14px}.gx-node{width:34px;height:34px;font-size:18px}}
+</style>
+
+<style id="caseBatchStyles">.caseBatchControls{display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;margin:0 auto 16px;padding:11px 15px;width:max-content;max-width:94vw;border:1px solid #34425a;border-radius:12px;background:#111927;color:#e8effa;font-size:12px;font-weight:800}.caseBatchControls label{display:flex;align-items:center;gap:8px}.caseBatchControls select{padding:7px 10px;border:1px solid #40516d;border-radius:8px;background:#0b111c;color:#fff;font:inherit}.caseBatchControls input{accent-color:#56d9dc}.caseBatchControls .caseSkipLabel{color:#b7c2d2;font-weight:650}#caseOpenQuantity option{background:#101827;color:white}</style>
+<style id="toaletGameStyles">#toaletGameScreen{position:fixed;z-index:480;inset:74px 0 0 220px;display:none;flex-direction:column;padding:16px;background:radial-gradient(ellipse at 50% 0,#172642,#090d16 68%);color:#edf3ff;font-family:Inter,ui-sans-serif,system-ui,sans-serif}#toaletGameScreen .tp-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 2px 12px}.tp-head strong{font-size:18px;letter-spacing:.08em}.tp-head span{margin-left:10px;color:#8d9bb2;font-size:10px;letter-spacing:.15em}.tp-head a{color:#75dfed;font-size:12px;font-weight:800;text-decoration:none}.tp-head a:hover{text-decoration:underline}#toaletGameScreen iframe{flex:1;width:100%;min-height:0;border:1px solid #2b3b55;border-radius:14px;background:#0a0b10}#toaletGameScreen .tp-head+iframe{box-shadow:0 14px 45px #0006}@media(max-width:900px){#toaletGameScreen{left:76px;padding:13px}}@media(max-width:620px){#toaletGameScreen{inset:64px 0 0 62px;padding:8px}.tp-head strong{font-size:14px}.tp-head span{display:none}}</style>
 </head>
 
 <body>
@@ -4113,8 +4122,6 @@ alt=""
                 <span class="mi">📊</span><span>STATISTICS</span>
             </button>
 
-            <button id="ascMenuButton" class="menuItem" role="menuitem" onclick="openAscension()"><span class="mi">✨</span><span>ASCENSION</span></button>
-
             <button id="selfDestructButton" class="menuItem slim" role="menuitem" onclick="selfDestruct()">
                 <span class="mi">💥</span><span>SELF DESTRUCT</span>
             </button>
@@ -4152,8 +4159,8 @@ alt=""
 </nav>
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
-  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="ascension" onclick="openAscension()"><span>✦</span>Ascension</button><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button></div>
-  <div class="sidebarFoot">V6.19</div>
+  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button><button class="siteSideLink" data-page="galaxy" onclick="openGalaxy()"><span>✦</span>Galaxy</button><button class="siteSideLink" data-page="toalet" onclick="openToaletGame()"><span>🎮</span>Toalet Peli</button></div>
+  <div class="sidebarFoot">V7.0</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4169,6 +4176,13 @@ alt=""
     <button class="homeCard cardLeaderboard" onclick="openLeaderboard()"><span class="cardIcon">🥇</span><strong>LEADERBOARD</strong><p>Who is the biggest degenerate this week?</p><small>See the rankings</small></button>
   </section>
 </main>
+<main id="galaxyScreen" aria-label="Galaxy conquest">
+ <header class="gx-header"><div><div class="gx-eyebrow">OUTER SYSTEMS</div><h1>GALACTIC FRONTIER</h1><p>Claim new worlds. Build colonies. Fund the next expedition.</p></div><div class="gx-wallet"><span>AVAILABLE CASH</span><strong id="gxCash">$0</strong><small id="gxIncome">+$0 / sec</small></div></header>
+ <div class="gx-progress"><div><span id="gxProgressText">0 / 8 WORLDS</span><span id="gxNextText">NEXT: LUNA</span></div><div class="gx-progressTrack"><i id="gxProgressBar"></i></div></div>
+ <div class="gx-system"><div class="gx-star">✹</div><div class="gx-orbit gx-orbit1"></div><div class="gx-orbit gx-orbit2"></div><div class="gx-planet gx-sun" title="Sol">☀</div><div id="gxPlanetNodes" class="gx-nodes"></div></div>
+ <section class="gx-worlds" id="gxWorlds"></section>
+</main>
+<main id="toaletGameScreen" aria-label="Toalet Peli game"><div class="tp-head"><div><strong>TOALET PELI</strong><span>COMMUNITY GAME</span></div><a href="https://kakkatykki.github.io/TOALET_PELI/" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a></div><iframe title="Toalet Peli" src="https://kakkatykki.github.io/TOALET_PELI/" loading="lazy" allow="fullscreen; autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe></main>
 <main id="socialScreen" class="socialScreen" aria-label="Social workspace">
   <nav class="socialTabs" aria-label="Social tools"><button class="socialTab active" data-social-tab="chat" onclick="openSocial('chat')">➤ &nbsp;Chat</button><button class="socialTab" data-social-tab="leaderboard" onclick="openSocial('leaderboard')">♜ &nbsp;Leaderboard</button><button class="socialTab" data-social-tab="achievements" onclick="openSocial('achievements')">♙ &nbsp;Achievements</button><button class="socialTab" data-social-tab="stats" onclick="openSocial('stats')">▥ &nbsp;Stats</button><button class="socialTab" data-social-tab="changelog" onclick="openSocial('changelog')">▤ &nbsp;Changelog</button></nav>
   <section id="socialNameBar" class="socialNameBar"><label for="socialNameInput">Name:</label><input id="socialNameInput" type="text" maxlength="20" placeholder="Enter player name"><button type="button" onclick="socialSaveName()">Save</button></section>
@@ -5240,6 +5254,10 @@ onclick="closeCases()"
 
 <div id="casesBalance">
     $0
+</div>
+<div class="caseBatchControls">
+  <label>OPEN <select id="caseOpenQuantity" aria-label="Cases to open at once" onchange="updateCaseOpenLabels()"><option value="1">1</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="max">MAX (up to 100)</option></select></label>
+  <label class="caseSkipLabel"><input id="caseSkipAnimation" type="checkbox"> Skip opening animation</label>
 </div>
 
 <div id="caseReelWindow">
@@ -6323,7 +6341,6 @@ function doRebirth() {
         "• You keep your offline vault & its upgrades\n" +
         "• You keep your Lucky Charm, achievements & statistics\n" +
         "• You keep your businesses, real estate & empire upgrades\n" +
-        "• You earn Ascension Points (spend them on permanent upgrades)\n" +
         "• Permanent multiplier becomes " +
         (getRebirthMultiplier() + 0.25).toFixed(2) +
         "×\n\n" +
@@ -10726,113 +10743,103 @@ function closeCases() {
     document.getElementById("casesScreen").style.display = "none";
 }
 
+function selectedCaseQuantity(price) {
+    const pick = document.getElementById("caseOpenQuantity");
+    const value = pick ? pick.value : "1";
+    const affordable = Math.max(0, Math.floor(gabeClicks / price));
+    if (value === "max") return Math.min(100, affordable);
+    return Math.min(Math.max(1, Number(value) || 1), affordable);
+}
+
+function updateCaseOpenLabels() {
+    for (const key in CASE_TYPES) {
+        const button = document.getElementById("openCase_" + key);
+        const def = CASE_TYPES[key];
+        if (!button) continue;
+        const quantity = selectedCaseQuantity(def.price);
+        const total = quantity * def.price;
+        button.textContent = quantity > 1
+            ? "OPEN " + quantity + " CASES — $" + formatCaseMoney(total)
+            : "OPEN CASE — $" + formatCaseMoney(def.price);
+        button.disabled = caseOpening || quantity < 1;
+    }
+}
+
 function openCase(caseKey) {
-
-    if (caseOpening) {
-        return;
-    }
-
+    if (caseOpening) return;
     const def = CASE_TYPES[caseKey];
-
-    if (gabeClicks < def.price) {
-
-        alert("You don't have enough money!");
-
-        return;
+    if (!def) return;
+    const quantity = selectedCaseQuantity(def.price);
+    if (quantity < 1) { alert("You don't have enough money!"); return; }
+    const skipAnimation = !!(document.getElementById("caseSkipAnimation") && document.getElementById("caseSkipAnimation").checked);
+    const drops = [];
+    let totalPayout = 0;
+    for (let i = 0; i < quantity; i++) {
+        const drop = pickCaseDrop(def);
+        const jitter = 0.85 + Math.random() * 0.3;
+        const payout = drop.price !== undefined ? Math.round(drop.price * 100) / 100 : Math.round(def.price * drop.mult * jitter * 100) / 100;
+        drops.push({drop, payout});
+        totalPayout += payout;
     }
-
-    const drop = pickCaseDrop(def);
-
-    const jitter = 0.85 + Math.random() * 0.3;
-
-    const payout = drop.price !== undefined ? Math.round(drop.price * 100) / 100 : Math.round(def.price * drop.mult * jitter * 100) / 100;
-
+    totalPayout = Math.round(totalPayout * 100) / 100;
+    const shown = drops[drops.length - 1];
+    const drop = shown.drop;
     caseOpening = true;
-
     setCaseButtonsDisabled(true);
-
-    gabeClicks -= def.price;
-
-    updateClicker();
-
-    saveGame();
-
+    gabeClicks -= def.price * quantity;
+    updateClicker(); saveGame();
     const result = document.getElementById("caseResult");
-
-    result.textContent = "OPENING...";
-
-    result.style.color = "#fff";
-
-    document.getElementById("caseResultSub").textContent = "";
-
-    const winIndex = 50 + Math.floor(Math.random() * 6);
-
-    renderCaseReel(def, drop.tier, winIndex, drop);
-
-    const wobble = (Math.random() - 0.5) * CASE_CARD_WIDTH * 0.7;
-
-    setCaseReelPosition(winIndex, true, wobble);
-
-    playCaseOpenSound();
-
-    setTimeout(
-        function() {
-
-            try {
-
-            gabeClicks += payout;
-
-            gameResult(
-                "case",
-                def.price,
-                payout,
-                drop.tier === "covert" || drop.tier === "contraband" || drop.tier === "stickerHolo" || drop.tier === "stickerFoil"
-            );
-
-            const tier = CASE_TIERS[drop.tier];
-
-            const profit = payout - def.price;
-
-            result.textContent = drop.itemName || tier.name;
-
-            result.style.color = tier.color;
-
-            document.getElementById("caseResultSub").textContent =
-                "+$" + formatCaseMoney(payout) +
-                " (" + (payout / def.price).toFixed(2) + "× — " +
-                (profit >= 0 ? "profit $" : "loss $") +
-                formatCaseMoney(Math.abs(profit)) + ")";
-
-            caseHistory.unshift({ tier: drop.tier, payout: payout });
-            caseInventory.unshift({ tier: drop.tier, caseName: def.name, itemName: drop.itemName || "", image: drop.image || "", payout: payout, date: Date.now() });
-            if (caseInventory.length > 1000) caseInventory.pop();
+    const resultSub = document.getElementById("caseResultSub");
+    result.textContent = skipAnimation ? "OPENING " + quantity + " CASE" + (quantity === 1 ? "" : "S") + "…" : "OPENING…";
+    result.style.color = "#fff"; resultSub.textContent = "";
+    if (!skipAnimation) {
+        const winIndex = 50 + Math.floor(Math.random() * 6);
+        renderCaseReel(def, drop.tier, winIndex, drop);
+        setCaseReelPosition(winIndex, true, (Math.random() - 0.5) * CASE_CARD_WIDTH * 0.7);
+        playCaseOpenSound();
+    } else {
+        renderCaseReel(def, drop.tier, 8, drop);
+        setCaseReelPosition(8, false, 0);
+    }
+    function settle() {
+        try {
+            gabeClicks += totalPayout;
+            for (const entry of drops) {
+                const item = entry.drop;
+                gameResult("case", def.price, entry.payout,
+                    item.tier === "covert" || item.tier === "contraband" || item.tier === "stickerHolo" || item.tier === "stickerFoil");
+                caseHistory.unshift({tier:item.tier,payout:entry.payout});
+                caseInventory.unshift({tier:item.tier,caseName:def.name,itemName:item.itemName||"",image:item.image||"",payout:entry.payout,date:Date.now()});
+            }
+            if (caseInventory.length > 1000) caseInventory.length = 1000;
+            if (caseHistory.length > 12) caseHistory.length = 12;
             try { localStorage.setItem("caseInventory", JSON.stringify(caseInventory)); } catch (e) {}
-
-            if (caseHistory.length > 12) {
-                caseHistory.pop();
-            }
-
-            renderCaseHistory();
-            renderCaseInventory();
-
-            } catch (error) {
-                console.error("Case opening cleanup recovered from an error:", error);
-                result.textContent = drop.itemName || "Case opened";
-                document.getElementById("caseResultSub").textContent = "Your case opening is complete. You can open another case.";
-            } finally {
-                caseOpening = false;
-                setCaseButtonsDisabled(false);
-                updateClicker();
-                saveGame();
-            }
-
-        },
-        CASE_SPIN_MS + 150
-    );
+            const tier = CASE_TIERS[drop.tier], profit = totalPayout - def.price * quantity;
+            result.textContent = quantity > 1 ? quantity + " CASES OPENED" : (drop.itemName || tier.name);
+            result.style.color = tier.color;
+            resultSub.textContent = "+$" + formatCaseMoney(totalPayout) +
+                (quantity > 1 ? " total · " + quantity + " drops" : " (" + (totalPayout / def.price).toFixed(2) + "×") +
+                " — " + (profit >= 0 ? "profit $" : "loss $") + formatCaseMoney(Math.abs(profit));
+            renderCaseHistory(); renderCaseInventory();
+        } catch (error) {
+            console.error("Case opening cleanup recovered from an error:", error);
+            result.textContent = quantity + " CASE" + (quantity === 1 ? "" : "S") + " OPENED";
+            resultSub.textContent = "Total payout: $" + formatCaseMoney(totalPayout);
+        } finally {
+            caseOpening = false; setCaseButtonsDisabled(false); updateClicker(); saveGame(); updateCaseOpenLabels();
+        }
+    }
+    if (skipAnimation) settle();
+    else setTimeout(settle, CASE_SPIN_MS + 150);
 }
 
 renderCasePanels();
-
+updateCaseOpenLabels();
+if (typeof updateClicker === "function" && !window.__caseQuantityUpdateWrapped) {
+    window.__caseQuantityUpdateWrapped = true;
+    const originalUpdateClickerForCases = updateClicker;
+    updateClicker = function() { originalUpdateClickerForCases.apply(this, arguments); updateCaseOpenLabels(); };
+}
 
 function selfDestruct() {
 
@@ -11194,9 +11201,9 @@ updateClicker();
 
     /* ---------- tuning ---------- */
 
-    const BIZ_RATIO = 1.14;          /* each extra level costs 14% more */
-    const MAX_LEVEL = 250;
-    const MILESTONES = [10, 25, 50, 100, 150, 200, 250];   /* income x2 each */
+    const BIZ_RATIO = 1.115;          /* each extra level costs 14% more */
+    const MAX_LEVEL = 500;
+    const MILESTONES = [10, 25, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500];   /* income x2 each */
 
     const PROP_RATIO = 1.10;         /* each extra unit of a property costs 10% more */
     const SELL_RATE = 0.85;          /* you get 85% of market value when selling */
@@ -11237,7 +11244,20 @@ updateClicker();
         ["🎬", "B-Movie Studio"],
         ["🛍️", "Mega Mall"],
         ["🚀", "Space Tourism Company"],
-        ["🏨", "Moon Resort"]
+        ["🏨", "Moon Resort"],
+        ["⛏️", "Asteroid Mining Guild"],
+        ["🛰️", "Orbital Freight Network"],
+        ["🌕", "Lunar Foundry"],
+        ["🪐", "Ringworld Logistics"],
+        ["☄️", "Comet Ice Refinery"],
+        ["🌌", "Deep Space Relay"],
+        ["🤖", "Replicator Works"],
+        ["🧬", "Terraforming Consortium"],
+        ["⚛️", "Fusion Megaplant"],
+        ["🚪", "Wormhole Transit Authority"],
+        ["🌠", "Interstellar Trade League"],
+        ["🏙️", "Dyson Swarm Industries"],
+        ["✨", "Galactic Exchange"]
     ];
 
     const BIZ = BIZ_NAMES.map(function(n, i) {
@@ -11250,7 +11270,7 @@ updateClicker();
             name: n[1],
             cost: cost,
             /* income per second at level 1 (payback ~8-14 minutes) */
-            base: cost / (450 + 50 * i)
+            base: cost / (300 + 30 * i)
         };
     });
 
@@ -11429,7 +11449,7 @@ updateClicker();
     }
 
     function offlineEff() {
-        return OFFLINE_EFF[Math.min(OFFLINE_EFF.length - 1, offState.eff || 0)] / 100 * (window.gabeOfflineMult ? window.gabeOfflineMult() : 1);
+        return OFFLINE_EFF[Math.min(OFFLINE_EFF.length - 1, offState.eff || 0)] / 100;
     }
 
     function totalIncome() {
@@ -11454,7 +11474,7 @@ updateClicker();
 
     /* cost of buying k more levels of a business (current level lv) */
     function bizBulkCost(b, lv, k) {
-        return Math.ceil(b.cost * (window.gabeCostMult ? window.gabeCostMult() : 1) * Math.pow(BIZ_RATIO, lv) * (Math.pow(BIZ_RATIO, k) - 1) / (BIZ_RATIO - 1));
+        return Math.ceil(b.cost * Math.pow(BIZ_RATIO, lv) * (Math.pow(BIZ_RATIO, k) - 1) / (BIZ_RATIO - 1));
     }
 
     function bizMaxAffordable(b, lv, cash) {
@@ -11463,7 +11483,7 @@ updateClicker();
 
         if (room <= 0) { return 0; }
 
-        const first = b.cost * (window.gabeCostMult ? window.gabeCostMult() : 1) * Math.pow(BIZ_RATIO, lv);
+        const first = b.cost * Math.pow(BIZ_RATIO, lv);
 
         if (cash < Math.ceil(first)) { return 0; }
 
@@ -13669,17 +13689,17 @@ function closeWebsite() {
 */
 const CHANGELOG_ENTRIES = [
   {
-    date: "2026-10-21",
-    title: "Ascensions + GABENTALE",
+    date: "2026-10-22",
+    title: "v7.0 · Galactic Expansion",
     changes: [
-      "New Ascension page: earn points from rebirths and spend them on permanent Clicking, Empire, Collector and Investor upgrades, with respec.",
-      "New GABENTALE minigame, heavily inspired by UNDERTALE. Probably will add more to it later on unless i scrap the whole thing.",
-      "New Empire Research projects boost income, cut business costs and improve offline earnings.",
-      "Cross-game milestones (cases, skins, stocks, casino, achievements, empire, clicks) award points, cash and titles.",
-      "Ascension data is included in save export/import. Existing saves are upgraded automatically."
+      "Added the Galaxy frontier: claim eight planets and grow a new passive-income stream.",
+      "Expanded Empire with 13 space-age businesses, higher level caps, and better business returns.",
+      "Added skip-animation and multi-case opening options.",
+      "Added Toalet Peli to the sidebar as an embedded community game.",
+      "Polished GABENTALE and fixed its close and Galaxy navigation behavior."
     ]
   },
-     {
+  {
     date: "2026-10-21",
     title: "Casino Patches",
     changes: [
@@ -14142,6 +14162,8 @@ updateChangeLogBadge();
 <!-- =========================================================
      PLAYER NAMES + PUBLIC LEADERBOARD
      Paste this whole block right before 
+
+
 
 </body>,
      AFTER the PUBLIC CHAT block. No other code needs to change
@@ -15553,10 +15575,10 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
 <script>
 /* Dashboard wiring: retain the site's existing game screens and actions. */
 (function(){
-  const ids=['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','achScreen','statsScreen','lbScreen','socialScreen'];
+  const ids=['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','achScreen','statsScreen','lbScreen','socialScreen','galaxyScreen','toaletGameScreen'];
   function active(page){document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(function(b){b.classList.toggle('active',b.dataset.page===page);});}
   window.showSiteHome=function(){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='block';active('home');};
-  window.switchSitePage=function(page){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='none';if(page==='home'){window.showSiteHome();return;}if(page==='clicker')window.openClicker();else if(page==='casino')window.openCasinoFromMenu();else if(page==='stocks')window.openStockMarket();else if(page==='cases')window.openCases();else if(page==='empire')window.openEmpire();else if(page==='social')window.openSocial('chat');active(page);};
+  window.switchSitePage=function(page){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='none';if(page==='home'){window.showSiteHome();return;}if(page==='clicker')window.openClicker();else if(page==='casino')window.openCasinoFromMenu();else if(page==='stocks')window.openStockMarket();else if(page==='cases')window.openCases();else if(page==='empire')window.openEmpire();else if(page==='social')window.openSocial('chat');else if(page==='galaxy')window.openGalaxy();else if(page==='toalet')window.openToaletGame();active(page);};
   document.addEventListener('click',function(e){const b=e.target.closest('.siteNavLink,.siteSideLink');if(b){active(b.dataset.page);if(b.classList.contains('siteSideLink')&&b.dataset.page!=='social'){const s=document.getElementById('socialScreen');if(s)s.style.display='none';}}});
   const chat=document.getElementById('pubChat');if(chat){document.getElementById('socialChatHost').appendChild(chat);chat.classList.remove('collapsed');}
   ['lbScreen','achScreen','statsScreen'].forEach(function(id){const el=document.getElementById(id);if(el)document.getElementById('socialDynamicHost').appendChild(el);});
@@ -15582,9 +15604,9 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
   window.setLowGraphics=function(enabled){const on=!!enabled;document.documentElement.classList.toggle('lowGraphics',on);try{localStorage.setItem('gabeLowGraphics',on?'1':'0');}catch(e){}const b=document.getElementById('lowGraphicsButton');if(b){b.textContent='Low graphics: '+(on?'On':'Off');b.setAttribute('aria-pressed',String(on));}};
   window.toggleLowGraphics=function(){window.setLowGraphics(!document.documentElement.classList.contains('lowGraphics'));};
   try{window.setLowGraphics(localStorage.getItem('gabeLowGraphics')==='1');}catch(e){window.setLowGraphics(false);}
-  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName','gabeAscend','gabeAscSkins'];
+  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
   const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
-  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch','gabeAscend']);
+  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch']);
   const saveTransferDb='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
   function createShortSaveCode(){const bytes=new Uint8Array(6);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
   window.exportSaveCode=async function(){
@@ -16115,144 +16137,28 @@ function act(){if(!turnReady)return;turnReady=false;s.turns++;s.acts++;s.kind++;
 function mercy(){if(!turnReady)return;turnReady=false;s.turns++;if(s.kind>=1||s.acts>=2){clearTimers();s.mercy=1;s.ghostResolved=true;renderMap('The Queue Ghost thanks Gabe and floats toward the elevator. The lock clicks open.')}else renderBattle('The Ghost is still nervous. Try ACT, or show it the ticket first.')}
 function showDefeat(){clearTimers();s.phase='defeat';cardBase();roomBar('ENCOUNTER · QUEUE GHOST','GABE NEEDS A BREAK');addPanel('GAME OVER','The support queue got the better of Gabe this time. Take a breath, then try again.',[{label:'RETRY ENCOUNTER',run:startBattle},{label:'RETURN TO MAP',run:()=>{s.hp=20;renderMap('Gabe catches his breath. The Queue Ghost is still waiting.')}}])}
 function finish(kind){clearTimers();s.phase='ending';s.ending=kind;save();cardBase();card.classList.add('gt-end');let title,text;if(kind==='bright'){title='THE GOOD PATCH';text='The lights return across the Underworks. The Queue Ghost goes home. Gabe adds “check the server room” to the release notes.'}else if(kind==='quiet'){title='ONE LAST TICKET';text='Gabe keeps the golden ticket. The Ghost is free, and somewhere a future game gets a very strange secret item.'}else{title='HOTFIX: EVERYTHING';text='The red button reboots every server at once. The queue clears. So does the calendar. Gabe calls it a successful launch.'}card.append(el('div','gt-endTitle',title),el('p','gt-endText',text),el('p','gt-hint','THE END'));const row=el('div','gt-actionRow');row.append(button('PLAY AGAIN',()=>{s=fresh();renderMap()},'gt-action gt-primary'),button('CLOSE GAME',window.closeGabentale,'gt-action'));card.append(row)}
-window.launchGabentale=()=>{root.classList.add('gt-open');root.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';if(s.phase==='battle')s.phase='map';if(s.phase==='ending')finish(s.ending);else renderMap()};window.closeGabentale=()=>{clearTimers();root.classList.remove('gt-open');root.setAttribute('aria-hidden','true');document.body.style.overflow=''};document.addEventListener('keydown',e=>{if(!root.classList.contains('gt-open'))return;if(e.key==='Escape'){window.closeGabentale();return}if(s.phase==='map'){const d={ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0],ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1]}[e.key];if(d){e.preventDefault();step(d[0],d[1])}else if(e.key==='e'||e.key==='E'||e.key==='Enter'){e.preventDefault();interact()}}else if(s.phase==='battle')move(e)});
+window.launchGabentale=()=>{root.classList.add('gt-open');root.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';if(s.phase==='battle')s.phase='map';if(s.phase==='ending')finish(s.ending);else renderMap()};window.closeGabentale=()=>{clearTimers();root.classList.remove('gt-open');root.setAttribute('aria-hidden','true');document.body.style.overflow='';if(typeof window.switchSitePage==='function')window.switchSitePage('clicker');else if(typeof window.openClicker==='function')window.openClicker()};document.addEventListener('keydown',e=>{if(!root.classList.contains('gt-open'))return;if(e.key==='Escape'){window.closeGabentale();return}if(s.phase==='map'){const d={ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0],ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1]}[e.key];if(d){e.preventDefault();step(d[0],d[1])}else if(e.key==='e'||e.key==='E'||e.key==='Enter'){e.preventDefault();interact()}}else if(s.phase==='battle')move(e)});
 })();</script>
-<style id="ascStyle">
-#ascScreen{display:none;position:fixed;inset:74px 0 0 220px;z-index:500;overflow:auto;padding:22px;color:#edf4fa;background:#0b0d13}
-@media(max-width:900px){#ascScreen{left:76px}}@media(max-width:620px){#ascScreen{inset:64px 0 0 62px;padding:12px}}
-#ascScreen h1{margin:0 0 4px;font-size:28px;letter-spacing:2px}#ascScreen .sub{color:#8fa3b8;margin-bottom:14px}
-.ascTabs{display:flex;gap:8px;margin:12px 0}.ascTabs button,.ascBtn{background:#101d2e;color:#cfe;border:1px solid #38e1e855;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer}
-.ascTabs button.on{background:#2bdde5;color:#04121a}.ascBtn:disabled{opacity:.4;cursor:not-allowed}.ascBtn.danger{border-color:#ff6b6b88;color:#ff9b9b}
-.ascGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.ascCard{background:#121826;border:1px solid #243247;border-radius:12px;padding:12px}.ascCard.locked{opacity:.45}
-.ascCard h3{margin:0 0 4px;font-size:15px}.ascCard p{margin:0 0 8px;color:#9fb2c6;font-size:13px}
-.ascBar{height:8px;background:#1b2536;border-radius:6px;overflow:hidden;margin:6px 0}.ascBar i{display:block;height:100%;background:linear-gradient(90deg,#2bdde5,#ffd84d)}
-.ascPts{color:#ffd84d;font-weight:900}.ascToast{position:fixed;right:18px;bottom:18px;z-index:99999;background:#101d2e;border:1px solid #ffd84d;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700}
-</style>
-<div id="ascScreen" class="gScreen">
- <h1>✨ ASCENSION</h1><div class="sub" id="ascSub"></div>
- <div class="ascTabs"><button data-t="over">Overview</button><button data-t="tree">Ascension Tree</button><button data-t="res">Empire Research</button></div>
- <div id="ascBody"></div>
-</div>
-<script>
-/* ===== ASCENSION EXPANSION: permanent tree, empire research, cross-game milestones =====
-   Save key: gabeAscend (JSON, versioned). Currency stays gabeClicks. */
-(function(){
-"use strict";
-const KEY="gabeAscend";
-let S={v:1,bonus:0,nodes:{},res:{},ms:{},titles:[],title:"",lastRb:null};
-try{const o=JSON.parse(localStorage.getItem(KEY));if(o&&typeof o==="object")S=Object.assign(S,o);}catch(e){}
-S.nodes=S.nodes||{};S.res=S.res||{};S.ms=S.ms||{};S.titles=Array.isArray(S.titles)?S.titles:[];
-const BR={click:["🖱️","Clicking",1],empire:["🏢","Empire",2],collect:["📦","Collector",3],invest:["📈","Investor",4]};
-/* id,branch,name,desc,max,baseCost,reqRebirth */
-const NODES=[
-["cp","click","Strong Fingers","+5% click income per level",10,1,1],
-["crit","click","Critical Mass","+10% critical-click rewards per level",5,1,1],
-["dbl","click","Double Tap","+2% chance per level that a click pays double",5,2,1],
-["bless","click","Gabe's Blessing ★","+25% click income (milestone)",1,5,5],
-["corp","empire","Corporate Synergy","+4% empire income per level",10,1,2],
-["lean","empire","Lean Management","-2% business level cost per level",10,1,2],
-["night","empire","Night Shift","+10% offline earning efficiency per level",5,2,2],
-["tycoon","empire","Empire Mastery ★","+10% empire income (milestone)",1,5,5],
-["stip","collect","Collector's Stipend","+0.5% empire income per level for every 10 skins owned (max +10%/level)",10,1,3],
-["bounty","collect","Skin Hunter","Each new unique skin pays $1,000 x level",5,2,3],
-["sharp","invest","Sharp Trader","+3% bonus on profitable stock sales per level",10,1,4],
-["nw","invest","Net Worth Edge","+0.5% income per level per digit of net worth above 6 digits (max 5 levels)",5,2,4]];
-const ND={};NODES.forEach(n=>ND[n[0]]=n);
-const lv=id=>S.nodes[id]||0, cost=(n,l)=>n[5]+Math.floor(l/3);
-const rb=()=>typeof rebirthLevel==="number"?rebirthLevel:0;
-const earned=()=>rb()+2*Math.floor(rb()/5)+(S.bonus||0);
-function spent(){let t=0;NODES.forEach(n=>{for(let l=0;l<lv(n[0]);l++)t+=cost(n,l);});return t;}
-const points=()=>earned()-spent();
-const unlocked=()=>rb()>=1||S.bonus>0;
-/* research: id,name,desc,cost,effect */
-const RES=[["auto","Automated Operations","+5% business income",1e5,"inc",.05],["bulk","Bulk Procurement","3% cheaper business levels",5e5,"cost",.03],
-["mkt","Global Marketing","+10% business income",2.5e6,"inc",.10],["srv","Server Optimization","+10% offline efficiency",1e7,"off",.10],
-["ai","Logistics AI","+15% business income",5e7,"inc",.15],["lean2","Lean Supply Chain","5% cheaper business levels",2.5e8,"cost",.05],
-["qm","Quantum Marketing","+25% business income",1e9,"inc",.25],["grid","Data Center Grid","+25% offline efficiency",5e9,"off",.25]];
-const rs=t=>RES.reduce((a,r)=>a+(S.res[r[0]]&&r[4]===t?r[5]:0),0);
-const J=k=>{try{return JSON.parse(localStorage.getItem(k))||{};}catch(e){return{};}};
-const inv=()=>typeof caseInventory!=="undefined"&&Array.isArray(caseInventory)?caseInventory:[];
-const nw=()=>Math.max(1,Number(window.getEmpireNetWorth?window.getEmpireNetWorth():0)||1);
-/* ---- multipliers ---- */
-const clickMult=()=>(1+.05*lv("cp"))*(lv("bless")?1.25:1);
-const incMult=()=>(1+.04*lv("corp"))*(lv("tycoon")?1.1:1)*(1+rs("inc"))*(1+.005*lv("stip")*Math.min(20,Math.floor(inv().length/10)))*(1+.005*lv("nw")*Math.max(0,Math.log10(nw())-6));
-window.gabeCostMult=()=>Math.max(.4,(1-.02*lv("lean"))*(1-rs("cost")));
-window.gabeOfflineMult=()=>(1+.1*lv("night"))*(1+rs("off"));
-const oldInc=window.gabeIncomeMult;window.gabeIncomeMult=function(){return (oldInc?oldInc():1)*incMult();};
-const oldClick=window.gabeComputeClick;
-window.gabeComputeClick=function(){const c=oldClick();let a=c.amount*clickMult();
- if(c.cls)a*=1+.1*lv("crit");
- if(Math.random()<.02*lv("dbl")){a*=2;c.label=c.label||"✨ DOUBLE TAP +$"+formatMoney(a);}
- c.amount=a;return c;};
-const oldSold=window.stockSold;
-window.stockSold=function(amount,profit){if(oldSold)oldSold(amount,profit);if(profit>0&&lv("sharp"))gabeClicks+=profit*.03*lv("sharp");};
-/* ---- milestones (cross-game) ---- */
-const st=()=>J("gabeStats"),achN=()=>Object.keys(J("gabeAch")).length;
-const levels=()=>Object.values(J("empireBiz")).reduce((a,b)=>a+(Number(b)||0),0);
-const skins=()=>new Set(inv().map(i=>i&&(i.name||i.skin||i.id||JSON.stringify(i)))).size;
-const METRICS=[["📦","Cases opened",()=>st().casesOpened||0,[10,100,500]],["🎨","Unique skins owned",skins,[5,25,75]],
-["📈","Stock trades",()=>st().stocksTraded||0,[10,100,500]],["💹","Realized stock profit",()=>st().stockProfit||0,[1e4,1e6,1e8]],
-["🎰","Casino wins",()=>st().casinoWins||0,[10,100,1000]],["🏆","Achievements unlocked",achN,[5,15,30]],
-["🏢","Total business levels",levels,[50,250,1000]],["🖱️","Total clicks",()=>st().totalClicks||0,[1e3,1e4,1e5]],["🔥","Rebirths",rb,[1,5,10]]];
-const REW=["pts1","cash","pts2"],TITLES=["Rookie","Veteran","Legend"];
-const MS=[];METRICS.forEach((m,mi)=>m[3].forEach((g,i)=>MS.push({id:mi+"_"+i,icon:m[0],name:m[1],get:m[2],goal:g,type:REW[i],title:i===2?m[1]+" "+TITLES[2]:""})));
-const inc=()=>(Number(window.getEmpireIncome?window.getEmpireIncome():0)||0)*incMult();
-const rewText=m=>(m.type==="cash"?"💵 cash bonus":"✨ "+(m.type==="pts1"?1:2)+" Ascension Point"+(m.type==="pts2"?"s":""))+(m.title?" + title":"");
-function toast(t){const d=document.createElement("div");d.className="ascToast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),4500);}
-function claim(){let changed=false;
- MS.forEach(m=>{if(S.ms[m.id]||m.get()<m.goal)return;S.ms[m.id]=1;changed=true;let msg="🏁 Milestone: "+m.name+" "+fmt(m.goal);
-  if(m.type==="cash"){const c=Math.max(5000,Math.floor(inc()*600));gabeClicks+=c;msg+=" — +$"+fmt(c);}else{const p=m.type==="pts1"?1:2;S.bonus+=p;msg+=" — +"+p+" Ascension Point";}
-  if(m.title&&!S.titles.includes(m.title))S.titles.push(m.title);toast(msg);});
- if(rb()>=5&&!S.titles.includes("Ascended")){S.titles.push("Ascended");changed=true;}
- if(S.lastRb===null)S.lastRb=rb();
- if(rb()>S.lastRb){const gain=earned()-(S.lastRb+2*Math.floor(S.lastRb/5)+S.bonus);toast("✨ Rebirth! +"+gain+" Ascension Point"+(gain>1?"s":""));S.lastRb=rb();changed=true;}
- if(changed)save();}
-const bountySeen=new Set(JSON.parse(localStorage.getItem("gabeAscSkins")||"null")||[]);let first=bountySeen.size===0;
-function bounty(){const cur=[...new Set(inv().map(i=>i&&(i.name||i.skin||i.id||JSON.stringify(i))))];
- let n=0;cur.forEach(k=>{if(!bountySeen.has(k)){bountySeen.add(k);n++;}});
- if(n&&!first&&lv("bounty")){const c=n*1000*lv("bounty");gabeClicks+=c;toast("🎨 Skin Hunter: +$"+fmt(c));}
- if(n||first){first=false;try{localStorage.setItem("gabeAscSkins",JSON.stringify([...bountySeen]));}catch(e){}}}
-const fmt=n=>n>=1e6?n.toExponential(2).replace("e+","e"):Math.floor(n).toLocaleString("en-US");
-function save(){try{S.v=1;localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
-const oldSave=window.saveGame;window.saveGame=function(){oldSave();save();};
-const oldReset=window.performReset;window.performReset=function(){oldReset();S={v:1,bonus:0,nodes:{},res:{},ms:{},titles:[],title:"",lastRb:0};try{localStorage.removeItem("gabeAscSkins");}catch(e){}bountySeen.clear();save();render();};
-/* ---- UI ---- */
-let tab="over";const $=id=>document.getElementById(id),B=()=>$("ascBody");
-function bar(p){return '<div class="ascBar"><i style="width:'+Math.min(100,Math.max(0,p*100))+'%"></i></div>';}
-function render(){if($("ascScreen").style.display==="none")return;
- $("ascSub").innerHTML='Ascension Points: <span class="ascPts">'+points()+'</span> · earned '+earned()+' · spent '+spent()+' · Rebirths '+rb()+(S.title?' · Title: <b>'+S.title+'</b>':'');
- document.querySelectorAll(".ascTabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
- let h="";
- if(tab==="over"){
-  const nxt=MS.filter(m=>!S.ms[m.id]).sort((a,b)=>b.get()/b.goal-a.get()/a.goal).slice(0,3);
-  h+='<h3>Next milestones</h3><div class="ascGrid">'+nxt.map(m=>'<div class="ascCard"><h3>'+m.icon+' '+m.name+'</h3><p>'+fmt(Math.min(m.get(),m.goal))+' / '+fmt(m.goal)+' — reward: '+rewText(m)+'</p>'+bar(m.get()/m.goal)+'</div>').join("")+'</div>';
-  h+='<h3>Next Ascension unlock</h3><div class="ascCard"><p>'+(unlocked()?Object.values(BR).filter(b=>b[2]>rb()).map(b=>b[1]+" branch at rebirth "+b[2]).concat(rb()<5?["Milestone upgrades + \"Ascended\" title at rebirth 5"]:[]).join(" · ")||"All branches unlocked. Bonus points every 5th rebirth.":"Rebirth once to unlock Ascension.")+'</p></div>';
-  h+='<h3>Titles</h3><div>'+(S.titles.length?S.titles.map(t=>'<button class="ascBtn" data-title="'+t+'" style="margin:3px">'+(S.title===t?"✔ ":"")+t+'</button>').join(""):'<span class="sub">Earn titles from milestones.</span>')+'</div>';
- }else if(tab==="tree"){
-  if(!unlocked())h+='<div class="ascCard"><p>🔒 Rebirth once to unlock the Ascension tree.</p></div>';
-  else{h+='<button class="ascBtn danger" id="ascRespec">Respec all points</button>';
-   Object.keys(BR).forEach(k=>{const b=BR[k],open=rb()>=b[2];h+='<h3>'+b[0]+' '+b[1]+(open?'':' 🔒 (rebirth '+b[2]+')')+'</h3><div class="ascGrid">'+NODES.filter(n=>n[1]===k).map(n=>{const l=lv(n[0]),mx=l>=n[4],c=cost(n,l),ok=open&&rb()>=n[6]&&!mx&&points()>=c;
-    return '<div class="ascCard'+(open&&rb()>=n[6]?'':' locked')+'"><h3>'+n[2]+' <small>'+l+'/'+n[4]+'</small></h3><p>'+n[3]+(rb()<n[6]?' (rebirth '+n[6]+')':'')+'</p>'+bar(l/n[4])+'<button class="ascBtn" data-buy="'+n[0]+'"'+(ok?'':' disabled')+'>'+(mx?'MAXED':'Buy · '+c+' pt')+'</button></div>';}).join("")+'</div>';});}
- }else{
-  h+='<p class="sub">Spend money on empire-wide research. Bonuses apply to the existing Empire income, costs and offline earnings.</p><div class="ascGrid">'+RES.map(r=>{const d=S.res[r[0]];return '<div class="ascCard"><h3>🔬 '+r[1]+'</h3><p>'+r[2]+'</p><button class="ascBtn" data-res="'+r[0]+'"'+(d||gabeClicks<r[3]?' disabled':'')+'>'+(d?'RESEARCHED':'Research · $'+fmt(r[3]))+'</button></div>';}).join("")+'</div>';}
- B().innerHTML=h;}
-document.addEventListener("click",function(e){const t=e.target.closest("#ascScreen button");if(!t)return;
- if(t.dataset.t){tab=t.dataset.t;}
- else if(t.dataset.buy){const n=ND[t.dataset.buy],c=cost(n,lv(n[0]));if(points()>=c&&lv(n[0])<n[4]){S.nodes[n[0]]=lv(n[0])+1;save();}}
- else if(t.dataset.res){const r=RES.find(x=>x[0]===t.dataset.res);if(r&&!S.res[r[0]]&&gabeClicks>=r[3]){gabeClicks-=r[3];S.res[r[0]]=1;save();if(window.saveGame)saveGame();}}
- else if(t.dataset.title){S.title=S.title===t.dataset.title?"":t.dataset.title;save();skin();}
- else if(t.id==="ascRespec"){showConfirm("RESPEC?\n\nAll Ascension nodes are refunded as points. Nothing else is lost.",function(){S.nodes={};save();render();},{yesText:"RESPEC",danger:true});return;}
- render();});
-function skin(){const s=document.querySelector(".sidebarIdentity small");if(s&&S.title)s.dataset.asc=S.title;}
-window.openAscension=function(){if(window.showSiteHome)showSiteHome();const h=$("siteHome");if(h)h.style.display="none";$("ascScreen").style.display="block";
- document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(b=>b.classList.toggle("active",b.dataset.page==="ascension"));render();};
-window.closeAscension=function(){$("ascScreen").style.display="none";};
-document.addEventListener("click",function(e){const b=e.target.closest(".siteNavLink,.siteSideLink,.homeCard,.menuItem");if(b&&!b.closest("#ascScreen")&&b.dataset.page!=="ascension")closeAscension();},true);
-setInterval(function(){claim();bounty();render();},2000);claim();bounty();
+<script id="galaxyGame">
+(()=>{'use strict';const planets=[
+ {name:'Luna',icon:'🌕',type:'LUNAR OUTPOST',cost:250000,yield:90,desc:'A foothold among the old craters.'},
+ {name:'Mars',icon:'🔴',type:'FRONTIER COLONY',cost:1800000,yield:850,desc:'Red dust, iron mines, and room to grow.'},
+ {name:'Ceres',icon:'🪨',type:'MINING SECTOR',cost:14000000,yield:6800,desc:'Turn the asteroid belt into a supply chain.'},
+ {name:'Europa',icon:'🧊',type:'OCEAN RESEARCH',cost:110000000,yield:52000,desc:'Build beneath the ice. Discover what sleeps below.'},
+ {name:'Titan',icon:'🟠',type:'ATMOSPHERIC HABITAT',cost:900000000,yield:420000,desc:'Harvest the clouds and light the methane seas.'},
+ {name:'Kepler-186f',icon:'🪐',type:'TERRAFORMING ZONE',cost:7500000000,yield:3600000,desc:'A second home, one atmosphere at a time.'},
+ {name:'Proxima b',icon:'🔵',type:'INTERSTELLAR PORT',cost:65000000000,yield:31000000,desc:'The first colony beyond Sol.'},
+ {name:'New Gaben',icon:'🌌',type:'GALACTIC CAPITAL',cost:580000000000,yield:280000000,desc:'A thriving world at the edge of the map.'}
+ ];let state={owned:[]},screen,worlds,nodes,cashNode,incomeNode,progressText,progressBar,nextText;try{state=JSON.parse(localStorage.getItem('gabeGalaxy'))||state}catch(e){}if(!Array.isArray(state.owned))state.owned=[];
+const fmt=n=>typeof formatNumber==='function'?formatNumber(n):Math.floor(n).toLocaleString('en-US');const save=()=>{try{localStorage.setItem('gabeGalaxy',JSON.stringify(state))}catch(e){}};function planetIncome(){return state.owned.reduce((sum,i)=>sum+planets[i].yield,0)}function active(page){document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(b=>b.classList.toggle('active',b.dataset.page===page))}
+function render(){if(!worlds)return;const earned=state.owned.length,inc=planetIncome();cashNode.textContent='$'+fmt(gabeClicks);incomeNode.textContent='+$'+fmt(inc)+' / sec';progressText.textContent=earned+' / '+planets.length+' WORLDS';progressBar.style.width=(earned/planets.length*100)+'%';nextText.textContent=earned<planets.length?'NEXT: '+planets[earned].name:'ALL WORLDS CLAIMED';worlds.replaceChildren();nodes.replaceChildren();planets.forEach((p,i)=>{const owned=state.owned.includes(i),next=i===earned,locked=i>earned;const card=document.createElement('article');card.className='gx-world'+(owned?' owned':'')+(next?' next':'');const top=document.createElement('div');top.className='gx-worldTop';const icon=document.createElement('span');icon.className='gx-worldIcon';icon.textContent=p.icon;const title=document.createElement('div');const h=document.createElement('h2');h.textContent=p.name;const typ=document.createElement('small');typ.textContent=p.type;title.append(h,typ);top.append(icon,title);const desc=document.createElement('p');desc.textContent=p.desc;const bottom=document.createElement('div');bottom.className='gx-worldBottom';const yieldLabel=document.createElement('span');yieldLabel.className='gx-yield';yieldLabel.textContent='+$'+fmt(p.yield)+'/s';if(owned){bottom.append(yieldLabel,Object.assign(document.createElement('span'),{className:'gx-ownedLabel',textContent:'COLONIZED'}))}else{const b=document.createElement('button');b.textContent=locked?'LOCKED · $'+fmt(p.cost):'CLAIM · $'+fmt(p.cost);b.disabled=locked||gabeClicks<p.cost;b.onclick=()=>claim(i);bottom.append(yieldLabel,b)}card.append(top,desc,bottom);worlds.append(card);const node=document.createElement('span');node.className='gx-node'+(owned?' owned':'')+(next?' next':'')+(locked?' locked':'');node.textContent=owned?'✓':locked?'·':p.icon;const angle=(-145+i*41)*Math.PI/180,rX=39,rY=35;node.style.left=(50+Math.cos(angle)*rX)+'%';node.style.top=(50+Math.sin(angle)*rY)+'%';node.title=p.name+(owned?' · Colonized':next?' · Ready to claim':' · Locked');nodes.append(node)});}
+function claim(i){if(i!==state.owned.length||gabeClicks<planets[i].cost)return;gabeClicks-=planets[i].cost;state.owned.push(i);save();saveGame();updateClicker();render();if(typeof showToast==='function')showToast('🪐 '+planets[i].name+' colony established! +$'+fmt(planets[i].yield)+'/s')}
+window.openGalaxy=function(){['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','siteHome','socialScreen','galaxyScreen','toaletGameScreen'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none'});document.querySelectorAll('.gScreen').forEach(e=>e.style.display='none');screen.style.display='block';document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(b=>b.classList.toggle('active',b.dataset.page==='galaxy'));render()};
+function tick(){if(!screen)return;const inc=planetIncome();if(inc>0){gabeClicks+=inc;saveGame();updateClicker()}if(screen.style.display==='block')render()}
+document.addEventListener('DOMContentLoaded',()=>{});screen=document.getElementById('galaxyScreen');worlds=document.getElementById('gxWorlds');nodes=document.getElementById('gxPlanetNodes');cashNode=document.getElementById('gxCash');incomeNode=document.getElementById('gxIncome');progressText=document.getElementById('gxProgressText');progressBar=document.getElementById('gxProgressBar');nextText=document.getElementById('gxNextText');render();setInterval(tick,1000);
 })();
 </script>
-
+<script id="toaletGameNavigation">window.openToaletGame=function(){['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','siteHome','socialScreen','galaxyScreen','toaletGameScreen'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});var screen=document.getElementById('toaletGameScreen');if(screen)screen.style.display='flex';document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(function(b){b.classList.toggle('active',b.dataset.page==='toalet');});};</script>
 </body>
 </html>
 
