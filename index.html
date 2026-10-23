@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GABE CLICKER VERSION 8.3 — GALACTIC EXPANSION -->
+<!-- GABE CLICKER VERSION 8.4 — GALACTIC EXPANSION -->
 
 <html lang="en">
 <head>
@@ -4181,7 +4181,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V8.3</div>
+  <div class="sidebarFoot">V8.4</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -6123,6 +6123,7 @@ function gabeClick(event) {
     const click = gabeComputeClick();
 
     gabeClicks += click.amount;
+    if (window.gabeAutoClickGuard) window.gabeAutoClickGuard.record(click.amount, event);
 
     showMoneyPopup(event, click.amount, click.label, click.cls);
 
@@ -13764,6 +13765,12 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-23",
+    title: "Clicker Fair Play",
+    changes: [
+      "The clicker now detects scripted and unusually steady rapid clicking, and removes the earnings from those clicks."
+    ]
+  },  {
+    date: "2026-10-23",
     title: "Progress and Number Display Update",
     changes: [
       "Your progress now syncs to your player profile and will reset when the community wipe is applied.",
@@ -14298,6 +14305,7 @@ updateChangeLogBadge();
 <!-- =========================================================
      PLAYER NAMES + PUBLIC LEADERBOARD
      Paste this whole block right before 
+
 
 
 
@@ -16551,14 +16559,14 @@ window.addEventListener("click",function(e){const t=e.target.closest("#taxScreen
 function render(){if($("taxScreen").style.display!=="block")return;
  const now=Date.now(),b=T.bill;
  $("taxSub").innerHTML="Tax: "+(RATE*100)+"% of net worth above $"+fmt(EXEMPT)+" every "+CYCLE/60000+" min · Paid $"+fmt(T.paid)+" · Evaded "+T.evaded+" · Caught "+T.caught;
- const keep=document.activeElement&&document.activeElement.id==="taxAmt"?$("taxAmt").value:"";
+ const keepFocus=!!(document.activeElement&&document.activeElement.id==="taxAmt");const keep=keepFocus?$("taxAmt").value:"";
  $("taxBody").innerHTML='<div class="ascGrid">'+
  '<div class="ascCard'+(b?' taxBill':'')+'"><h3>📄 Current bill</h3><p>'+(b?'<b>$'+fmt(b.amt)+'</b> due in '+Math.max(0,Math.ceil((b.due-now)/1000))+'s. If unpaid, the taxman collects it with a 25% penalty.':'No bill. Next assessment in '+Math.max(0,Math.ceil((T.next-now)/1000))+'s.')+'</p>'+
  '<div class="taxRow"><button class="ascBtn" data-a="pay"'+(b&&gabeClicks>=b.amt?'':' disabled')+'>PAY TAXES</button><button class="ascBtn danger" data-a="evade"'+(b?'':' disabled')+'>EVADE ('+Math.round((1-catchChance())*100)+'% success)</button></div><p>Failing costs double the bill plus a fine.</p></div>'+
  '<div class="ascCard"><h3>🔥 Heat</h3><p>Evading raises heat. High heat makes evasion fail more and triggers audits (audit chance now '+Math.round(auditChance()*100)+'%). Paying and time cool it down.</p><div class="ascBar"><i style="width:'+T.heat+'%"></i></div></div>'+
  '<div class="ascCard"><h3>🏝️ Offshore account: $'+fmt(T.off)+'</h3><p>Money here is not counted for tax. 5% fee to deposit, 2% to withdraw. Audits can seize 35% of it.</p><input id="taxAmt" type="number" min="1" placeholder="Amount"><div class="taxRow"><button class="ascBtn" data-a="dep">DEPOSIT</button><button class="ascBtn" data-a="wd">WITHDRAW</button><button class="ascBtn" data-a="max">MAX</button></div></div>'+
  '<div class="ascCard"><h3>🧾 Accountant ('+T.acct+'/3)</h3><p>Each level: bills −10% and caught chance −8%.</p><button class="ascBtn" data-a="acct"'+(T.acct>=3||gabeClicks<acctCost()?' disabled':'')+'>'+(T.acct>=3?'MAXED':'HIRE · $'+fmt(acctCost()))+'</button></div></div>';
- if(keep)$("taxAmt").value=keep;}
+ if(keepFocus){const input=$("taxAmt");input.value=keep;input.focus({preventScroll:true});}}
 setInterval(function(){const now=Date.now();T.heat=cl(T.heat-.05,0,100);
  if(T.bill&&now>=T.bill.due)collect();else if(!T.bill&&now>=T.next)issue();
  render();},1000);
@@ -16783,6 +16791,52 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
 })();
 </script>
 
+
+<script id="autoClickDetector">
+/* Heuristic protection against synthetic and sustained machine-timed click spam. */
+(function(){
+  "use strict";
+  const WINDOW=32, MIN_RATE=8.5, MAX_VARIATION=0.10;
+  let clicks=[], nextId=0, lastNotice=0;
+  function detect(){
+    if(clicks.length<WINDOW)return;
+    const sample=clicks.slice(-WINDOW), intervals=[];
+    for(let i=1;i<sample.length;i++)intervals.push(sample[i].time-sample[i-1].time);
+    const mean=intervals.reduce((a,b)=>a+b,0)/intervals.length;
+    if(mean<=0||(intervals.length*1000/(sample[sample.length-1].time-sample[0].time))<MIN_RATE)return;
+    const variance=intervals.reduce((a,b)=>a+Math.pow(b-mean,2),0)/intervals.length;
+    if(Math.sqrt(variance)/mean>MAX_VARIATION)return;
+    const fresh=sample.filter(c=>!c.charged), amount=fresh.reduce((a,c)=>a+c.amount,0);
+    if(amount<=0)return;
+    fresh.forEach(c=>c.charged=true);
+    const removed=Math.min(Math.max(0,Number(gabeClicks)||0),amount);
+    if(removed<=0)return;
+    gabeClicks-=removed;
+    if(typeof updateCasinoBalance==="function")updateCasinoBalance();
+    const now=Date.now();
+    if(now-lastNotice>6000&&typeof showToast==="function"){
+      showToast("Automated clicking detected. Removed $"+formatMoney(removed)+" from rapid click earnings.");
+      lastNotice=now;
+    }
+  }
+  window.gabeAutoClickGuard={
+    record:function(rawAmount,event){
+      const now=performance.now();
+      const amount=Math.max(0,Number(rawAmount)||0);
+      /* Script-generated clicks are not treated as player input. */
+      if(event&&event.isTrusted===false){
+        const removed=Math.min(Math.max(0,Number(gabeClicks)||0),amount);
+        gabeClicks-=removed;
+        if(removed>0&&typeof showToast==="function")showToast("Automated clicking detected. Removed $"+formatMoney(removed)+" from click earnings.");
+        return;
+      }
+      clicks.push({id:nextId++,time:now,amount:amount,charged:false});
+      clicks=clicks.filter(c=>now-c.time<10000).slice(-WINDOW*2);
+      detect();
+    }
+  };
+})();
+</script>
 </body>
 </html>
 
