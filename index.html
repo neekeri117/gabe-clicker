@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GABE CLICKER VERSION 8.4 — GALACTIC EXPANSION -->
+<!-- GABE CLICKER VERSION 8.5 — GALACTIC EXPANSION -->
 
 <html lang="en">
 <head>
@@ -4181,7 +4181,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V8.4</div>
+  <div class="sidebarFoot">V8.5</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -13765,6 +13765,12 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-23",
+    title: "World Conquest",
+    changes: [
+      "Claim a country, grow your treasury, recruit an army, build forts, and fight your way across a shared world."
+    ]
+  },  {
+    date: "2026-10-23",
     title: "Clicker Fair Play",
     changes: [
       "The clicker now detects scripted and unusually steady rapid clicking, and removes the earnings from those clicks."
@@ -16656,7 +16662,7 @@ draw();ui();
 @media(max-width:900px){.sidebarGroupLabel{display:none}.sidebarUtilityLinks{margin:0}.sidebarMinigames{margin-top:auto!important}.saveWipeEvent{right:10px;bottom:10px;align-items:flex-start;flex-direction:column;gap:5px;width:min(355px,calc(100vw - 84px));padding:9px 11px}.saveWipeCountdown{font-size:16px}}
 @media(max-width:620px){.saveWipeEvent{padding:12px}.saveWipeEvent strong{font-size:14px}.saveWipeEvent span{font-size:10px}.rrMultiPanel{padding:14px}.rrMultiButton{flex:1}}
 </style>
-<section id="minigameHubScreen" class="gScreen" style="display:none"><div class="mgHubWrap"><header class="mgHubHeader"><small>QUICK BREAKS · FRIENDLY COMPETITION</small><h1>MINIGAMES</h1><p>Pick a game and jump straight in.</p></header><div class="mgHubGrid"><button class="mgHubCard" onclick="openToaletGame()"><span>🎮</span><strong>Toalet Peli</strong><p>Take a quick break with the classic mini-game.</p><small>ARCADE</small></button></div></div></section>
+<section id="minigameHubScreen" class="gScreen" style="display:none"><div class="mgHubWrap"><header class="mgHubHeader"><small>QUICK BREAKS · FRIENDLY COMPETITION</small><h1>MINIGAMES</h1><p>Pick a game and jump straight in.</p></header><div class="mgHubGrid"><button class="mgHubCard" onclick="openWorldConquest()"><span>🌍</span><strong>World Conquest</strong><p>Claim a country, grow your economy, and fight for the map.</p><small>REAL-TIME STRATEGY</small></button><button class="mgHubCard" onclick="openToaletGame()"><span>🎮</span><strong>Toalet Peli</strong><p>Take a quick break with the classic mini-game.</p><small>ARCADE</small></button></div></div></section>
 
 <script id="saveWipeCountdownTimer">
 (function(){
@@ -16736,7 +16742,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
  const badge=document.getElementById("cloudSaveBadge");
  const keepLocal=/^(gabePlayerId|gabePlayerName|pubChatName|gabePlayerAnonymousAuthV1|gabeFirebaseWebApiKey|gabeCloudSave|.*ChangeLog.*|.*Changelog.*|.*Audio.*|.*audio.*|.*Sound.*|.*sound.*|.*Volume.*|.*volume.*|.*Graphics.*|.*graphics.*|.*Quality.*|.*quality.*|.*ReducedMotion.*|.*Theme.*|.*theme.*|.*Background.*|.*background.*|.*Collapsed.*|.*collapsed.*|.*admin.*)$/i;
  const excludeCloud=/^(gabePlayerId|gabePlayerName|pubChatName|gabePlayerAnonymousAuthV1|gabeFirebaseWebApiKey|.*ChangeLog.*|.*Changelog.*|.*Audio.*|.*audio.*|.*Sound.*|.*sound.*|.*Volume.*|.*volume.*|.*Graphics.*|.*graphics.*|.*Quality.*|.*quality.*|.*ReducedMotion.*|.*Theme.*|.*theme.*|.*Background.*|.*background.*|.*Collapsed.*|.*collapsed.*|.*admin.*)$/i;
- let token="",refreshToken="",uid="",expiresAt=0,epoch=1,ready=false,busy=false,lastPayload="",lastWrite=0;
+ let token="",refreshToken="",uid="",expiresAt=0,epoch=1,ready=false,busy=false,lastPayload="",lastWrite=0,authPromise=null;
  function status(text,state){if(badge){const s=state||"busy";badge.textContent=s==="ready"?"☁ Saved":s==="error"?"☁ Save issue":"☁ Syncing";badge.title="Cloud save: "+text;badge.setAttribute("aria-label","Cloud save: "+text);badge.dataset.state=s}}
  function safeLocalGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
  function safeLocalSet(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
@@ -16758,12 +16764,13 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
   if(saved&&saved.refreshToken){refreshToken=saved.refreshToken;uid=saved.uid||"";if(saved.idToken&&Number(saved.expiresAt)>Date.now()+60000){token=saved.idToken;expiresAt=Number(saved.expiresAt);return}const form=new URLSearchParams({grant_type:"refresh_token",refresh_token:refreshToken});const r=await fetch("https://securetoken.googleapis.com/v1/token?key="+encodeURIComponent(API_KEY),{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error&&d.error.message||"Could not refresh the player sign-in.");token=d.id_token;refreshToken=d.refresh_token||refreshToken;uid=d.user_id||uid;expiresAt=Date.now()+Number(d.expires_in||3600)*1000;safeLocalSet(AUTH_KEY,JSON.stringify({uid,idToken:token,refreshToken,expiresAt}));return}
   const d=await postJson("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="+encodeURIComponent(API_KEY),{returnSecureToken:true});token=d.idToken;refreshToken=d.refreshToken;uid=d.localId;expiresAt=Date.now()+Number(d.expiresIn||3600)*1000;safeLocalSet(AUTH_KEY,JSON.stringify({uid,idToken:token,refreshToken,expiresAt}));
  }
- async function db(path,method,value){const r=await fetch(DB+"/"+path+".json?auth="+encodeURIComponent(token),{method:method||"GET",headers:{"Content-Type":"application/json"},...(value===undefined?{}:{body:JSON.stringify(value)}),cache:"no-store"});const d=await r.json().catch(()=>null);if(!r.ok)throw Error(typeof d==="string"?d:"Realtime Database rejected the save (HTTP "+r.status+"). Check the playerSaves/saveControl rules.");return d}
+ async function db(path,method,value){await ensureAuth();const r=await fetch(DB+"/"+path+".json?auth="+encodeURIComponent(token),{method:method||"GET",headers:{"Content-Type":"application/json"},...(value===undefined?{}:{body:JSON.stringify(value)}),cache:"no-store"});const d=await r.json().catch(()=>null);if(!r.ok)throw Error(typeof d==="string"?d:"Realtime Database rejected the save (HTTP "+r.status+"). Check the playerSaves/saveControl rules.");return d}
  async function writeSave(){if(!ready||busy||Date.now()-lastWrite<5000)return;busy=true;try{const data=collect(),payload=JSON.stringify({version:1,epoch,updatedAt:Date.now(),data});if(payload===lastPayload){lastWrite=Date.now();return}await db("playerSaves/"+uid,"PUT",JSON.parse(payload));lastPayload=payload;lastWrite=Date.now();safeLocalSet(EPOCH_KEY,epoch);status("on · saved to this player profile","ready")}catch(e){status(e.message||"could not save","error")}finally{busy=false}}
+ function ensureAuth(){if(!authPromise)authPromise=getAuth().then(()=>{authPromise=null},e=>{authPromise=null;throw e});return authPromise}
  async function start(){
   try{
    if(location.protocol==="file:")status("open the deployed https site to connect","error");else status("connecting…","busy");
-   await getAuth();
+   await ensureAuth();
    const rawEpoch=await db("saveControl/epoch","GET");epoch=Number(rawEpoch)||1;
    const cloud=await db("playerSaves/"+uid,"GET");
    const localEpoch=Number(safeLocalGet(EPOCH_KEY)||0);
@@ -16784,7 +16791,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
    setInterval(async()=>{if(!ready||busy)return;try{const current=Number(await db("saveControl/epoch","GET"))||1;if(current!==epoch)resetLocalForWipe(current)}catch(e){status(e.message||"could not check wipe status","error")}},15000);
   }catch(e){status(e.message||"local save still works; cloud connection failed","error");console.error("Cloud save setup:",e)}
  }
- window.gabePlayerCloudSave={start:start,save:writeSave,get uid(){return uid}};
+ window.gabePlayerCloudSave={start:start,save:writeSave,getToken:async function(){await ensureAuth();return token},get uid(){return uid}};
  start();
  setInterval(writeSave,5000);
  window.addEventListener("pagehide",()=>{writeSave()});
@@ -16839,6 +16846,80 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
       detect();
     }
   };
+})();
+</script>
+<style id="worldConquestStyles">
+#worldConquestScreen{left:220px!important;right:0!important;padding:22px clamp(12px,3vw,34px) 32px!important;background:radial-gradient(ellipse at 48% 0,#18353d 0,transparent 45%),#0b0f16!important;color:#edf4fa!important}
+.wc-wrap{max-width:1260px;margin:0 auto}.wc-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:15px}.wc-head h1{margin:3px 0;font-size:clamp(26px,4vw,42px);letter-spacing:.07em}.wc-head p{margin:0;color:#9eacbf}.wc-kicker{color:#3ee2df;font-size:10px;font-weight:900;letter-spacing:.2em}.wc-status{padding:8px 11px;border:1px solid #344452;border-radius:9px;color:#9eb3c2;background:#121a22;font-size:11px;font-weight:800}.wc-status[data-state="ready"]{color:#91e4bd;border-color:#28755b}.wc-status[data-state="error"]{color:#ffaaa0;border-color:#9d4b4b}
+.wc-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:12px 0}.wc-stat{padding:11px 13px;border:1px solid #293340;border-radius:11px;background:#121720}.wc-stat small{display:block;color:#8494a8;font-size:9px;font-weight:900;letter-spacing:.12em}.wc-stat strong{display:block;margin-top:5px;color:#f0d36d;font:800 18px ui-monospace,monospace;overflow-wrap:anywhere}
+.wc-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.75fr);gap:12px}.wc-map,.wc-panel,.wc-feed{border:1px solid #293340;border-radius:14px;background:#111720;box-shadow:0 12px 30px #0004}.wc-map{padding:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-content:start}.wc-country{min-width:0;min-height:104px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:10px;border:1px solid #364152;border-radius:10px;background:linear-gradient(145deg,#19222d,#121821);color:#eff4fa;text-align:left;cursor:pointer;transition:border-color .15s,transform .15s}.wc-country:hover{border-color:#59d6d4;transform:translateY(-1px)}.wc-country.selected{border-color:#53e0df;box-shadow:0 0 0 1px #53e0df55}.wc-country.mine{background:linear-gradient(145deg,#153334,#131b23)}.wc-country.enemy{background:linear-gradient(145deg,#2b1c2b,#171720)}.wc-country b{font-size:12px}.wc-country small{color:#a0adbe;font-size:9px;line-height:1.35}.wc-country .wc-flag{font-size:20px}.wc-panel{padding:15px}.wc-panel h2{margin:0 0 5px;font-size:20px}.wc-panel p{color:#9eacbf;font-size:12px;line-height:1.55}.wc-owner{color:#60dddd;font-size:10px;font-weight:900;letter-spacing:.08em}.wc-controls{display:grid;gap:8px;margin-top:12px}.wc-controls label{color:#98a7bb;font-size:10px;font-weight:850}.wc-controls input,.wc-controls select{width:100%;box-sizing:border-box;padding:10px;border:1px solid #35404e;border-radius:8px;background:#0c1118;color:#f4f6f8}.wc-button{width:100%;padding:10px;border:1px solid #328e8e;border-radius:8px;background:linear-gradient(110deg,#126b70,#4a3e98);color:#fff;font-weight:900;cursor:pointer}.wc-button:hover{filter:brightness(1.15)}.wc-button:disabled{opacity:.45;cursor:not-allowed}.wc-button.secondary{border-color:#475263;background:#1b222d}.wc-feed{margin-top:12px;padding:13px}.wc-feed h3{margin:0 0 8px;color:#90a3b8;font-size:10px;letter-spacing:.16em}.wc-log{display:grid;gap:5px;color:#c4ced9;font-size:11px}.wc-log div{padding:6px 8px;border-radius:6px;background:#171e28}.wc-empty{padding:18px;text-align:center;color:#9ba8b8;font-size:12px}
+@media(max-width:900px){#worldConquestScreen{left:76px!important;padding:17px 12px 26px!important}}
+@media(max-width:620px){#worldConquestScreen{inset:64px 0 0 62px!important;padding:12px 8px 22px!important}.wc-head{align-items:flex-start;flex-direction:column}.wc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wc-layout{grid-template-columns:1fr}.wc-map{gap:5px;padding:7px}.wc-country{min-height:82px;padding:7px}.wc-country b{font-size:10px}.wc-country small{font-size:8px}.wc-panel{padding:12px}}
+</style>
+<section id="worldConquestScreen" class="gScreen" style="display:none">
+ <div class="wc-wrap">
+  <header class="wc-head"><div><div class="wc-kicker">MULTIPLAYER · SHARED WORLD</div><h1>WORLD CONQUEST</h1><p>Claim a country, build its strength, and expand across Europe.</p></div><div id="wcStatus" class="wc-status" data-state="busy" role="status">Connecting to world…</div></header>
+  <div id="wcStats" class="wc-stats"></div>
+  <div class="wc-layout"><div id="wcMap" class="wc-map" aria-label="World map"></div><aside id="wcPanel" class="wc-panel"></aside></div>
+  <section class="wc-feed"><h3>WORLD DISPATCHES</h3><div id="wcFeed" class="wc-log"></div></section>
+ </div>
+</section>
+<script id="worldConquestGame">
+(function(){
+ "use strict";
+ const DB="https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app";
+ const C=[
+  {id:"nor",name:"Norway",flag:"🇳🇴",n:["swe","den"]},{id:"swe",name:"Sweden",flag:"🇸🇪",n:["nor","fin","den"]},
+  {id:"fin",name:"Finland",flag:"🇫🇮",n:["swe","ukr"]},{id:"uk",name:"United Kingdom",flag:"🇬🇧",n:["fra"]},
+  {id:"den",name:"Denmark",flag:"🇩🇰",n:["nor","swe","ger","fra"]},{id:"ger",name:"Germany",flag:"🇩🇪",n:["den","pol","fra","ita"]},
+  {id:"pol",name:"Poland",flag:"🇵🇱",n:["ger","ukr"]},{id:"ukr",name:"Ukraine",flag:"🇺🇦",n:["pol","fin","tur"]},
+  {id:"fra",name:"France",flag:"🇫🇷",n:["uk","den","ger","spa","ita"]},{id:"ita",name:"Italy",flag:"🇮🇹",n:["ger","fra","tur"]},
+  {id:"tur",name:"Turkey",flag:"🇹🇷",n:["ita","ukr","spa"]},{id:"spa",name:"Spain",flag:"🇪🇸",n:["fra","tur"]}
+ ];
+ const $=id=>document.getElementById(id),screen=$("worldConquestScreen");
+ let uid="",name="Player",state=null,selected="nor",busy=false,timer=0,token="";
+ const cash=n=>"$"+Math.floor(Number(n)||0).toLocaleString("en-US");
+ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const meta=id=>C.find(c=>c.id===id);
+ function status(text,type){$("wcStatus").textContent=text;$("wcStatus").dataset.state=type||"busy"}
+ async function authenticate(){const cloud=window.gabePlayerCloudSave;if(!cloud||!cloud.getToken)throw Error("Player sign-in is unavailable. Reload the site and try again.");token=await cloud.getToken();uid=cloud.uid;if(!uid)throw Error("Could not identify your player. Reload and try again.");try{name=(localStorage.getItem("gabePlayerName")||localStorage.getItem("pubChatName")||"Player").trim().slice(0,20)||"Player"}catch(e){}}
+ function endpoint(){return DB+"/worldConquest/main.json?auth="+encodeURIComponent(token)}
+ function fresh(){const countries={};C.forEach(c=>countries[c.id]={owner:null,army:12,fort:0});return {version:1,updatedAt:Date.now(),countries:countries,players:{},feed:[{by:"World",text:"The borders are open. Claim a country to begin.",at:Date.now()}]}}
+ async function read(){await authenticate();const r=await fetch(endpoint(),{headers:{"X-Firebase-ETag":"true"},cache:"no-store"}),d=await r.json().catch(()=>null);if(!r.ok)throw Error("World sync failed (HTTP "+r.status+"). Check the worldConquest Firebase rules.");return {data:d,etag:r.headers.get("ETag")}}
+ function owned(s,id){return Object.keys(s.countries||{}).filter(k=>s.countries[k]&&s.countries[k].owner===id)}
+ function rate(s,id){return 10+15*owned(s,id).length}
+ function settle(s){const p=s.players[uid];if(!p)return;const now=Date.now(),elapsed=Math.max(0,Math.min(6*60*60*1000,now-(Number(p.lastIncome)||now)));p.gold=(Number(p.gold)||0)+Math.floor(elapsed/60000*rate(s,uid));p.lastIncome=now}
+ function projected(s,p){const elapsed=Math.max(0,Math.min(6*60*60*1000,Date.now()-(Number(p.lastIncome)||Date.now())));return (Number(p.gold)||0)+Math.floor(elapsed/60000*rate(s,uid))}
+ async function transact(change){if(busy)throw Error("Your last order is still processing.");busy=true;status("Sending orders…","busy");try{for(let i=0;i<7;i++){const snap=await read(),s=snap.data||fresh();if(!s.countries||!s.players||!Array.isArray(s.feed))throw Error("Shared world data is invalid.");const result=await change(s);s.updatedAt=Date.now();s.feed=s.feed.slice(-20);const r=await fetch(endpoint(),{method:"PUT",headers:{"Content-Type":"application/json","if-match":snap.etag||"null_etag"},body:JSON.stringify(s),cache:"no-store"});if(r.status===412)continue;if(!r.ok)throw Error("World order failed (HTTP "+r.status+"). Check the worldConquest Firebase rules.");state=s;paint();status("World synced · "+new Date().toLocaleTimeString(),"ready");return result}throw Error("World is busy. Wait a moment and retry.")}finally{busy=false}}
+ function log(s,text){s.feed.unshift({by:name,text:text,at:Date.now()});s.feed=s.feed.slice(0,20)}
+ async function claim(id){return transact(s=>{const current=s.players[uid],territories=owned(s,uid);if(current&&territories.length){selected=current.capital;return}const m=meta(id),d=s.countries[id];if(!m||!d||d.owner)throw Error("That country has already been claimed.");d.owner=uid;d.army=35;d.fort=0;s.players[uid]={name:name,capital:id,gold:650,lastIncome:Date.now()};selected=id;log(s,name+" claimed "+m.name+".")})}
+ async function recruit(){return transact(s=>{const p=s.players[uid],d=s.countries[selected];if(!p||!d||d.owner!==uid)throw Error("Select one of your countries first.");settle(s);const units=Math.max(1,Math.min(100,Math.floor(Number($("wcUnits").value)||1))),cost=units*15;if(p.gold<cost)throw Error("Not enough treasury. Each troop costs $15.");p.gold-=cost;d.army+=units;log(s,name+" recruited "+units+" troops in "+meta(selected).name+".")})}
+ async function fortify(){return transact(s=>{const p=s.players[uid],d=s.countries[selected];if(!p||!d||d.owner!==uid)throw Error("Select one of your countries first.");settle(s);if(d.fort>=5)throw Error("That country already has the maximum fort level.");const cost=250*(d.fort+1);if(p.gold<cost)throw Error("Not enough treasury for a fort.");p.gold-=cost;d.fort++;log(s,name+" fortified "+meta(selected).name+".")})}
+ async function attack(){return transact(s=>{const p=s.players[uid],src=s.countries[selected],targetId=$("wcTarget").value,tgt=s.countries[targetId];if(!p||!src||src.owner!==uid)throw Error("Select one of your countries as the attack source.");if(!meta(targetId)||!meta(selected).n.includes(targetId)||!tgt||tgt.owner===uid)throw Error("Choose a neighboring country you do not own.");settle(s);const units=Math.max(1,Math.min(Math.floor(src.army),Math.floor(Number($("wcUnits").value)||1)));if(src.army<1)throw Error("You need troops to attack.");const atk=units*(.8+Math.random()*.4),def=(Number(tgt.army)||0)*(tgt.owner ? .9 : 1)+(Number(tgt.fort)||0)*8;src.army-=units;const target=meta(targetId);if(atk>def){tgt.owner=uid;tgt.army=Math.max(2,Math.floor(units-def*.45));tgt.fort=0;log(s,name+" conquered "+target.name+" with "+tgt.army+" troops left.");selected=targetId}else{tgt.army=Math.max(0,Math.floor((Number(tgt.army)||0)-units*.4));log(s,name+" attacked "+target.name+" and lost "+units+" troops.")}})}
+ async function run(fn){if(busy)return;try{await fn()}catch(e){status(e.message||"Order failed","error")}}
+ function paint(){
+  if(!state)return;
+  const map=$("wcMap"),panelNode=$("wcPanel"),active=panelNode.contains(document.activeElement)?document.activeElement:null,focusId=active&&active.id,focusValue=active&&active.value;
+  const p=state.players[uid],territories=owned(state,uid);
+  map.innerHTML=C.map(c=>{const d=state.countries[c.id]||{army:0,fort:0},owner=d.owner?state.players[d.owner]:null,cls="wc-country"+(selected===c.id?" selected":"")+(d.owner===uid?" mine":d.owner?" enemy":"");return '<button class="'+cls+'" data-country="'+c.id+'"><span class="wc-flag">'+c.flag+'</span><b>'+esc(c.name)+'</b><small>'+esc(owner?owner.name:(d.owner?"Another country":"Unclaimed"))+' · ⚔ '+Math.max(0,Number(d.army)||0)+(d.fort?" · Fort "+d.fort:"")+'</small></button>'}).join("");
+  const gold=p?projected(state,p):0,army=territories.reduce((a,id)=>a+(Number(state.countries[id].army)||0),0);
+  $("wcStats").innerHTML='<div class="wc-stat"><small>YOUR COUNTRY</small><strong>'+esc(p&&territories.length?meta(p.capital).name:"Not claimed")+'</strong></div><div class="wc-stat"><small>TREASURY</small><strong>'+cash(gold)+'</strong></div><div class="wc-stat"><small>ARMY</small><strong>'+army.toLocaleString("en-US")+'</strong></div><div class="wc-stat"><small>INCOME</small><strong>'+cash(p?rate(state,uid):0)+'/min</strong></div>';
+  const d=state.countries[selected],m=meta(selected),owner=d&&d.owner?state.players[d.owner]:null,canClaim=(!p||!territories.length)&&d&&!d.owner;
+  let panel='<div class="wc-owner">'+(owner?esc(owner.name.toUpperCase()):"OPEN TERRITORY")+'</div><h2>'+m.flag+" "+esc(m.name)+'</h2><p>Army: <b>'+Math.max(0,Number(d.army)||0)+'</b> · Fort level: <b>'+Math.max(0,Number(d.fort)||0)+'</b></p>';
+  if(canClaim){panel+='<p>Establish your nation here. Each country starts with a treasury and a small army.</p><button class="wc-button" data-action="claim">CLAIM '+esc(m.name.toUpperCase())+'</button>'}
+  else if(p&&d.owner===uid){const targets=m.n.filter(id=>state.countries[id]&&state.countries[id].owner!==uid),cost=250*((Number(d.fort)||0)+1);panel+='<p>Each territory earns $15 per minute. Recruit troops, fortify, then attack a neighbor.</p><div class="wc-controls"><label for="wcUnits">TROOPS / RECRUITS</label><input id="wcUnits" type="number" min="1" max="100" value="10"><button class="wc-button secondary" data-action="recruit">RECRUIT · $15 EACH</button><button class="wc-button secondary" data-action="fort" '+(d.fort>=5?"disabled":"")+'>BUILD FORT · '+cash(cost)+'</button>';if(targets.length)panel+='<label for="wcTarget">NEIGHBOR TO ATTACK</label><select id="wcTarget">'+targets.map(id=>'<option value="'+id+'">'+esc(meta(id).name)+' · '+Math.max(0,Number(state.countries[id].army)||0)+' defenders</option>').join("")+'</select><button class="wc-button" data-action="attack" '+(d.army<1?"disabled":"")+'>ATTACK WITH TROOPS</button>';else panel+='<p>All neighboring territories are yours.</p>';panel+='</div>'}
+  else panel+='<p>Owned by <b>'+esc(owner?owner.name:"another nation")+'</b>. Select one of your neighboring countries to attack it.</p>';
+  panelNode.innerHTML=panel;
+  if(focusId){const again=$(focusId);if(again){again.value=focusValue;again.focus({preventScroll:true})}}
+  $("wcFeed").innerHTML=state.feed.length?state.feed.slice(0,8).map(x=>'<div><b>'+esc(x.by)+'</b> '+esc(x.text)+' <small>· '+new Date(x.at).toLocaleTimeString()+'</small></div>').join(""):'<div class="wc-empty">No dispatches yet.</div>';
+  if(!busy)status("World synced · "+new Date(state.updatedAt||Date.now()).toLocaleTimeString(),"ready");
+ }
+ async function load(){try{status("Connecting to shared world…","busy");await authenticate();let snap=await read();if(!snap.data){await transact(function(){});snap=await read()}state=snap.data;if(!state||!state.countries||!state.players||!Array.isArray(state.feed))throw Error("Shared world data is invalid.");const p=state.players[uid],territories=owned(state,uid);if(p&&territories.length)selected=state.countries[p.capital]&&state.countries[p.capital].owner===uid?p.capital:territories[0];else{const free=C.find(c=>!state.countries[c.id]||!state.countries[c.id].owner);if(free)selected=free.id}paint();if(timer)clearInterval(timer);timer=setInterval(refresh,4000)}catch(e){status(e.message||"Could not connect to the world","error")}}
+ async function refresh(){if(busy||screen.style.display==="none")return;try{const snap=await read();if(snap.data){state=snap.data;const p=state.players[uid],territories=owned(state,uid);if(p&&territories.length&&(!state.countries[selected]||state.countries[selected].owner!==uid))selected=state.countries[p.capital]&&state.countries[p.capital].owner===uid?p.capital:territories[0];paint()}}catch(e){status(e.message||"World sync failed","error")}}
+ window.openWorldConquest=function(){document.querySelectorAll(".gScreen").forEach(n=>n.style.display="none");["clickerScreen","casinoScreen","stockMarketScreen","casesScreen","empireScreen","siteHome","socialScreen","galaxyScreen","toaletGameScreen"].forEach(id=>{const n=$(id);if(n)n.style.display="none"});screen.style.display="block";document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(b=>b.classList.toggle("active",b.dataset.page==="minigames"));load()};
+ $("wcMap").addEventListener("click",e=>{const b=e.target.closest("[data-country]");if(!b)return;selected=b.dataset.country;paint()});
+ $("wcPanel").addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(!b||busy)return;const a=b.dataset.action;if(a==="claim")run(()=>claim(selected));else if(a==="recruit")run(recruit);else if(a==="fort")run(fortify);else if(a==="attack")run(attack)});
+ window.addEventListener("beforeunload",()=>{if(timer)clearInterval(timer)});
 })();
 </script>
 </body>
