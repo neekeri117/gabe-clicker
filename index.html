@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GABE CLICKER VERSION 8.5 — GALACTIC EXPANSION -->
+<!-- GABE CLICKER VERSION 8.6 — WORLD CONQUEST FIX -->
 
 <html lang="en">
 <head>
@@ -4181,7 +4181,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V8.5</div>
+  <div class="sidebarFoot">V8.6</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -13765,6 +13765,13 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-23",
+    title: "World Conquest Fix",
+    changes: [
+      "Fixed the first-time setup so players can claim a country and start playing."
+    ]
+  },
+  {
+    date: "2026-10-23",
     title: "World Conquest",
     changes: [
       "Claim a country, grow your treasury, recruit an army, build forts, and fight your way across a shared world."
@@ -16877,7 +16884,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
   {id:"tur",name:"Turkey",flag:"🇹🇷",n:["ita","ukr","spa"]},{id:"spa",name:"Spain",flag:"🇪🇸",n:["fra","tur"]}
  ];
  const $=id=>document.getElementById(id),screen=$("worldConquestScreen");
- let uid="",name="Player",state=null,selected="nor",busy=false,timer=0,token="";
+ let uid="",name="Player",state=null,selected="nor",busy=false,timer=0,token="",worldSaved=false;
  const cash=n=>"$"+Math.floor(Number(n)||0).toLocaleString("en-US");
  const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const meta=id=>C.find(c=>c.id===id);
@@ -16890,7 +16897,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
  function rate(s,id){return 10+15*owned(s,id).length}
  function settle(s){const p=s.players[uid];if(!p)return;const now=Date.now(),elapsed=Math.max(0,Math.min(6*60*60*1000,now-(Number(p.lastIncome)||now)));p.gold=(Number(p.gold)||0)+Math.floor(elapsed/60000*rate(s,uid));p.lastIncome=now}
  function projected(s,p){const elapsed=Math.max(0,Math.min(6*60*60*1000,Date.now()-(Number(p.lastIncome)||Date.now())));return (Number(p.gold)||0)+Math.floor(elapsed/60000*rate(s,uid))}
- async function transact(change){if(busy)throw Error("Your last order is still processing.");busy=true;status("Sending orders…","busy");try{for(let i=0;i<7;i++){const snap=await read(),s=snap.data||fresh();if(!s.countries||!s.players||!Array.isArray(s.feed))throw Error("Shared world data is invalid.");const result=await change(s);s.updatedAt=Date.now();s.feed=s.feed.slice(-20);const r=await fetch(endpoint(),{method:"PUT",headers:{"Content-Type":"application/json","if-match":snap.etag||"null_etag"},body:JSON.stringify(s),cache:"no-store"});if(r.status===412)continue;if(!r.ok){const d=await r.json().catch(()=>null),reason=typeof d==="string"?d:(d&&d.error)||"unknown Firebase error";throw Error("World order failed (HTTP "+r.status+" · "+reason+"). Check anonymous sign-in and the worldConquest Firebase rules.")}state=s;paint();status("World synced · "+new Date().toLocaleTimeString(),"ready");return result}throw Error("World is busy. Wait a moment and retry.")}finally{busy=false}}
+ async function transact(change){if(busy)throw Error("Your last order is still processing.");busy=true;status("Sending orders…","busy");try{for(let i=0;i<7;i++){const snap=await read(),s=snap.data||fresh();if(!s.countries||!s.players||!Array.isArray(s.feed))throw Error("Shared world data is invalid.");const result=await change(s);s.updatedAt=Date.now();s.feed=s.feed.slice(-20);const r=await fetch(endpoint(),{method:"PUT",headers:{"Content-Type":"application/json","if-match":snap.etag||"null_etag"},body:JSON.stringify(s),cache:"no-store"});if(r.status===412)continue;if(!r.ok){const d=await r.json().catch(()=>null),reason=typeof d==="string"?d:(d&&d.error)||"unknown Firebase error";throw Error("World order failed (HTTP "+r.status+" · "+reason+"). Check anonymous sign-in and the worldConquest Firebase rules.")}state=s;worldSaved=true;paint();status("World synced · "+new Date().toLocaleTimeString(),"ready");return result}throw Error("World is busy. Wait a moment and retry.")}finally{busy=false}}
  function log(s,text){s.feed.unshift({by:name,text:text,at:Date.now()});s.feed=s.feed.slice(0,20)}
  async function claim(id){return transact(s=>{const current=s.players[uid],territories=owned(s,uid);if(current&&territories.length){selected=current.capital;return}const m=meta(id),d=s.countries[id];if(!m||!d||d.owner)throw Error("That country has already been claimed.");d.owner=uid;d.army=35;d.fort=0;s.players[uid]={name:name,capital:id,gold:650,lastIncome:Date.now()};selected=id;log(s,name+" claimed "+m.name+".")})}
  async function recruit(){return transact(s=>{const p=s.players[uid],d=s.countries[selected];if(!p||!d||d.owner!==uid)throw Error("Select one of your countries first.");settle(s);const units=Math.max(1,Math.min(100,Math.floor(Number($("wcUnits").value)||1))),cost=units*15;if(p.gold<cost)throw Error("Not enough treasury. Each troop costs $15.");p.gold-=cost;d.army+=units;log(s,name+" recruited "+units+" troops in "+meta(selected).name+".")})}
@@ -16912,10 +16919,10 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
   panelNode.innerHTML=panel;
   if(focusId){const again=$(focusId);if(again){again.value=focusValue;again.focus({preventScroll:true})}}
   $("wcFeed").innerHTML=state.feed.length?state.feed.slice(0,8).map(x=>'<div><b>'+esc(x.by)+'</b> '+esc(x.text)+' <small>· '+new Date(x.at).toLocaleTimeString()+'</small></div>').join(""):'<div class="wc-empty">No dispatches yet.</div>';
-  if(!busy)status("World synced · "+new Date(state.updatedAt||Date.now()).toLocaleTimeString(),"ready");
+  if(!busy)status(worldSaved?"World synced · "+new Date(state.updatedAt||Date.now()).toLocaleTimeString():"New world · claim a country to begin",worldSaved?"ready":"busy");
  }
- async function load(){try{status("Connecting to shared world…","busy");await authenticate();let snap=await read();if(!snap.data){await transact(function(){});snap=await read()}state=snap.data;if(!state||!state.countries||!state.players||!Array.isArray(state.feed))throw Error("Shared world data is invalid.");const p=state.players[uid],territories=owned(state,uid);if(p&&territories.length)selected=state.countries[p.capital]&&state.countries[p.capital].owner===uid?p.capital:territories[0];else{const free=C.find(c=>!state.countries[c.id]||!state.countries[c.id].owner);if(free)selected=free.id}paint();if(timer)clearInterval(timer);timer=setInterval(refresh,4000)}catch(e){status(e.message||"Could not connect to the world","error")}}
- async function refresh(){if(busy||screen.style.display==="none")return;try{const snap=await read();if(snap.data){state=snap.data;const p=state.players[uid],territories=owned(state,uid);if(p&&territories.length&&(!state.countries[selected]||state.countries[selected].owner!==uid))selected=state.countries[p.capital]&&state.countries[p.capital].owner===uid?p.capital:territories[0];paint()}}catch(e){status(e.message||"World sync failed","error")}}
+ async function load(){try{status("Connecting to shared world…","busy");await authenticate();const snap=await read();if(snap.data){state=snap.data;worldSaved=true}else{state=fresh();worldSaved=false}if(!state||!state.countries||!state.players||!Array.isArray(state.feed))throw Error("Shared world data is invalid.");const p=state.players[uid],territories=owned(state,uid);if(p&&territories.length)selected=state.countries[p.capital]&&state.countries[p.capital].owner===uid?p.capital:territories[0];else{const free=C.find(c=>!state.countries[c.id]||!state.countries[c.id].owner);if(free)selected=free.id}paint();if(timer)clearInterval(timer);timer=setInterval(refresh,4000)}catch(e){status(e.message||"Could not connect to the world","error")}}
+ async function refresh(){if(busy||screen.style.display==="none")return;try{const snap=await read();if(snap.data){state=snap.data;worldSaved=true;const p=state.players[uid],territories=owned(state,uid);if(p&&territories.length&&(!state.countries[selected]||state.countries[selected].owner!==uid))selected=state.countries[p.capital]&&state.countries[p.capital].owner===uid?p.capital:territories[0];paint()}}catch(e){status(e.message||"World sync failed","error")}}
  window.openWorldConquest=function(){document.querySelectorAll(".gScreen").forEach(n=>n.style.display="none");["clickerScreen","casinoScreen","stockMarketScreen","casesScreen","empireScreen","siteHome","socialScreen","galaxyScreen","toaletGameScreen"].forEach(id=>{const n=$(id);if(n)n.style.display="none"});screen.style.display="block";document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(b=>b.classList.toggle("active",b.dataset.page==="minigames"));load()};
  $("wcMap").addEventListener("click",e=>{const b=e.target.closest("[data-country]");if(!b)return;selected=b.dataset.country;paint()});
  $("wcPanel").addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(!b||busy)return;const a=b.dataset.action;if(a==="claim")run(()=>claim(selected));else if(a==="recruit")run(recruit);else if(a==="fort")run(fortify);else if(a==="attack")run(attack)});
