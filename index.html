@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 8.2 — PLAYER SAVE SYNC -->
+<!-- GABE CLICKER VERSION 8.3 — GALACTIC EXPANSION -->
 
 <html lang="en">
 <head>
@@ -4182,8 +4182,8 @@ alt=""
 </nav>
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
-  <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>DUEL</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigames"><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button><button class="siteSideLink" data-page="galaxy" onclick="openGalaxy()"><span>✦</span>Galaxy</button><button class="siteSideLink" data-page="toalet" onclick="openToaletGame()"><span>🎮</span>Toalet Peli</button></div>
-  <div class="sidebarFoot">V8.2</div>
+  <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
+  <div class="sidebarFoot">V8.3</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4198,8 +4198,7 @@ alt=""
     <button class="homeCard cardChat" onclick="document.getElementById('pubChat').scrollIntoView({behavior:'smooth',block:'end'})"><span class="cardIcon">💬</span><strong>CHAT</strong><p>The friend group. Unmoderated, as intended.</p><small>Public room</small></button>
     <button class="homeCard cardLeaderboard" onclick="openLeaderboard()"><span class="cardIcon">🥇</span><strong>LEADERBOARD</strong><p>Who is the biggest degenerate this week?</p><small>See the rankings</small></button>
   </section>
-</main>
-<main id="galaxyScreen" aria-label="Galaxy conquest">
+</main><section id="saveWipeEvent" class="saveWipeEvent" aria-live="polite"><div><small>UPCOMING EVENT</small><strong>FULL SAVE WIPE</strong><span>OCT 25 · 23:00 EET</span></div><div id="saveWipeCountdown" class="saveWipeCountdown">Loading countdown…</div></section><main id="galaxyScreen" aria-label="Galaxy conquest">
  <header class="gx-header"><div><div class="gx-eyebrow">OUTER SYSTEMS</div><h1>GALACTIC FRONTIER</h1><p>Claim new worlds. Build colonies. Fund the next expedition.</p></div><div class="gx-wallet"><span>AVAILABLE CASH</span><strong id="gxCash">$0</strong><small id="gxIncome">+$0 / sec</small></div></header>
  <nav class="gx-systemTabs" aria-label="Choose solar system"><button class="gx-systemTab active" data-system="0" onclick="selectGalaxySystem(0)"><span>01</span><b>SOL</b><small>HOME SYSTEM</small></button><button class="gx-systemTab" data-system="1" onclick="selectGalaxySystem(1)"><span>02</span><b>EPSILON ERIDANI</b><small>FROST FRONTIER</small></button><button class="gx-systemTab" data-system="2" onclick="selectGalaxySystem(2)"><span>03</span><b>KEPLER REACH</b><small>DEEP SPACE</small></button></nav>
  <div class="gx-progress"><div><span id="gxProgressText">0 / 8 WORLDS</span><span id="gxNextText">NEXT: LUNA</span></div><div class="gx-progressTrack"><i id="gxProgressBar"></i></div></div>
@@ -9827,8 +9826,8 @@ function drawChartGrid(ctx, width, height, bounds) {
         const axisValue = max - (i / 4) * (max - min);
         const price = bounds.logarithmic ? Math.exp(axisValue) : axisValue * bounds.scale;
         const y = 20 + (i / 4) * (height - 55);
-        const label = !Number.isFinite(price) ? (axisValue > 0 ? ">$1e308" : "$0") :
-            "$" + (price >= 1e9 || price < 0.01 ? price.toExponential(2) : price.toLocaleString("en-US", { maximumFractionDigits: 2 }));
+        const label = !Number.isFinite(price) ? (axisValue > 0 ? ">$" + Number.MAX_VALUE.toLocaleString("en-US", { maximumFractionDigits: 0 }) : "$0") :
+            "$" + price.toLocaleString("en-US", { minimumFractionDigits: price > 0 && price < 0.01 ? 6 : 2, maximumFractionDigits: price > 0 && price < 0.01 ? 6 : 2 });
         ctx.fillText(label, 8, y);
     }
 }
@@ -10788,6 +10787,10 @@ function renderCaseInventory() {
 }
 
 function openCases() {
+    try { if (document.pointerLockElement && document.exitPointerLock) document.exitPointerLock(); } catch (e) {}
+    document.body.style.overflow = "";
+    const miniOverlay = document.getElementById("gabentaleRoot");
+    if (miniOverlay && miniOverlay.classList.contains("gt-open") && typeof window.closeGabentale === "function") window.closeGabentale();
 
     document.getElementById("clickerScreen").style.display = "none";
     document.getElementById("casinoScreen").style.display = "none";
@@ -13766,9 +13769,17 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-23",
-    title: "v8.2 · Community Save Reset",
+    title: "Progress and Number Display Update",
     changes: [
-      "Your progress can now be backed up to your player profile, so everyone can start fresh together when a community reset is announced."
+      "Your progress now syncs to your player profile and will reset when the community wipe is applied.",
+      "Large balances, research costs, taxes and chart prices now use readable number formatting."
+    ]
+  },  {
+    date: "2026-10-23",
+    title: "Minigames and Event Countdown",
+    changes: [
+      "Find your side games together in the new Minigame Hub, including multiplayer Russian Roulette with friends.",
+      "The Full Save Wipe event is scheduled for October 25 at 23:00 Helsinki time."
     ]
   },
   {
@@ -14293,6 +14304,7 @@ updateChangeLogBadge();
 <!-- =========================================================
      PLAYER NAMES + PUBLIC LEADERBOARD
      Paste this whole block right before 
+
 
 
 
@@ -15707,10 +15719,10 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
 <script>
 /* Dashboard wiring: retain the site's existing game screens and actions. */
 (function(){
-  const ids=['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','achScreen','statsScreen','lbScreen','socialScreen','galaxyScreen','toaletGameScreen','progressionScreen'];
+  const ids=['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','achScreen','statsScreen','lbScreen','socialScreen','galaxyScreen','toaletGameScreen','progressionScreen','minigameHubScreen'];
   function active(page){document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(function(b){b.classList.toggle('active',b.dataset.page===page);});}
   window.showSiteHome=function(){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='block';active('home');};
-  window.switchSitePage=function(page){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='none';if(page==='home'){window.showSiteHome();return;}if(page==='clicker')window.openClicker();else if(page==='casino')window.openCasinoFromMenu();else if(page==='stocks')window.openStockMarket();else if(page==='cases')window.openCases();else if(page==='empire')window.openEmpire();else if(page==='progression')window.openProgression();else if(page==='social')window.openSocial('chat');else if(page==='galaxy')window.openGalaxy();else if(page==='toalet')window.openToaletGame();active(page);};
+  window.switchSitePage=function(page){ids.forEach(function(id){const e=document.getElementById(id);if(e)e.style.display='none';});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none';});const home=document.getElementById('siteHome');if(home)home.style.display='none';if(page==='home'){window.showSiteHome();return;}if(page==='clicker')window.openClicker();else if(page==='casino')window.openCasinoFromMenu();else if(page==='stocks')window.openStockMarket();else if(page==='cases')window.openCases();else if(page==='empire')window.openEmpire();else if(page==='progression')window.openProgression();else if(page==='social')window.openSocial('chat');else if(page==='galaxy')window.openGalaxy();else if(page==='toalet')window.openToaletGame();else if(page==='minigames')window.openMinigameHub();else if(page==='multiplayerRoulette')window.openMultiplayerRoulette();active(page);};
   document.addEventListener('click',function(e){const b=e.target.closest('.siteNavLink,.siteSideLink');if(b){active(b.dataset.page);if(b.classList.contains('siteSideLink')&&b.dataset.page!=='social'){const s=document.getElementById('socialScreen');if(s)s.style.display='none';}}});
   const chat=document.getElementById('pubChat');if(chat){document.getElementById('socialChatHost').appendChild(chat);chat.classList.remove('collapsed');}
   ['lbScreen','achScreen','statsScreen'].forEach(function(id){const el=document.getElementById(id);if(el)document.getElementById('socialDynamicHost').appendChild(el);});
@@ -15831,7 +15843,7 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
     const cash='$'+(Number(money)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
     const balance=Number(money)||0,absBalance=Math.abs(balance),suffixes=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
     let compactCash=cash;
-    if(absBalance>=1e6){let tier=Math.floor(Math.log10(absBalance)/3),scaled=absBalance/Math.pow(1000,tier);if(scaled>=999.5&&tier<suffixes.length-1){tier++;scaled/=1000;}compactCash=tier>=suffixes.length?'$'+balance.toExponential(2):(balance<0?'-$':'$')+scaled.toFixed(scaled>=100?0:scaled>=10?1:2)+suffixes[tier];}
+    if(absBalance>=1e6){let tier=Math.floor(Math.log10(absBalance)/3),scaled=absBalance/Math.pow(1000,tier);if(scaled>=999.5&&tier<suffixes.length-1){tier++;scaled/=1000;}compactCash=tier>=suffixes.length?cash:(balance<0?'-$':'$')+scaled.toFixed(scaled>=100?0:scaled>=10?1:2)+suffixes[tier];}
     const headerBalance=document.getElementById('siteBalance');if(headerBalance){headerBalance.textContent=window.matchMedia('(max-width:620px)').matches?compactCash:cash;headerBalance.title=cash;}
     const netWorth=document.getElementById('siteNetWorth');if(netWorth)netWorth.textContent=cash;
     let incomeRate=0;try{if(typeof window.getEmpireIncome==='function')incomeRate=Number(window.getEmpireIncome())||0;if(typeof window.gabeIncomeMult==='function')incomeRate*=Number(window.gabeIncomeMult())||1;}catch(e){}
@@ -16505,7 +16517,7 @@ function bounty(){const cur=[...new Set(inv().map(i=>i&&(i.name||i.skin||i.id||J
  let n=0;cur.forEach(k=>{if(!bountySeen.has(k)){bountySeen.add(k);n++;}});
  if(n&&!first&&lv("bounty")){const c=n*1000*lv("bounty");gabeClicks+=c;toast("🎨 Skin Hunter: +$"+fmt(c));}
  if(n||first){first=false;try{localStorage.setItem("gabeAscSkins",JSON.stringify([...bountySeen]));}catch(e){}}}
-const fmt=n=>n>=1e6?n.toExponential(2).replace("e+","e"):Math.floor(n).toLocaleString("en-US");
+const fmt=n=>Math.floor(Number(n)||0).toLocaleString("en-US");
 function save(){try{S.v=1;let r={};try{r=JSON.parse(localStorage.getItem("gabeResearch"))||{};}catch(e){}if(!Array.isArray(r.purchased))r.purchased=[];r.asc=S;localStorage.setItem("gabeResearch",JSON.stringify(r));}catch(e){}}
 const oldSave=window.saveGame;window.saveGame=function(){oldSave();save();};
 const oldReset=window.performReset;window.performReset=function(){oldReset();S={v:1,bonus:0,nodes:{},res:{},ms:{},titles:[],title:"",lastRb:0};try{localStorage.removeItem("gabeAscSkins");}catch(e){}bountySeen.clear();save();render();};
@@ -16540,7 +16552,7 @@ function skin(){const s=document.querySelector(".sidebarIdentity small");if(s&&S
 window.openAscension=function(){if(window.showSiteHome)showSiteHome();const h=$("siteHome");if(h)h.style.display="none";$("ascScreen").style.display="block";
  document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(b=>b.classList.toggle("active",b.dataset.page==="ascension"));render();};
 window.closeAscension=function(){$("ascScreen").style.display="none";};const oldHome=window.showSiteHome;window.showSiteHome=function(){closeAscension();return oldHome.apply(this,arguments);};
-(function(){const l=document.querySelector(".sidebarLinks");if(l&&!l.querySelector("[data-page=ascension]")){const x=document.createElement("button");x.className="siteSideLink";x.dataset.page="ascension";x.onclick=function(){openAscension();};x.innerHTML="<span>✧</span>Ascension";l.appendChild(x);}})();
+(function(){const l=document.querySelector(".sidebarUtilityLinks")||document.querySelector(".sidebarLinks");if(l&&!l.querySelector("[data-page=ascension]")){const x=document.createElement("button");x.className="siteSideLink";x.dataset.page="ascension";x.onclick=function(){openAscension();};x.innerHTML="<span>✧</span>Ascension";l.appendChild(x);}})();
 document.addEventListener("click",function(e){const b=e.target.closest(".siteNavLink,.siteSideLink,.homeCard,.menuItem");if(b&&!b.closest("#ascScreen")&&b.dataset.page!=="ascension")closeAscension();},true);
 setInterval(function(){claim();bounty();render();},2000);claim();bounty();
 })();
@@ -16564,7 +16576,7 @@ let T={off:0,heat:0,next:Date.now()+CYCLE,bill:null,paid:0,evaded:0,caught:0,acc
 try{const o=JSON.parse(localStorage.getItem("gabeResearch"));if(o&&o.tax&&typeof o.tax==="object")T=Object.assign(T,o.tax);}catch(e){}
 if(!(T.next>0))T.next=Date.now()+CYCLE;
 const $=id=>document.getElementById(id);
-const fmt=n=>n>=1e6?n.toExponential(2).replace("e+","e"):Math.floor(n).toLocaleString("en-US");
+const fmt=n=>Math.floor(Number(n)||0).toLocaleString("en-US");
 const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
 function save(){try{let r={};try{r=JSON.parse(localStorage.getItem("gabeResearch"))||{};}catch(e){}if(!Array.isArray(r.purchased))r.purchased=[];r.tax=T;localStorage.setItem("gabeResearch",JSON.stringify(r));}catch(e){}}
 function toast(t){if(typeof showToast==="function")showToast(t);}
@@ -16608,7 +16620,7 @@ window.openTaxes=function(){if(window.showSiteHome)showSiteHome();const h=$("sit
 window.closeTaxes=function(){$("taxScreen").style.display="none";};
 const oh=window.showSiteHome;window.showSiteHome=function(){closeTaxes();return oh.apply(this,arguments);};
 document.addEventListener("click",function(e){const b=e.target.closest(".siteNavLink,.siteSideLink");if(b&&b.dataset.page!=="taxes")closeTaxes();},true);
-(function(){const l=document.querySelector(".sidebarLinks");if(l&&!l.querySelector("[data-page=taxes]")){const x=document.createElement("button");x.className="siteSideLink";x.dataset.page="taxes";x.onclick=function(){openTaxes();};x.innerHTML="<span>§</span>Taxes";l.appendChild(x);}})();
+(function(){const l=document.querySelector(".sidebarUtilityLinks")||document.querySelector(".sidebarLinks");if(l&&!l.querySelector("[data-page=taxes]")){const x=document.createElement("button");x.className="siteSideLink";x.dataset.page="taxes";x.onclick=function(){openTaxes();};x.innerHTML="<span>§</span>Taxes";l.appendChild(x);}})();
 })();
 </script>
 <style id="rrStyle">
@@ -16683,6 +16695,74 @@ if(wrap&&panel){wrap.appendChild(panel);
 draw();ui();
 })();
 </script>
+<style id="minigameHubAndEventStyles">
+.sidebarGroupLabel{padding:10px 12px 5px;color:#657184;font-size:9px;font-weight:900;letter-spacing:.16em}.sidebarLinks{margin-bottom:0!important}.sidebarUtilityLinks{margin-top:0}.sidebarMinigames{margin-top:auto!important}.sidebarMinigames .sidebarGroupLabel{padding-left:12px}.saveWipeEvent{position:fixed;right:16px;bottom:16px;z-index:29999;box-sizing:border-box;width:min(355px,calc(100vw - 90px));display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;padding:11px 14px;border:1px solid #684d23;border-radius:14px;background:linear-gradient(110deg,#211b13,#151720 65%);box-shadow:0 10px 30px #0003}.saveWipeEvent>div:first-child{display:flex;flex-direction:column;gap:4px}.saveWipeEvent small{color:#f0bb4a;font-size:9px;font-weight:900;letter-spacing:.17em}.saveWipeEvent strong{color:#fff;font-size:17px;letter-spacing:.07em}.saveWipeEvent span{color:#9ca8ba;font-size:11px}.saveWipeCountdown{flex:none;color:#ffe06b;font:800 clamp(16px,2vw,23px) ui-monospace,monospace;letter-spacing:.04em}.gScreen#minigameHubScreen{z-index:510!important}.mgHubWrap{max-width:1120px;margin:0 auto}.mgHubHeader{margin-bottom:20px}.mgHubHeader small{color:#42dfdf;font-size:10px;font-weight:900;letter-spacing:.18em}.mgHubHeader h1{margin:5px 0;font-size:clamp(26px,4vw,42px)}.mgHubHeader p{margin:0;color:#9ba8bc}.mgHubGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:13px}.mgHubCard{min-height:175px;display:flex;flex-direction:column;align-items:flex-start;padding:18px;border:1px solid #303747;border-radius:15px;background:linear-gradient(145deg,#161c29,#11151e);color:#ecf2f8;text-align:left;cursor:pointer;transition:transform .18s,border-color .18s}.mgHubCard:hover{transform:translateY(-2px);border-color:#49cdd2}.mgHubCard>span{font-size:27px}.mgHubCard strong{margin:11px 0 6px;font-size:15px}.mgHubCard p{margin:0;color:#9ba8bc;font-size:12px;line-height:1.5}.mgHubCard small{margin-top:auto;padding-top:12px;color:#57d8da;font-size:10px;font-weight:900;letter-spacing:.08em}.mgHubCard.mgNew{border-color:#7355a1}.rrMultiPanel{max-width:850px;margin:20px auto;padding:clamp(16px,3vw,28px);border:1px solid #33384a;border-radius:16px;background:linear-gradient(145deg,#171a26,#10131b);box-shadow:0 14px 38px #0005}.rrMultiPanel h1,.rrMultiPanel h3{margin:0 0 6px;color:#e4a8ff}.rrModeSwitch{display:flex;gap:8px;margin:12px 0}.rrModeButton{flex:1;padding:10px 14px;border:1px solid #41495b;border-radius:9px;background:#171c27;color:#aab4c5;font-weight:900;cursor:pointer}.rrModeButton.active{border-color:#a45bd2;background:linear-gradient(110deg,#7440c8,#d238db);color:#fff}.rrModeSwitch+.casinoInfo{margin-top:0}#rrSoloMode[hidden],#rrMultiMode[hidden]{display:none!important}.rrMultiPanel>p{color:#9da9bc;font-size:13px}.rrMultiRow{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.rrMultiRow input{flex:1;min-width:140px;padding:11px;border:1px solid #353b4a;border-radius:9px;background:#0d1119;color:#f2f5fa}.rrMultiButton{padding:10px 13px;border:1px solid #464c5f;border-radius:9px;background:#202638;color:#eef4fb;font-weight:850;cursor:pointer}.rrMultiButton.primary{border-color:#894cb5;background:linear-gradient(110deg,#7744c7,#b33bb5)}.rrMultiButton:disabled{opacity:.45;cursor:not-allowed}.rrRoomCode{color:#ffe06b;font:900 18px ui-monospace,monospace;letter-spacing:.15em}.rrPlayers{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:14px 0}.rrPlayer{padding:11px;border:1px solid #303747;border-radius:9px;background:#131824;color:#dfe8f5}.rrPlayer.out{opacity:.5;text-decoration:line-through}.rrStatus{min-height:28px;padding:10px 0;color:#84e4d0;font-weight:800}.rrLog{max-height:220px;overflow:auto;padding:10px;border:1px solid #2e3441;border-radius:9px;background:#0c1017;color:#b4bfd0;font-size:12px;line-height:1.7}.rrLog:empty:after{content:'The room log will appear here.';color:#69758a}.caseReel,.caseReelViewport,#caseReelTrack{user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:default}#casesScreen{overscroll-behavior:contain;touch-action:pan-y;cursor:auto}
+@media(max-width:900px){.sidebarGroupLabel{display:none}.sidebarUtilityLinks{margin:0}.sidebarMinigames{margin-top:auto!important}.saveWipeEvent{right:10px;bottom:10px;align-items:flex-start;flex-direction:column;gap:5px;width:min(355px,calc(100vw - 84px));padding:9px 11px}.saveWipeCountdown{font-size:16px}}
+@media(max-width:620px){.saveWipeEvent{padding:12px}.saveWipeEvent strong{font-size:14px}.saveWipeEvent span{font-size:10px}.rrMultiPanel{padding:14px}.rrMultiButton{flex:1}}
+</style>
+<section id="minigameHubScreen" class="gScreen" style="display:none"><div class="mgHubWrap"><header class="mgHubHeader"><small>QUICK BREAKS · FRIENDLY COMPETITION</small><h1>MINIGAMES</h1><p>Pick a game and jump straight in.</p></header><div class="mgHubGrid"><button class="mgHubCard" onclick="launchGabentale()"><span>♥</span><strong>Gabentale</strong><p>Explore, talk to characters, and uncover the story.</p><small>STORY ADVENTURE</small></button><button class="mgHubCard" onclick="openToaletGame()"><span>🎮</span><strong>Toalet Peli</strong><p>Take a quick break with the classic mini-game.</p><small>ARCADE</small></button></div></div></section>
+
+<script id="saveWipeCountdownTimer">
+(function(){
+ const target=Date.parse('2026-10-25T23:00:00+02:00');
+ function tick(){
+  const node=document.getElementById('saveWipeCountdown');
+  if(!node)return;
+  let ms=target-Date.now();
+  if(ms<=0){node.textContent='THE EVENT HAS BEGUN';return;}
+  const days=Math.floor(ms/86400000);ms%=86400000;
+  const hours=Math.floor(ms/3600000);ms%=3600000;
+  const minutes=Math.floor(ms/60000);ms%=60000;
+  const seconds=Math.floor(ms/1000);
+  node.textContent=(days?days+'d ':'')+String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0');
+ }
+ tick();setInterval(tick,1000);
+})();
+</script><script id="minigameHubRouletteAndWipe">
+(function(){
+'use strict';
+const db='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
+const baseId=(()=>{try{return localStorage.getItem('gabePlayerId')||'guest'+Math.random().toString(36).slice(2,10)}catch(e){return 'guest'+Math.random().toString(36).slice(2,10)}})();
+const playerId=String(baseId).replace(/[.#$\/\[\]]/g,'_').slice(0,48);
+let roomCode='',room=null,pollTimer=0,requestBusy=false;
+const el=id=>document.getElementById(id);
+const cleanName=(()=>{try{return (localStorage.getItem('gabePlayerName')||localStorage.getItem('pubChatName')||'Player').slice(0,20)}catch(e){return 'Player'}})();
+const url=path=>db+'/'+path+'.json';
+async function request(path,method='GET',data){const res=await fetch(url(path),{method,headers:{'Content-Type':'application/json'},...(data===undefined?{}:{body:JSON.stringify(data)}),cache:'no-store'});if(!res.ok)throw new Error('Firebase room request failed ('+res.status+'). Check your pokerRooms rules and connection.');return res.status===204?null:res.json()}
+function message(text,error=false){const n=el('rrMultiStatus');if(n){n.textContent=text;n.style.color=error?'#ff9797':''}}
+function esc(text){return String(text||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function roomPath(){return 'pokerRooms/'+roomCode}
+function render(){const lobby=el('rrMultiLobby'),setup=el('rrMultiSetup');setup.hidden=!!room;lobby.hidden=!room;if(!room)return;el('rrMultiCode').textContent=roomCode;const players=Object.values(room.players||{});const box=el('rrMultiPlayers');box.textContent='';players.forEach(p=>{const node=document.createElement('div');node.className='rrPlayer'+(room.round&&room.round.out&&room.round.out.includes(p.id)?' out':'');node.textContent=(p.name||'Player')+(p.id===playerId?' (you)':'')+(room.host===p.id?' · host':'');box.appendChild(node)});const r=room.round||null,roundStatus=el('rrMultiGameStatus'),turn=el('rrMultiTurn'),start=el('rrMultiStart');if(!r){roundStatus.textContent='Waiting for at least two players. The host can start a round.';turn.disabled=true;start.disabled=room.host!==playerId||players.length<2;el('rrMultiLog').textContent='';return}el('rrMultiLog').textContent=(r.log||[]).slice(-12).join('\n');if(r.phase==='done'){roundStatus.textContent='Round over — '+(players.find(p=>p.id===r.winner)?.name||'A player')+' wins!';turn.disabled=true;start.disabled=room.host!==playerId||players.length<2;start.textContent='PLAY AGAIN';return}roundStatus.textContent='Current turn: '+(players.find(p=>p.id===r.turnId)?.name||'waiting…');turn.disabled=r.turnId!==playerId||requestBusy;turn.textContent=r.turnId===playerId?'TAKE YOUR TURN':'WAIT FOR YOUR TURN';start.disabled=true;start.textContent='ROUND IN PROGRESS'}
+async function fetchRoom(){if(!roomCode)return;try{const data=await request(roomPath());if(!data){room=null;message('Room not found. Check the code and try again.',true);clearInterval(pollTimer);render();return}if(data.kind!=='multiplayer-roulette'){room=null;message('That code belongs to a different game.',true);clearInterval(pollTimer);render();return}room=data;render()}catch(e){message(e.message,true)}}
+function beginPolling(){clearInterval(pollTimer);fetchRoom();pollTimer=setInterval(fetchRoom,1800)}
+function makeCode(){return 'RR'+Math.random().toString(36).slice(2,6).toUpperCase().padEnd(4,'0')}
+window.openMinigameHub=function(){['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','siteHome','socialScreen','galaxyScreen','toaletGameScreen'].forEach(id=>{const n=el(id);if(n)n.style.display='none'});document.querySelectorAll('.gScreen').forEach(n=>n.style.display='none');el('minigameHubScreen').style.display='block';document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(b=>b.classList.toggle('active',b.dataset.page==='minigames'))};
+const roulettePanel=el('rrPanel');
+if(roulettePanel){
+ const intro=roulettePanel.querySelector(':scope > .casinoInfo');
+ const soloMode=document.createElement('div');soloMode.id='rrSoloMode';
+ let child=intro?intro.nextElementSibling:null;
+ while(child){const next=child.nextElementSibling;soloMode.appendChild(child);child=next}
+ const modes=document.createElement('div');modes.className='rrModeSwitch';modes.innerHTML='<button type="button" class="rrModeButton active" data-rr-mode="solo" onclick="setRussianRouletteMode(\'solo\')">SOLO</button><button type="button" class="rrModeButton" data-rr-mode="multi" onclick="setRussianRouletteMode(\'multi\')">MULTIPLAYER</button>';
+ roulettePanel.appendChild(modes);roulettePanel.appendChild(soloMode);
+ const multi=document.createElement('div');multi.id='rrMultiMode';multi.hidden=true;multi.innerHTML='<div class="rrMultiPanel"><h3>PLAY WITH FRIENDS</h3><p>Join a room and take turns. This mode uses no cash or save data.</p><div id="rrMultiSetup"><div class="rrMultiRow"><button class="rrMultiButton primary" onclick="rrMultiCreate()">CREATE ROOM</button><input id="rrMultiCodeInput" maxlength="6" placeholder="Room code (RR1234)" aria-label="Room code"><button class="rrMultiButton" onclick="rrMultiJoin()">JOIN ROOM</button></div><div id="rrMultiStatus" class="rrStatus" aria-live="polite">Create a room and share the code with friends.</div></div><div id="rrMultiLobby" hidden><div>ROOM CODE <span id="rrMultiCode" class="rrRoomCode"></span></div><div class="rrMultiRow"><button id="rrMultiStart" class="rrMultiButton primary" onclick="rrMultiStartRound()">START ROUND</button><button class="rrMultiButton" onclick="rrMultiLeave()">LEAVE ROOM</button></div><div id="rrMultiPlayers" class="rrPlayers"></div><div id="rrMultiGameStatus" class="rrStatus" aria-live="polite"></div><div class="rrMultiRow"><button id="rrMultiTurn" class="rrMultiButton primary" onclick="rrMultiTakeTurn()">TAKE YOUR TURN</button></div><div id="rrMultiLog" class="rrLog" aria-live="polite"></div></div></div>';
+ roulettePanel.appendChild(multi);
+ if(intro)intro.textContent='Choose Solo to play for in-game money, or Multiplayer to join friends in a no-stakes room.';
+}
+window.setRussianRouletteMode=function(mode){const multi=mode==='multi',solo=el('rrSoloMode'),online=el('rrMultiMode');if(!solo||!online)return;solo.hidden=multi;online.hidden=!multi;document.querySelectorAll('.rrModeButton').forEach(b=>b.classList.toggle('active',b.dataset.rrMode===(multi?'multi':'solo')));if(multi&&room)beginPolling()};
+window.openMultiplayerRoulette=function(){if(typeof window.openCasinoFromMenu==='function')window.openCasinoFromMenu();const tab=Array.from(document.querySelectorAll('#casinoNavTabs .casinoNavTab')).find(b=>/RUSSIAN ROULETTE/i.test(b.textContent));if(tab)tab.click();window.setRussianRouletteMode('multi')};window.rrMultiCreate=async function(){if(requestBusy)return;requestBusy=true;message('Creating a room…');try{let code='',data=null;for(let i=0;i<5;i++){code=makeCode();data=await request('pokerRooms/'+code);if(!data)break}if(data)throw new Error('Could not find a free room code. Try again.');roomCode=code;room={kind:'multiplayer-roulette',code,host:playerId,players:{[playerId]:{id:playerId,name:cleanName}},round:null,createdAt:Date.now()};await request(roomPath(),'PUT',room);message('Room created. Share the code with friends.');beginPolling()}catch(e){message(e.message,true)}finally{requestBusy=false}};
+window.rrMultiJoin=async function(){if(requestBusy)return;const code=(el('rrMultiCodeInput').value||'').trim().toUpperCase();if(!/^RR[A-Z0-9]{4}$/.test(code)){message('Enter a six-character room code such as RR1234.',true);return}requestBusy=true;message('Joining room…');try{roomCode=code;let data=await request(roomPath());if(!data||data.kind!=='multiplayer-roulette')throw new Error('That roulette room could not be found.');await request(roomPath()+'/players/'+playerId,'PUT',{id:playerId,name:cleanName});message('Joined room '+code+'.');beginPolling()}catch(e){roomCode='';message(e.message,true)}finally{requestBusy=false}};
+window.rrMultiStartRound=async function(){if(!room||room.host!==playerId||requestBusy)return;const ids=Object.keys(room.players||{});if(ids.length<2)return;requestBusy=true;try{await request(roomPath()+'/round','PUT',{phase:'playing',turnId:ids[Math.floor(Math.random()*ids.length)],out:[],winner:null,log:['A new round begins. Take turns.'],updatedAt:Date.now()});await fetchRoom()}catch(e){message(e.message,true)}finally{requestBusy=false}};
+window.rrMultiTakeTurn=async function(){if(!room||!room.round||room.round.phase!=='playing'||room.round.turnId!==playerId||requestBusy)return;requestBusy=true;try{const r=JSON.parse(JSON.stringify(room.round));const players=Object.values(room.players||{}),active=players.map(p=>p.id).filter(id=>!r.out.includes(id));const name=room.players[playerId]?.name||cleanName;if(Math.random()<1/6){r.out.push(playerId);r.log.push(name+' is out this round.');const remaining=active.filter(id=>id!==playerId);if(remaining.length<=1){r.phase='done';r.winner=remaining[0]||null;r.turnId=null;r.log.push((room.players[r.winner]?.name||'No one')+' wins the round!')}else r.turnId=remaining[Math.floor(Math.random()*remaining.length)]}else{r.log.push(name+' survives and takes another turn.')}r.updatedAt=Date.now();await request(roomPath()+'/round','PUT',r);await fetchRoom()}catch(e){message(e.message,true)}finally{requestBusy=false;render()}};
+window.rrMultiLeave=async function(){clearInterval(pollTimer);const code=roomCode,old=room;roomCode='';room=null;render();message('You left the room.');try{if(old&&old.players&&Object.keys(old.players).length>1){await request('pokerRooms/'+code+'/players/'+playerId,'DELETE');if(old.host===playerId){const next=Object.keys(old.players).find(id=>id!==playerId);if(next)await request('pokerRooms/'+code+'/host','PUT',next)}}}catch(e){message('Left the room, but Firebase could not update the player list.',true)}};
+window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
+
+
+})();
+</script>
+
+
+
 <style id="cloudSaveStyles">
 #cloudSaveBadge{position:fixed;left:12px;bottom:12px;z-index:99990;padding:7px 10px;border:1px solid #394455;border-radius:9px;background:#111720eF;color:#aab6c8;font:700 11px system-ui,sans-serif;box-shadow:0 5px 18px #0005;max-width:min(340px,calc(100vw - 32px))}
 #cloudSaveBadge[data-state="ready"]{border-color:#28755b;color:#8de5ba}#cloudSaveBadge[data-state="error"]{border-color:#9d4b4b;color:#ffaaaa}
@@ -16753,6 +16833,7 @@ draw();ui();
  window.addEventListener("pagehide",()=>{writeSave()});
 })();
 </script>
+
 </body>
 </html>
 
