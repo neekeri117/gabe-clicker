@@ -6371,6 +6371,7 @@ function doRebirth() {
         "• You keep your offline vault & its upgrades\n" +
         "• You keep your Lucky Charm, achievements & statistics\n" +
         "• You keep your businesses, real estate & empire upgrades\n" +
+        "• You earn Ascension Points (spend them on permanent upgrades)\n" +
         "• Permanent multiplier becomes " +
         (getRebirthMultiplier() + 0.25).toFixed(2) +
         "×\n\n" +
@@ -11483,7 +11484,7 @@ updateClicker();
     }
 
     function offlineEff() {
-        return OFFLINE_EFF[Math.min(OFFLINE_EFF.length - 1, offState.eff || 0)] / 100;
+        return OFFLINE_EFF[Math.min(OFFLINE_EFF.length - 1, offState.eff || 0)] / 100 * (window.gabeOfflineMult ? window.gabeOfflineMult() : 1);
     }
 
     function totalIncome() {
@@ -11510,7 +11511,7 @@ updateClicker();
 
     /* cost of buying k more levels of a business (current level lv) */
     function bizBulkCost(b, lv, k) {
-        return Math.ceil(b.cost * Math.pow(BIZ_RATIO, lv) * (Math.pow(BIZ_RATIO, k) - 1) / (BIZ_RATIO - 1));
+        return Math.ceil(b.cost * (window.gabeCostMult ? window.gabeCostMult() : 1) * Math.pow(BIZ_RATIO, lv) * (Math.pow(BIZ_RATIO, k) - 1) / (BIZ_RATIO - 1));
     }
 
     function bizMaxAffordable(b, lv, cash) {
@@ -11519,7 +11520,7 @@ updateClicker();
 
         if (room <= 0) { return 0; }
 
-        const first = b.cost * Math.pow(BIZ_RATIO, lv);
+        const first = b.cost * (window.gabeCostMult ? window.gabeCostMult() : 1) * Math.pow(BIZ_RATIO, lv);
 
         if (cash < Math.ceil(first)) { return 0; }
 
@@ -13726,6 +13727,16 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+  {
+    date: "2026-10-23",
+    title: "Ascension Update",
+    changes: [
+      "New Ascension page: earn points from rebirths and spend them on permanent Clicking, Empire, Collector and Investor upgrades, with respec.",
+      "New Empire Research projects boost income, cut business costs and improve offline earnings.",
+      "Cross-game milestones award points, cash and titles. Ascension data is included in save export/import.",
+      "The sidebar now scrolls on short screens."
+    ]
+  },
   {
     date: "2026-10-22",
     title: "v8.0 · Progression Overhaul",
@@ -16338,6 +16349,145 @@ const oldSave=window.saveGame;if(typeof oldSave==='function'){window.saveGame=fu
 screen=document.getElementById('progressionScreen');branchesNode=document.getElementById('pgBranches');questNode=document.getElementById('pgQuestGrid');render();
 })();
 </script>
+<style id="ascStyle">
+#ascScreen{display:none;position:fixed;inset:74px 0 0 220px;z-index:500;overflow:auto;padding:22px;color:#edf4fa;background:#0b0d13}
+@media(max-width:900px){#ascScreen{left:76px}}@media(max-width:620px){#ascScreen{inset:64px 0 0 62px;padding:12px}}
+#ascScreen h1{margin:0 0 4px;font-size:28px;letter-spacing:2px}#ascScreen .sub{color:#8fa3b8;margin-bottom:14px}
+.ascTabs{display:flex;gap:8px;margin:12px 0}.ascTabs button,.ascBtn{background:#101d2e;color:#cfe;border:1px solid #38e1e855;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer}
+.ascTabs button.on{background:#2bdde5;color:#04121a}.ascBtn:disabled{opacity:.4;cursor:not-allowed}.ascBtn.danger{border-color:#ff6b6b88;color:#ff9b9b}
+.ascGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ascCard{background:#121826;border:1px solid #243247;border-radius:12px;padding:12px}.ascCard.locked{opacity:.45}
+.ascCard h3{margin:0 0 4px;font-size:15px}.ascCard p{margin:0 0 8px;color:#9fb2c6;font-size:13px}
+.ascBar{height:8px;background:#1b2536;border-radius:6px;overflow:hidden;margin:6px 0}.ascBar i{display:block;height:100%;background:linear-gradient(90deg,#2bdde5,#ffd84d)}
+.ascPts{color:#ffd84d;font-weight:900}.ascToast{position:fixed;right:18px;bottom:18px;z-index:99999;background:#101d2e;border:1px solid #ffd84d;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700}
+</style>
+<div id="ascScreen" class="gScreen">
+ <h1>✨ ASCENSION</h1><div class="sub" id="ascSub"></div>
+ <div class="ascTabs"><button data-t="over">Overview</button><button data-t="tree">Ascension Tree</button><button data-t="res">Empire Research</button></div>
+ <div id="ascBody"></div>
+</div>
+<script>
+/* ===== ASCENSION EXPANSION: permanent tree, empire research, cross-game milestones =====
+   Save key: gabeAscend (JSON, versioned). Currency stays gabeClicks. */
+(function(){
+"use strict";
+const KEY="gabeAscend";
+let S={v:1,bonus:0,nodes:{},res:{},ms:{},titles:[],title:"",lastRb:null};
+/* Stored inside the existing gabeResearch save key (field "asc") so save export/import carries it with no extra setup. */
+try{const o=JSON.parse(localStorage.getItem("gabeResearch"));if(o&&o.asc&&typeof o.asc==="object")S=Object.assign(S,o.asc);}catch(e){}
+S.nodes=S.nodes||{};S.res=S.res||{};S.ms=S.ms||{};S.titles=Array.isArray(S.titles)?S.titles:[];
+const BR={click:["🖱️","Clicking",1],empire:["🏢","Empire",2],collect:["📦","Collector",3],invest:["📈","Investor",4]};
+/* id,branch,name,desc,max,baseCost,reqRebirth */
+const NODES=[
+["cp","click","Strong Fingers","+5% click income per level",10,1,1],
+["crit","click","Critical Mass","+10% critical-click rewards per level",5,1,1],
+["dbl","click","Double Tap","+2% chance per level that a click pays double",5,2,1],
+["bless","click","Gabe's Blessing ★","+25% click income (milestone)",1,5,5],
+["corp","empire","Corporate Synergy","+4% empire income per level",10,1,2],
+["lean","empire","Lean Management","-2% business level cost per level",10,1,2],
+["night","empire","Night Shift","+10% offline earning efficiency per level",5,2,2],
+["tycoon","empire","Empire Mastery ★","+10% empire income (milestone)",1,5,5],
+["stip","collect","Collector's Stipend","+0.5% empire income per level for every 10 skins owned (max +10%/level)",10,1,3],
+["bounty","collect","Skin Hunter","Each new unique skin pays $1,000 x level",5,2,3],
+["sharp","invest","Sharp Trader","+3% bonus on profitable stock sales per level",10,1,4],
+["nw","invest","Net Worth Edge","+0.5% income per level per digit of net worth above 6 digits (max 5 levels)",5,2,4]];
+const ND={};NODES.forEach(n=>ND[n[0]]=n);
+const lv=id=>S.nodes[id]||0, cost=(n,l)=>n[5]+Math.floor(l/3);
+const rb=()=>typeof rebirthLevel==="number"?rebirthLevel:0;
+const earned=()=>rb()+2*Math.floor(rb()/5)+(S.bonus||0);
+function spent(){let t=0;NODES.forEach(n=>{for(let l=0;l<lv(n[0]);l++)t+=cost(n,l);});return t;}
+const points=()=>earned()-spent();
+const unlocked=()=>rb()>=1||S.bonus>0;
+/* research: id,name,desc,cost,effect */
+const RES=[["auto","Automated Operations","+5% business income",1e5,"inc",.05],["bulk","Bulk Procurement","3% cheaper business levels",5e5,"cost",.03],
+["mkt","Global Marketing","+10% business income",2.5e6,"inc",.10],["srv","Server Optimization","+10% offline efficiency",1e7,"off",.10],
+["ai","Logistics AI","+15% business income",5e7,"inc",.15],["lean2","Lean Supply Chain","5% cheaper business levels",2.5e8,"cost",.05],
+["qm","Quantum Marketing","+25% business income",1e9,"inc",.25],["grid","Data Center Grid","+25% offline efficiency",5e9,"off",.25]];
+const rs=t=>RES.reduce((a,r)=>a+(S.res[r[0]]&&r[4]===t?r[5]:0),0);
+const J=k=>{try{return JSON.parse(localStorage.getItem(k))||{};}catch(e){return{};}};
+const inv=()=>typeof caseInventory!=="undefined"&&Array.isArray(caseInventory)?caseInventory:[];
+const nw=()=>Math.max(1,Number(window.getEmpireNetWorth?window.getEmpireNetWorth():0)||1);
+/* ---- multipliers ---- */
+const clickMult=()=>(1+.05*lv("cp"))*(lv("bless")?1.25:1);
+const incMult=()=>(1+.04*lv("corp"))*(lv("tycoon")?1.1:1)*(1+rs("inc"))*(1+.005*lv("stip")*Math.min(20,Math.floor(inv().length/10)))*(1+.005*lv("nw")*Math.max(0,Math.log10(nw())-6));
+window.gabeCostMult=()=>Math.max(.4,(1-.02*lv("lean"))*(1-rs("cost")));
+window.gabeOfflineMult=()=>(1+.1*lv("night"))*(1+rs("off"));
+const oldInc=window.gabeIncomeMult;window.gabeIncomeMult=function(){return (oldInc?oldInc():1)*incMult();};
+const oldClick=window.gabeComputeClick;
+window.gabeComputeClick=function(){const c=oldClick();let a=c.amount*clickMult();
+ if(c.cls)a*=1+.1*lv("crit");
+ if(Math.random()<.02*lv("dbl")){a*=2;c.label=c.label||"✨ DOUBLE TAP +$"+formatMoney(a);}
+ c.amount=a;return c;};
+const oldSold=window.stockSold;
+window.stockSold=function(amount,profit){if(oldSold)oldSold(amount,profit);if(profit>0&&lv("sharp"))gabeClicks+=profit*.03*lv("sharp");};
+/* ---- milestones (cross-game) ---- */
+const st=()=>J("gabeStats"),achN=()=>Object.keys(J("gabeAch")).length;
+const levels=()=>Object.values(J("empireBiz")).reduce((a,b)=>a+(Number(b)||0),0);
+const skins=()=>new Set(inv().map(i=>i&&(i.name||i.skin||i.id||JSON.stringify(i)))).size;
+const METRICS=[["📦","Cases opened",()=>st().casesOpened||0,[10,100,500]],["🎨","Unique skins owned",skins,[5,25,75]],
+["📈","Stock trades",()=>st().stocksTraded||0,[10,100,500]],["💹","Realized stock profit",()=>st().stockProfit||0,[1e4,1e6,1e8]],
+["🎰","Casino wins",()=>st().casinoWins||0,[10,100,1000]],["🏆","Achievements unlocked",achN,[5,15,30]],
+["🏢","Total business levels",levels,[50,250,1000]],["🖱️","Total clicks",()=>st().totalClicks||0,[1e3,1e4,1e5]],["🔥","Rebirths",rb,[1,5,10]]];
+const REW=["pts1","cash","pts2"],TITLES=["Rookie","Veteran","Legend"];
+const MS=[];METRICS.forEach((m,mi)=>m[3].forEach((g,i)=>MS.push({id:mi+"_"+i,icon:m[0],name:m[1],get:m[2],goal:g,type:REW[i],title:i===2?m[1]+" "+TITLES[2]:""})));
+const inc=()=>(Number(window.getEmpireIncome?window.getEmpireIncome():0)||0)*incMult();
+const rewText=m=>(m.type==="cash"?"💵 cash bonus":"✨ "+(m.type==="pts1"?1:2)+" Ascension Point"+(m.type==="pts2"?"s":""))+(m.title?" + title":"");
+function toast(t){const d=document.createElement("div");d.className="ascToast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),4500);}
+function claim(){let changed=false;
+ MS.forEach(m=>{if(S.ms[m.id]||m.get()<m.goal)return;S.ms[m.id]=1;changed=true;let msg="🏁 Milestone: "+m.name+" "+fmt(m.goal);
+  if(m.type==="cash"){const c=Math.max(5000,Math.floor(inc()*600));gabeClicks+=c;msg+=" — +$"+fmt(c);}else{const p=m.type==="pts1"?1:2;S.bonus+=p;msg+=" — +"+p+" Ascension Point";}
+  if(m.title&&!S.titles.includes(m.title))S.titles.push(m.title);toast(msg);});
+ if(rb()>=5&&!S.titles.includes("Ascended")){S.titles.push("Ascended");changed=true;}
+ if(S.lastRb===null)S.lastRb=rb();
+ if(rb()>S.lastRb){const gain=earned()-(S.lastRb+2*Math.floor(S.lastRb/5)+S.bonus);toast("✨ Rebirth! +"+gain+" Ascension Point"+(gain>1?"s":""));S.lastRb=rb();changed=true;}
+ if(changed)save();}
+const bountySeen=new Set(JSON.parse(localStorage.getItem("gabeAscSkins")||"null")||[]);let first=bountySeen.size===0;
+function bounty(){const cur=[...new Set(inv().map(i=>i&&(i.name||i.skin||i.id||JSON.stringify(i))))];
+ let n=0;cur.forEach(k=>{if(!bountySeen.has(k)){bountySeen.add(k);n++;}});
+ if(n&&!first&&lv("bounty")){const c=n*1000*lv("bounty");gabeClicks+=c;toast("🎨 Skin Hunter: +$"+fmt(c));}
+ if(n||first){first=false;try{localStorage.setItem("gabeAscSkins",JSON.stringify([...bountySeen]));}catch(e){}}}
+const fmt=n=>n>=1e6?n.toExponential(2).replace("e+","e"):Math.floor(n).toLocaleString("en-US");
+function save(){try{S.v=1;let r={};try{r=JSON.parse(localStorage.getItem("gabeResearch"))||{};}catch(e){}if(!Array.isArray(r.purchased))r.purchased=[];r.asc=S;localStorage.setItem("gabeResearch",JSON.stringify(r));}catch(e){}}
+const oldSave=window.saveGame;window.saveGame=function(){oldSave();save();};
+const oldReset=window.performReset;window.performReset=function(){oldReset();S={v:1,bonus:0,nodes:{},res:{},ms:{},titles:[],title:"",lastRb:0};try{localStorage.removeItem("gabeAscSkins");}catch(e){}bountySeen.clear();save();render();};
+/* ---- UI ---- */
+let tab="over";const $=id=>document.getElementById(id),B=()=>$("ascBody");
+function bar(p){return '<div class="ascBar"><i style="width:'+Math.min(100,Math.max(0,p*100))+'%"></i></div>';}
+function render(){if($("ascScreen").style.display==="none")return;
+ $("ascSub").innerHTML='Ascension Points: <span class="ascPts">'+points()+'</span> · earned '+earned()+' · spent '+spent()+' · Rebirths '+rb()+(S.title?' · Title: <b>'+S.title+'</b>':'');
+ document.querySelectorAll(".ascTabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
+ let h="";
+ if(tab==="over"){
+  const nxt=MS.filter(m=>!S.ms[m.id]).sort((a,b)=>b.get()/b.goal-a.get()/a.goal).slice(0,3);
+  h+='<h3>Next milestones</h3><div class="ascGrid">'+nxt.map(m=>'<div class="ascCard"><h3>'+m.icon+' '+m.name+'</h3><p>'+fmt(Math.min(m.get(),m.goal))+' / '+fmt(m.goal)+' — reward: '+rewText(m)+'</p>'+bar(m.get()/m.goal)+'</div>').join("")+'</div>';
+  h+='<h3>Next Ascension unlock</h3><div class="ascCard"><p>'+(unlocked()?Object.values(BR).filter(b=>b[2]>rb()).map(b=>b[1]+" branch at rebirth "+b[2]).concat(rb()<5?["Milestone upgrades + \"Ascended\" title at rebirth 5"]:[]).join(" · ")||"All branches unlocked. Bonus points every 5th rebirth.":"Rebirth once to unlock Ascension.")+'</p></div>';
+  h+='<h3>Titles</h3><div>'+(S.titles.length?S.titles.map(t=>'<button class="ascBtn" data-title="'+t+'" style="margin:3px">'+(S.title===t?"✔ ":"")+t+'</button>').join(""):'<span class="sub">Earn titles from milestones.</span>')+'</div>';
+ }else if(tab==="tree"){
+  if(!unlocked())h+='<div class="ascCard"><p>🔒 Rebirth once to unlock the Ascension tree.</p></div>';
+  else{h+='<button class="ascBtn danger" id="ascRespec">Respec all points</button>';
+   Object.keys(BR).forEach(k=>{const b=BR[k],open=rb()>=b[2];h+='<h3>'+b[0]+' '+b[1]+(open?'':' 🔒 (rebirth '+b[2]+')')+'</h3><div class="ascGrid">'+NODES.filter(n=>n[1]===k).map(n=>{const l=lv(n[0]),mx=l>=n[4],c=cost(n,l),ok=open&&rb()>=n[6]&&!mx&&points()>=c;
+    return '<div class="ascCard'+(open&&rb()>=n[6]?'':' locked')+'"><h3>'+n[2]+' <small>'+l+'/'+n[4]+'</small></h3><p>'+n[3]+(rb()<n[6]?' (rebirth '+n[6]+')':'')+'</p>'+bar(l/n[4])+'<button class="ascBtn" data-buy="'+n[0]+'"'+(ok?'':' disabled')+'>'+(mx?'MAXED':'Buy · '+c+' pt')+'</button></div>';}).join("")+'</div>';});}
+ }else{
+  h+='<p class="sub">Spend money on empire-wide research. Bonuses apply to the existing Empire income, costs and offline earnings.</p><div class="ascGrid">'+RES.map(r=>{const d=S.res[r[0]];return '<div class="ascCard"><h3>🔬 '+r[1]+'</h3><p>'+r[2]+'</p><button class="ascBtn" data-res="'+r[0]+'"'+(d||gabeClicks<r[3]?' disabled':'')+'>'+(d?'RESEARCHED':'Research · $'+fmt(r[3]))+'</button></div>';}).join("")+'</div>';}
+ B().innerHTML=h;}
+document.addEventListener("click",function(e){const t=e.target.closest("#ascScreen button");if(!t)return;
+ if(t.dataset.t){tab=t.dataset.t;}
+ else if(t.dataset.buy){const n=ND[t.dataset.buy],c=cost(n,lv(n[0]));if(points()>=c&&lv(n[0])<n[4]){S.nodes[n[0]]=lv(n[0])+1;save();}}
+ else if(t.dataset.res){const r=RES.find(x=>x[0]===t.dataset.res);if(r&&!S.res[r[0]]&&gabeClicks>=r[3]){gabeClicks-=r[3];S.res[r[0]]=1;save();if(window.saveGame)saveGame();}}
+ else if(t.dataset.title){S.title=S.title===t.dataset.title?"":t.dataset.title;save();skin();}
+ else if(t.id==="ascRespec"){showConfirm("RESPEC?\n\nAll Ascension nodes are refunded as points. Nothing else is lost.",function(){S.nodes={};save();render();},{yesText:"RESPEC",danger:true});return;}
+ render();});
+function skin(){const s=document.querySelector(".sidebarIdentity small");if(s&&S.title)s.dataset.asc=S.title;}
+window.openAscension=function(){if(window.showSiteHome)showSiteHome();const h=$("siteHome");if(h)h.style.display="none";$("ascScreen").style.display="block";
+ document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(b=>b.classList.toggle("active",b.dataset.page==="ascension"));render();};
+window.closeAscension=function(){$("ascScreen").style.display="none";};const oldHome=window.showSiteHome;window.showSiteHome=function(){closeAscension();return oldHome.apply(this,arguments);};
+(function(){const l=document.querySelector(".sidebarLinks");if(l&&!l.querySelector("[data-page=ascension]")){const x=document.createElement("button");x.className="siteSideLink";x.dataset.page="ascension";x.onclick=function(){openAscension();};x.innerHTML="<span>✧</span>Ascension";l.appendChild(x);}})();
+document.addEventListener("click",function(e){const b=e.target.closest(".siteNavLink,.siteSideLink,.homeCard,.menuItem");if(b&&!b.closest("#ascScreen")&&b.dataset.page!=="ascension")closeAscension();},true);
+setInterval(function(){claim();bounty();render();},2000);claim();bounty();
+})();
+</script>
+<style id="sidebarScroll">.siteSidebar{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3a3a46 transparent}.siteSidebar>*{flex-shrink:0}.siteSidebar::-webkit-scrollbar{width:6px}.siteSidebar::-webkit-scrollbar-thumb{background:#3a3a46;border-radius:6px}</style>
+
 </body>
 </html>
 
