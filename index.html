@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OUTER/GABE CLICKER SITE VERSION 7.0 — GALACTIC EXPANSION -->
+<!-- OUTER/GABE CLICKER SITE VERSION 8.2 — PLAYER SAVE SYNC -->
 
 <html lang="en">
 <head>
@@ -4183,7 +4183,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>DUEL</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigames"><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button><button class="siteSideLink" data-page="galaxy" onclick="openGalaxy()"><span>✦</span>Galaxy</button><button class="siteSideLink" data-page="toalet" onclick="openToaletGame()"><span>🎮</span>Toalet Peli</button></div>
-  <div class="sidebarFoot">V8.1</div>
+  <div class="sidebarFoot">V8.2</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -13766,6 +13766,13 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-23",
+    title: "v8.2 · Community Save Reset",
+    changes: [
+      "Your progress can now be backed up to your player profile, so everyone can start fresh together when a community reset is announced."
+    ]
+  },
+  {
+    date: "2026-10-23",
     title: "Russian Roulette",
     changes: [
       "Added high-stakes Russian Roulette to the DUEL Casino: choose 1-5 bullets, survive pulls to multiply your bet, and cash out before the chamber turns on you. Minimum bet $1,000."
@@ -16674,6 +16681,76 @@ if(wrap&&panel){wrap.appendChild(panel);
   tabs.appendChild(t);
   nav.addEventListener("click",function(e){if(!e.target.closest("button")||e.target.closest("button")===t)return;panel.classList.remove("activeGame");t.classList.remove("active");});}}
 draw();ui();
+})();
+</script>
+<style id="cloudSaveStyles">
+#cloudSaveBadge{position:fixed;left:12px;bottom:12px;z-index:99990;padding:7px 10px;border:1px solid #394455;border-radius:9px;background:#111720eF;color:#aab6c8;font:700 11px system-ui,sans-serif;box-shadow:0 5px 18px #0005;max-width:min(340px,calc(100vw - 32px))}
+#cloudSaveBadge[data-state="ready"]{border-color:#28755b;color:#8de5ba}#cloudSaveBadge[data-state="error"]{border-color:#9d4b4b;color:#ffaaaa}
+</style>
+<div id="cloudSaveBadge" role="status" aria-live="polite" data-state="busy">Cloud save: connecting…</div>
+<script id="playerCloudSave">
+/* Per-player cloud saves. Configure this with the Firebase Web API key. */
+(function(){
+ "use strict";
+ const DB="https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app";
+ const API_KEY="AIzaSyDdgL7BiR3PJmYPbyGTKJalkI4hwUYb8fY";
+
+ const AUTH_KEY="gabePlayerAnonymousAuthV1", EPOCH_KEY="gabePlayerSaveEpochV1", APPLIED_KEY="gabePlayerSaveAppliedAtV1";
+ const badge=document.getElementById("cloudSaveBadge");
+ const keepLocal=/^(gabePlayerId|gabePlayerName|pubChatName|gabePlayerAnonymousAuthV1|gabeFirebaseWebApiKey|gabeCloudSave|.*ChangeLog.*|.*Changelog.*|.*Audio.*|.*audio.*|.*Sound.*|.*sound.*|.*Volume.*|.*volume.*|.*Graphics.*|.*graphics.*|.*Quality.*|.*quality.*|.*ReducedMotion.*|.*Theme.*|.*theme.*|.*Background.*|.*background.*|.*Collapsed.*|.*collapsed.*|.*admin.*)$/i;
+ const excludeCloud=/^(gabePlayerId|gabePlayerName|pubChatName|gabePlayerAnonymousAuthV1|gabeFirebaseWebApiKey|.*ChangeLog.*|.*Changelog.*|.*Audio.*|.*audio.*|.*Sound.*|.*sound.*|.*Volume.*|.*volume.*|.*Graphics.*|.*graphics.*|.*Quality.*|.*quality.*|.*ReducedMotion.*|.*Theme.*|.*theme.*|.*Background.*|.*background.*|.*Collapsed.*|.*collapsed.*|.*admin.*)$/i;
+ let token="",refreshToken="",uid="",expiresAt=0,epoch=1,ready=false,busy=false,lastPayload="",lastWrite=0;
+ function status(text,state){if(badge){badge.textContent="Cloud save: "+text;badge.dataset.state=state||"busy"}}
+ function safeLocalGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+ function safeLocalSet(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
+ function saveKeys(){const keys=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&!excludeCloud.test(k)&&!/[.#$\[\]\/]/.test(k))keys.push(k)}}catch(e){}return keys}
+ function collect(){const data={__saveMarker:"1"};saveKeys().forEach(k=>{try{const v=localStorage.getItem(k);if(v!==null)data[k]=v}catch(e){}});return data}
+ function resetLocalForWipe(nextEpoch){
+  status("resetting after the save wipe…","busy");
+  window.__gabeCloudWipeInProgress=true;
+  const nativeSet=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(k,v){if(this===localStorage&&!keepLocal.test(String(k)))return;return nativeSet.call(this,k,v)};
+  saveKeys().forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+  safeLocalSet(EPOCH_KEY,nextEpoch);try{localStorage.removeItem(APPLIED_KEY)}catch(e){}
+  setTimeout(()=>location.reload(),50);
+ }
+ async function postJson(url,body){const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),cache:"no-store"});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error&&d.error.message||"Firebase sign-in failed (HTTP "+r.status+").");return d}
+ async function getAuth(){
+  if(!API_KEY)throw Error("Firebase Web API key is missing");
+  let saved=null;try{saved=JSON.parse(safeLocalGet(AUTH_KEY)||"null")}catch(e){}
+  if(saved&&saved.refreshToken){refreshToken=saved.refreshToken;uid=saved.uid||"";if(saved.idToken&&Number(saved.expiresAt)>Date.now()+60000){token=saved.idToken;expiresAt=Number(saved.expiresAt);return}const form=new URLSearchParams({grant_type:"refresh_token",refresh_token:refreshToken});const r=await fetch("https://securetoken.googleapis.com/v1/token?key="+encodeURIComponent(API_KEY),{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error&&d.error.message||"Could not refresh the player sign-in.");token=d.id_token;refreshToken=d.refresh_token||refreshToken;uid=d.user_id||uid;expiresAt=Date.now()+Number(d.expires_in||3600)*1000;safeLocalSet(AUTH_KEY,JSON.stringify({uid,idToken:token,refreshToken,expiresAt}));return}
+  const d=await postJson("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="+encodeURIComponent(API_KEY),{returnSecureToken:true});token=d.idToken;refreshToken=d.refreshToken;uid=d.localId;expiresAt=Date.now()+Number(d.expiresIn||3600)*1000;safeLocalSet(AUTH_KEY,JSON.stringify({uid,idToken:token,refreshToken,expiresAt}));
+ }
+ async function db(path,method,value){const r=await fetch(DB+"/"+path+".json?auth="+encodeURIComponent(token),{method:method||"GET",headers:{"Content-Type":"application/json"},...(value===undefined?{}:{body:JSON.stringify(value)}),cache:"no-store"});const d=await r.json().catch(()=>null);if(!r.ok)throw Error(typeof d==="string"?d:"Realtime Database rejected the save (HTTP "+r.status+"). Check the playerSaves/saveControl rules.");return d}
+ async function writeSave(){if(!ready||busy||Date.now()-lastWrite<5000)return;busy=true;try{const data=collect(),payload=JSON.stringify({version:1,epoch,updatedAt:Date.now(),data});if(payload===lastPayload){lastWrite=Date.now();return}await db("playerSaves/"+uid,"PUT",JSON.parse(payload));lastPayload=payload;lastWrite=Date.now();safeLocalSet(EPOCH_KEY,epoch);status("on · saved to this player profile","ready")}catch(e){status(e.message||"could not save","error")}finally{busy=false}}
+ async function start(){
+  try{
+   if(location.protocol==="file:")status("open the deployed https site to connect","error");else status("connecting…","busy");
+   await getAuth();
+   const rawEpoch=await db("saveControl/epoch","GET");epoch=Number(rawEpoch)||1;
+   const cloud=await db("playerSaves/"+uid,"GET");
+   const localEpoch=Number(safeLocalGet(EPOCH_KEY)||0);
+   if(cloud&&Number(cloud.epoch)===epoch&&cloud.data){
+    const applied=Number(safeLocalGet(APPLIED_KEY)||0);
+    if(Number(cloud.updatedAt)>0&&applied!==Number(cloud.updatedAt)){
+     saveKeys().forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+     Object.keys(cloud.data).forEach(k=>{if(k!=="__saveMarker"&&!excludeCloud.test(k)&&!/[.#$\[\]\/]/.test(k)){try{localStorage.setItem(k,String(cloud.data[k]))}catch(e){}}});
+     safeLocalSet(EPOCH_KEY,epoch);safeLocalSet(APPLIED_KEY,cloud.updatedAt);location.reload();return;
+    }
+    if(localEpoch&&localEpoch!==epoch){resetLocalForWipe(epoch);return}
+    ready=true;lastPayload=JSON.stringify({version:1,epoch,updatedAt:cloud.updatedAt,data:collect()});status("on · saved to this player profile","ready");
+   }else{
+    if((localEpoch&&localEpoch!==epoch)||(!localEpoch&&epoch>1)){resetLocalForWipe(epoch);return}
+    ready=true;safeLocalSet(EPOCH_KEY,epoch);safeLocalSet(APPLIED_KEY,0);status("on · moving this browser’s save to Firebase…","busy");await writeSave();
+   }
+   setInterval(writeSave,5000);
+   setInterval(async()=>{if(!ready||busy)return;try{const current=Number(await db("saveControl/epoch","GET"))||1;if(current!==epoch)resetLocalForWipe(current)}catch(e){status(e.message||"could not check wipe status","error")}},15000);
+  }catch(e){status(e.message||"local save still works; cloud connection failed","error");console.error("Cloud save setup:",e)}
+ }
+ window.gabePlayerCloudSave={start:start,save:writeSave,get uid(){return uid}};
+ start();
+ setInterval(writeSave,5000);
+ window.addEventListener("pagehide",()=>{writeSave()});
 })();
 </script>
 </body>
