@@ -4183,7 +4183,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>DUEL</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigames"><button class="siteSideLink" data-page="gabentale" onclick="launchGabentale()"><span>♥</span>GABENTALE</button><button class="siteSideLink" data-page="galaxy" onclick="openGalaxy()"><span>✦</span>Galaxy</button><button class="siteSideLink" data-page="toalet" onclick="openToaletGame()"><span>🎮</span>Toalet Peli</button></div>
-  <div class="sidebarFoot">V8.0</div>
+  <div class="sidebarFoot">V8.1</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -7556,10 +7556,15 @@ function createPlinkoBoard() {
     const startY = 75, rowSpacing = 34, horizontalSpacing = 34;
     for (let row = 0; row < plinkoRows; row++) {
         const y = startY + row * rowSpacing;
-        const offset = row % 2 === 0 ? 0 : horizontalSpacing / 2;
-        for (let x = 0; x < 10; x++) {
-            const pegX = 15 + x * horizontalSpacing + offset;
-            if (pegX <= 325) plinkoPegs.push({x: pegX, y});
+        // Symmetric board centred on x=170 (the drop point and the middle slot centre).
+        // Even rows put a peg dead-centre; odd rows are offset by half a step. The outermost
+        // offset-row pegs are left out so the edge channels stay open and the corner jackpot
+        // slots can be reached by a physically falling ball.
+        const centred = row % 2 === 0;
+        const count = centred ? 9 : 8;
+        const firstX = centred ? horizontalSpacing : horizontalSpacing * 1.5;
+        for (let x = 0; x < count; x++) {
+            plinkoPegs.push({x: firstX + x * horizontalSpacing, y});
         }
     }
 }
@@ -7629,31 +7634,63 @@ function launchNextPlinkoBall() {
 }
 
 function stepPlinkoPhysics() {
+    const low = document.documentElement.classList.contains("lowGraphics");
+    const slotWidth = plinkoCanvas.width / plinkoMultipliers.length;
+    const R = plinkoBallRadius + plinkoPegRadius;
     for (let i = plinkoBalls.length - 1; i >= 0; i--) {
         const ball = plinkoBalls[i];
         ball.frames = (ball.frames || 0) + 1;
-        ball.vy = Math.min(5, ball.vy + 0.12);
-        ball.x += ball.vx; ball.y += ball.vy; ball.vx *= 0.995;
-        if (ball.x < plinkoBallRadius) { ball.x = plinkoBallRadius; ball.vx = Math.abs(ball.vx); }
-        if (ball.x > plinkoCanvas.width - plinkoBallRadius) { ball.x = plinkoCanvas.width - plinkoBallRadius; ball.vx = -Math.abs(ball.vx); }
-        // Gently guide the animation toward the preselected, odds-weighted slot.
-        const targetX = (ball.targetSlot + 0.5) * (plinkoCanvas.width / plinkoMultipliers.length);
-        if (ball.y > 170) {
-            const finalApproach = ball.y > 350;
-            const steering = finalApproach ? 0.55 : 0.045;
-            ball.x += (targetX - ball.x) * steering;
-        }
-        if (!document.documentElement.classList.contains("lowGraphics")) plinkoPegs.forEach(peg => {
-            const dx = ball.x - peg.x, dy = ball.y - peg.y, distance = Math.sqrt(dx*dx + dy*dy);
-            const collisionDistance = plinkoBallRadius + plinkoPegRadius;
-            if (distance < collisionDistance && distance > 0) {
-                const nx = dx / distance, ny = dy / distance, overlap = collisionDistance - distance;
-                ball.x += nx * overlap; ball.y += ny * overlap;
-                ball.vx = (nx >= 0 ? 1 : -1) * (1.2 + Math.random() * 1.5);
-                ball.vy = Math.max(1.5, ball.vy * 0.75);
+        const targetX = (ball.targetSlot + 0.5) * slotWidth;
+        for (let sub = 0; sub < 2; sub++) {
+            // Gravity, plus gentle steering toward the pre-chosen slot. The steering aims for the
+            // horizontal speed that would carry the ball to the slot by the time it lands, and
+            // strengthens as it falls, so the ball bounces naturally but never has to snap sideways.
+            ball.vy = Math.min(6, ball.vy + 0.09);
+            const depth = Math.min(1, Math.max(0, (ball.y - 40) / 330));
+            const remain = Math.max(20, 382 - ball.y);
+            const wantVx = Math.max(-3, Math.min(3, (targetX - ball.x) * Math.max(1.5, ball.vy) / remain));
+            ball.vx += (wantVx - ball.vx) * (0.02 + 0.10 * depth * depth);
+            ball.vx *= 0.995;
+            ball.vx = Math.max(-3, Math.min(3, ball.vx));
+            ball.x += ball.vx * 0.5;
+            ball.y += ball.vy * 0.5;
+            if (ball.x < plinkoBallRadius) { ball.x = plinkoBallRadius; ball.vx = Math.abs(ball.vx) * 0.5; }
+            if (ball.x > plinkoCanvas.width - plinkoBallRadius) { ball.x = plinkoCanvas.width - plinkoBallRadius; ball.vx = -Math.abs(ball.vx) * 0.5; }
+            if (!low) {
+                for (let k = 0; k < plinkoPegs.length; k++) {
+                    const peg = plinkoPegs[k];
+                    const dx = ball.x - peg.x, dy = ball.y - peg.y;
+                    if (Math.abs(dx) > R || Math.abs(dy) > R) continue;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d >= R) continue;
+                    // Push out along the contact normal, then bounce (reflect + lose some energy).
+                    const nx = d > 0.001 ? dx / d : (Math.random() < 0.5 ? -1 : 1), ny = d > 0.001 ? dy / d : 0;
+                    ball.x = peg.x + nx * R;
+                    ball.y = peg.y + ny * R;
+                    const vn = ball.vx * nx + ball.vy * ny;
+                    if (vn < 0) {
+                        ball.vx -= 1.45 * vn * nx;
+                        ball.vy -= 1.45 * vn * ny;
+                        ball.vx *= 0.97;
+                    }
+                    // Landing dead-centre on a peg: nudge it off so it never balances there.
+                    if (Math.abs(nx) < 0.15) ball.vx += (nx >= 0 ? 1 : -1) * (0.4 + Math.random() * 0.6);
+                    // Allow a small upward rebound off a peg, but never a big launch.
+                    if (ball.vy < -2) ball.vy = -2;
+                }
             }
-        });
-        if (ball.y > plinkoCanvas.height - 35 || ball.frames >= 300) settlePlinkoBall(i);
+        }
+        // Anti-stuck: if the ball made almost no downward progress recently, shake it loose.
+        if (ball.frames % 40 === 0) {
+            if (ball.lastY !== undefined && ball.y - ball.lastY < 4) {
+                ball.vy += 1.5;
+                ball.vx += (Math.random() < 0.5 ? -1 : 1) * (0.8 + Math.random());
+            }
+            ball.lastY = ball.y;
+        }
+        // Below the last row of pegs: guide cleanly into the slot.
+        if (ball.y > 352) { ball.vx *= 0.9; ball.x += (targetX - ball.x) * 0.07; }
+        if (ball.y > plinkoCanvas.height - 35 || ball.frames >= 600) settlePlinkoBall(i);
     }
 }
 
@@ -13729,6 +13766,21 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
   {
     date: "2026-10-23",
+    title: "Russian Roulette",
+    changes: [
+      "Added high-stakes Russian Roulette to the DUEL Casino: choose 1-5 bullets, survive pulls to multiply your bet, and cash out before the chamber turns on you. Minimum bet $1,000."
+    ]
+  },
+  {
+    date: "2026-10-23",
+    title: "Taxation Update",
+    changes: [
+      "The taxman now sends a bill every 5 minutes: 3% of net worth above $50,000.",
+      "Pay it, hire accountants, hide money in an offshore account, or try to evade — but heat builds and audits can seize your offshore cash."
+    ]
+  },
+  {
+    date: "2026-10-23",
     title: "Ascension Update",
     changes: [
       "New Ascension page: earn points from rebirths and spend them on permanent Clicking, Empire, Collector and Investor upgrades, with respec.",
@@ -16488,6 +16540,142 @@ setInterval(function(){claim();bounty();render();},2000);claim();bounty();
 </script>
 <style id="sidebarScroll">.siteSidebar{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3a3a46 transparent}.siteSidebar>*{flex-shrink:0}.siteSidebar::-webkit-scrollbar{width:6px}.siteSidebar::-webkit-scrollbar-thumb{background:#3a3a46;border-radius:6px}</style>
 
+<style id="taxStyle">
+#taxScreen{display:none;position:fixed;inset:74px 0 0 220px;z-index:500;overflow:auto;padding:22px;color:#edf4fa;background:#0b0d13}
+@media(max-width:900px){#taxScreen{left:76px}}@media(max-width:620px){#taxScreen{inset:64px 0 0 62px;padding:12px}}
+#taxScreen h1{margin:0 0 4px;font-size:28px;letter-spacing:2px}#taxScreen .sub{color:#8fa3b8;margin-bottom:14px}
+#taxScreen input{width:100%;margin:6px 0;padding:9px;border-radius:8px;border:1px solid #344660;background:#0b1220;color:#fff}
+.taxBill{border-color:#ff6b6b!important}.taxRow{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+<div id="taxScreen" class="gScreen"><h1>🏛️ TAXATION</h1><div class="sub" id="taxSub"></div><div id="taxBody"></div></div>
+<script>
+/* ===== TAXATION: periodic bills + ways to evade them (risk, heat, audits). Saved in gabeResearch.tax ===== */
+(function(){
+"use strict";
+const CYCLE=300000,GRACE=180000,EXEMPT=50000,RATE=.03;
+let T={off:0,heat:0,next:Date.now()+CYCLE,bill:null,paid:0,evaded:0,caught:0,acct:0};
+try{const o=JSON.parse(localStorage.getItem("gabeResearch"));if(o&&o.tax&&typeof o.tax==="object")T=Object.assign(T,o.tax);}catch(e){}
+if(!(T.next>0))T.next=Date.now()+CYCLE;
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1e6?n.toExponential(2).replace("e+","e"):Math.floor(n).toLocaleString("en-US");
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+function save(){try{let r={};try{r=JSON.parse(localStorage.getItem("gabeResearch"))||{};}catch(e){}if(!Array.isArray(r.purchased))r.purchased=[];r.tax=T;localStorage.setItem("gabeResearch",JSON.stringify(r));}catch(e){}}
+function toast(t){if(typeof showToast==="function")showToast(t);}
+function pay(n){n=Math.min(n,gabeClicks);gabeClicks-=n;updateClicker();return n;}
+const worth=()=>Math.max(0,(window.getEmpireNetWorth?Number(window.getEmpireNetWorth()):gabeClicks)||0);
+const acctCost=()=>Math.round(25000*Math.pow(4,T.acct));
+const catchChance=()=>cl(.35+T.heat/200-.08*T.acct,.1,.85);
+const auditChance=()=>cl(T.heat/120+(T.off>0?.05+.25*T.off/(T.off+gabeClicks+1):0),0,.7);
+function issue(){
+ const base=Math.max(0,worth()-EXEMPT)*RATE*(1-.1*T.acct);
+ T.next=Date.now()+CYCLE;
+ if(Math.random()<auditChance()){const seized=Math.floor(T.off*.35),fine=pay(gabeClicks*.05);T.off-=seized;T.heat*=.5;T.caught++;toast("🚔 TAX AUDIT!\nSeized $"+fmt(seized)+" offshore and fined $"+fmt(fine)+".");}
+ if(base>=1){T.bill={amt:Math.floor(base),due:Date.now()+GRACE};toast("🏛️ Tax bill: $"+fmt(T.bill.amt)+"\nPay it, or try to evade (Taxation page).");}
+ save();
+}
+function collect(){const b=T.bill;T.bill=null;const got=pay(b.amt*1.25);T.heat=cl(T.heat+10,0,100);toast("💸 The taxman collected $"+fmt(got)+" (+25% late penalty).");save();}
+window.addEventListener("click",function(e){const t=e.target.closest("#taxScreen button");if(!t)return;const a=t.dataset.a;
+ if(a==="pay"&&T.bill&&gabeClicks>=T.bill.amt){pay(T.bill.amt);T.paid+=T.bill.amt;T.bill=null;T.heat=cl(T.heat-5,0,100);toast("✅ Taxes paid. Heat cooled down.");}
+ else if(a==="evade"&&T.bill){if(Math.random()<catchChance()){const x=pay(T.bill.amt*2+gabeClicks*.02);T.bill=null;T.heat=cl(T.heat+25,0,100);T.caught++;toast("🚨 CAUGHT EVADING!\nYou paid $"+fmt(x)+" (double plus a fine).");}else{T.bill=null;T.evaded++;T.heat=cl(T.heat+15,0,100);toast("🕶️ Bill evaded!\nThe taxman never noticed… this time.");}}
+ else if(a==="acct"&&T.acct<3&&gabeClicks>=acctCost()){pay(acctCost());T.acct++;toast("🧾 Accountant hired.\nSmaller bills and a lower chance of being caught.");}
+ else if(a==="dep"||a==="wd"){const v=Math.floor(Number($("taxAmt").value));if(v>0){if(a==="dep"&&gabeClicks>=v){gabeClicks-=v;T.off+=Math.floor(v*.95);updateClicker();}else if(a==="wd"&&T.off>=v){T.off-=v;gabeClicks+=Math.floor(v*.98);updateClicker();}else toast("Not enough money for that!");}}
+ else if(a==="max"){$("taxAmt").value=Math.floor(gabeClicks);}
+ save();if(typeof saveGame==="function")saveGame();render();});
+function render(){if($("taxScreen").style.display!=="block")return;
+ const now=Date.now(),b=T.bill;
+ $("taxSub").innerHTML="Tax: "+(RATE*100)+"% of net worth above $"+fmt(EXEMPT)+" every "+CYCLE/60000+" min · Paid $"+fmt(T.paid)+" · Evaded "+T.evaded+" · Caught "+T.caught;
+ const keep=document.activeElement&&document.activeElement.id==="taxAmt"?$("taxAmt").value:"";
+ $("taxBody").innerHTML='<div class="ascGrid">'+
+ '<div class="ascCard'+(b?' taxBill':'')+'"><h3>📄 Current bill</h3><p>'+(b?'<b>$'+fmt(b.amt)+'</b> due in '+Math.max(0,Math.ceil((b.due-now)/1000))+'s. If unpaid, the taxman collects it with a 25% penalty.':'No bill. Next assessment in '+Math.max(0,Math.ceil((T.next-now)/1000))+'s.')+'</p>'+
+ '<div class="taxRow"><button class="ascBtn" data-a="pay"'+(b&&gabeClicks>=b.amt?'':' disabled')+'>PAY TAXES</button><button class="ascBtn danger" data-a="evade"'+(b?'':' disabled')+'>EVADE ('+Math.round((1-catchChance())*100)+'% success)</button></div><p>Failing costs double the bill plus a fine.</p></div>'+
+ '<div class="ascCard"><h3>🔥 Heat</h3><p>Evading raises heat. High heat makes evasion fail more and triggers audits (audit chance now '+Math.round(auditChance()*100)+'%). Paying and time cool it down.</p><div class="ascBar"><i style="width:'+T.heat+'%"></i></div></div>'+
+ '<div class="ascCard"><h3>🏝️ Offshore account: $'+fmt(T.off)+'</h3><p>Money here is not counted for tax. 5% fee to deposit, 2% to withdraw. Audits can seize 35% of it.</p><input id="taxAmt" type="number" min="1" placeholder="Amount"><div class="taxRow"><button class="ascBtn" data-a="dep">DEPOSIT</button><button class="ascBtn" data-a="wd">WITHDRAW</button><button class="ascBtn" data-a="max">MAX</button></div></div>'+
+ '<div class="ascCard"><h3>🧾 Accountant ('+T.acct+'/3)</h3><p>Each level: bills −10% and caught chance −8%.</p><button class="ascBtn" data-a="acct"'+(T.acct>=3||gabeClicks<acctCost()?' disabled':'')+'>'+(T.acct>=3?'MAXED':'HIRE · $'+fmt(acctCost()))+'</button></div></div>';
+ if(keep)$("taxAmt").value=keep;}
+setInterval(function(){const now=Date.now();T.heat=cl(T.heat-.05,0,100);
+ if(T.bill&&now>=T.bill.due)collect();else if(!T.bill&&now>=T.next)issue();
+ render();},1000);
+const os=window.saveGame;window.saveGame=function(){os.apply(this,arguments);save();};
+const op=window.performReset;window.performReset=function(){op.apply(this,arguments);T={off:0,heat:0,next:Date.now()+CYCLE,bill:null,paid:0,evaded:0,caught:0,acct:0};save();render();};
+window.openTaxes=function(){if(window.showSiteHome)showSiteHome();const h=$("siteHome");if(h)h.style.display="none";$("taxScreen").style.display="block";document.querySelectorAll(".siteSideLink").forEach(b=>b.classList.toggle("active",b.dataset.page==="taxes"));render();};
+window.closeTaxes=function(){$("taxScreen").style.display="none";};
+const oh=window.showSiteHome;window.showSiteHome=function(){closeTaxes();return oh.apply(this,arguments);};
+document.addEventListener("click",function(e){const b=e.target.closest(".siteNavLink,.siteSideLink");if(b&&b.dataset.page!=="taxes")closeTaxes();},true);
+(function(){const l=document.querySelector(".sidebarLinks");if(l&&!l.querySelector("[data-page=taxes]")){const x=document.createElement("button");x.className="siteSideLink";x.dataset.page="taxes";x.onclick=function(){openTaxes();};x.innerHTML="<span>§</span>Taxes";l.appendChild(x);}})();
+})();
+</script>
+<style id="rrStyle">
+#rrCyl{display:flex;justify-content:center;gap:9px;margin:16px 0}
+.rrCh{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid #4a4256;background:#0d0f16;box-shadow:inset 0 0 12px #000a}
+.rrCh.safe{border-color:#5dff8a}.rrCh.boom{border-color:#ff4d4d;background:#3a0d0d}
+#rrMsg{min-height:44px;text-align:center;font-weight:900;margin:8px 0}
+#rrInfo{display:flex;justify-content:space-between;color:#aab;font-size:13px;margin:6px 0}
+.rrBtns{display:flex;gap:8px}.rrBtns button{flex:1;padding:12px;font-weight:900}
+</style>
+<div class="casinoPanel" id="rrPanel">
+ <h2>🔫 RUSSIAN ROULETTE</h2>
+ <div class="casinoInfo" style="margin:0 0 8px">HIGH STAKES · minimum bet $1,000. Survive pulls to multiply your bet. Cash out any time — or take one pull too many and lose it all.</div>
+ <div id="rrCyl"></div>
+ <div id="rrMsg">PLACE YOUR BET</div>
+ <div id="rrInfo"><span id="rrMult">Multiplier: ×1.00</span><span id="rrNext">Next: –</span></div>
+ <input id="rrBet" class="casinoInput" type="number" min="1000" placeholder="Bet amount (min $1,000)">
+ <label style="display:block;color:#aaa;font-size:12px;margin:4px 0">BULLETS IN THE CYLINDER</label>
+ <select id="rrBullets" class="casinoInput"><option value="1">1 bullet · up to ×5.7 (5 pulls)</option><option value="2">2 bullets · up to ×14.2 (4 pulls)</option><option value="3">3 bullets · up to ×19 (3 pulls)</option><option value="4">4 bullets · up to ×14.2 (2 pulls)</option><option value="5">5 bullets · ×5.7 (1 pull)</option></select>
+ <div class="rrBtns" style="margin-top:8px"><button id="rrStart" onclick="rrStart()">LOAD &amp; SPIN</button><button id="rrPull" onclick="rrPull()" disabled>PULL TRIGGER</button><button id="rrCash" onclick="rrCash()" disabled>CASH OUT</button></div>
+ <div class="casinoInfo">Payouts are 95% of the true odds. If you leave mid-round the bet is lost.</div>
+</div>
+<script>
+/* ===== RUSSIAN ROULETTE (high stakes) ===== */
+(function(){
+"use strict";
+const MIN=1000,$=id=>document.getElementById(id);
+let g=null;
+const fmt=n=>Math.floor(n).toLocaleString("en-US");
+function prob(b,n){let p=1;for(let i=0;i<n;i++)p*=(6-b-i)/(6-i);return p;}
+const mult=(b,n)=>n<=0?1:.95/prob(b,n);
+function draw(){const c=$("rrCyl");c.textContent="";for(let i=0;i<6;i++){const d=document.createElement("div");d.className="rrCh";d.textContent=g&&i<g.pulls?(g.order[i]?"💥":"💨"):"●";if(g&&i<g.pulls)d.classList.add(g.order[i]?"boom":"safe");c.appendChild(d);}}
+function ui(msg){
+ if(msg)$("rrMsg").textContent=msg;
+ const on=!!(g&&g.live);
+ $("rrStart").disabled=on;$("rrBullets").disabled=on;$("rrBet").disabled=on;
+ $("rrPull").disabled=!on;$("rrCash").disabled=!(on&&g.pulls>0);
+ if(g){$("rrMult").textContent="Cash out value: $"+fmt(g.bet*mult(g.b,g.pulls))+" (×"+mult(g.b,g.pulls).toFixed(2)+")";
+  $("rrNext").textContent=on&&g.pulls<6-g.b?"Next ×"+mult(g.b,g.pulls+1).toFixed(2)+" · death "+Math.round((1-(prob(g.b,g.pulls+1)/prob(g.b,g.pulls)))*100)+"%":"–";}
+ draw();}
+window.rrStart=function(){
+ const bet=Math.floor(Number($("rrBet").value)),b=Number($("rrBullets").value);
+ if(!Number.isFinite(bet)||bet<MIN){showToast("Enter a valid bet! Minimum is $"+fmt(MIN)+".");return;}
+ if(bet>gabeClicks){showToast("You don't have enough money!");return;}
+ snapshotCasinoBalance();gabeClicks-=bet;updateClicker();saveGame();
+ const order=[1,1,1,1,1,1].map((_,i)=>i<b?1:0);
+ for(let i=5;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+ g={bet,b,order,pulls:0,live:true};
+ ui("🔄 The cylinder spins… the gun is loaded with "+b+" bullet"+(b>1?"s":"")+".");};
+window.rrPull=function(){
+ if(!g||!g.live)return;
+ const hit=g.order[g.pulls];g.pulls++;
+ if(hit){g.live=false;gameResult("roulette",g.bet,0,false);
+  ui("💥 BANG. You lost $"+fmt(g.bet)+".");}
+ else if(g.pulls>=6-g.b){rrCash(true);return;}
+ else ui("💨 Click. Safe. Keep going or cash out?");
+ updateClicker();saveGame();};
+window.rrCash=function(auto){
+ if(!g||!g.live||g.pulls<1)return;
+ const win=Math.floor(g.bet*mult(g.b,g.pulls));g.live=false;gabeClicks+=win;
+ gameResult("roulette",g.bet,win,mult(g.b,g.pulls)>=10);recordCasinoWin();
+ ui((auto===true?"🏆 Every chamber survived! ":"💰 You walked away with ")+"$"+fmt(win)+" (×"+mult(g.b,g.pulls).toFixed(2)+").");
+ updateClicker();saveGame();};
+/* add the panel to the casino carousel */
+const wrap=document.querySelector("#casinoScreen .casinoPanels"),panel=$("rrPanel");
+if(wrap&&panel){wrap.appendChild(panel);
+ const tabs=$("casinoNavTabs"),nav=$("casinoNav");
+ if(tabs&&nav){const t=document.createElement("button");t.className="casinoNavTab";t.textContent="🔫 RUSSIAN ROULETTE";
+  t.onclick=function(){wrap.querySelectorAll(".casinoPanel").forEach(p=>p.classList.remove("activeGame"));panel.classList.add("activeGame");tabs.querySelectorAll(".casinoNavTab").forEach(b=>b.classList.toggle("active",b===t));};
+  tabs.appendChild(t);
+  nav.addEventListener("click",function(e){if(!e.target.closest("button")||e.target.closest("button")===t)return;panel.classList.remove("activeGame");t.classList.remove("active");});}}
+draw();ui();
+})();
+</script>
 </body>
 </html>
 
