@@ -4173,7 +4173,7 @@ alt=""
 
 <header class="siteTopbar" aria-label="Site header">
   <a class="siteBrand" href="#home" onclick="showSiteHome();return false">GABE <b>CLICKER</b> <small>V2.0</small></a>
-  <div class="topbarRight"><div class="balancePill"><strong id="siteBalance">$0</strong><small id="siteIncome">+$0.00/s</small></div><button class="topbarButton" onclick="toggleChangeLog(true)">Changelog<span id="siteChangeNew">!</span></button><button class="topbarButton" onclick="openSiteSettings()">Settings</button></div>
+  <div class="topbarRight"><div id="cloudSaveBadge" role="status" aria-live="polite" data-state="busy">Cloud save: connecting…</div><div class="balancePill"><strong id="siteBalance">$0</strong><small id="siteIncome">+$0.00/s</small></div><button class="topbarButton" onclick="toggleChangeLog(true)">Changelog<span id="siteChangeNew">!</span></button><button class="topbarButton" onclick="openSiteSettings()">Settings</button></div>
 </header>
 <nav class="siteNav" aria-label="Site sections">
   <button class="siteNavLink active" data-page="home" onclick="showSiteHome()">HOME</button><button class="siteNavLink" data-page="clicker" onclick="openClicker()">CLICKER</button><button class="siteNavLink" data-page="casino" onclick="openCasinoFromMenu()">DUEL CASINO</button><button class="siteNavLink" data-page="stocks" onclick="openStockMarket()">STOCKS</button><button class="siteNavLink" data-page="cases" onclick="openCases()">CASES</button><button class="siteNavLink" data-page="empire" onclick="openEmpire()">EMPIRE</button><button class="siteNavLink" data-page="achievements" onclick="openAchievements()">ACHIEVEMENTS</button><button class="siteNavLink" data-page="statistics" onclick="openStats()">STATISTICS</button><button class="siteNavLink" data-page="chat" onclick="document.getElementById('pubChat').scrollIntoView({behavior:'smooth',block:'end'})">CHAT</button><button class="siteNavLink" data-page="leaderboard" onclick="openLeaderboard()">LEADERBOARD</button>
@@ -16712,12 +16712,11 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
 
 
 <style id="cloudSaveStyles">
-#cloudSaveBadge{position:fixed;left:8px;bottom:40px;z-index:25001;box-sizing:border-box;width:204px;padding:7px 8px;border:1px solid #394455;border-radius:9px;background:#111720ef;color:#aab6c8;font:700 10px/1.35 system-ui,sans-serif;box-shadow:0 5px 18px #0005;text-align:center;overflow-wrap:anywhere}
+#cloudSaveBadge{position:static;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:68px;padding:7px 8px;border:1px solid #394455;border-radius:9px;background:#111720;color:#aab6c8;font:750 10px/1 system-ui,sans-serif;white-space:nowrap}
 #cloudSaveBadge[data-state="ready"]{border-color:#28755b;color:#8de5ba}#cloudSaveBadge[data-state="error"]{border-color:#9d4b4b;color:#ffaaaa}
-@media(max-width:900px){#cloudSaveBadge{left:7px;bottom:10px;width:62px;height:34px;padding:5px 2px;font-size:0;overflow:hidden;white-space:nowrap}#cloudSaveBadge::before{content:"…";font:900 17px/1 system-ui,sans-serif}#cloudSaveBadge[data-state="ready"]::before{content:"☁✓";font-size:14px}#cloudSaveBadge[data-state="error"]::before{content:"☁!";font-size:14px}}
-@media(max-width:620px){#cloudSaveBadge{left:4px;width:54px;height:32px}}
+@media(max-width:620px){#cloudSaveBadge{min-width:30px;width:30px;height:30px;padding:0;font-size:0}#cloudSaveBadge::before{content:"…";font:900 16px/1 system-ui,sans-serif}#cloudSaveBadge[data-state="ready"]::before{content:"☁✓";font-size:12px}#cloudSaveBadge[data-state="error"]::before{content:"☁!";font-size:12px}}
 </style>
-<div id="cloudSaveBadge" role="status" aria-live="polite" data-state="busy">Cloud save: connecting…</div>
+
 <script id="playerCloudSave">
 /* Per-player cloud saves. Configure this with the Firebase Web API key. */
 (function(){
@@ -16730,7 +16729,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
  const keepLocal=/^(gabePlayerId|gabePlayerName|pubChatName|gabePlayerAnonymousAuthV1|gabeFirebaseWebApiKey|gabeCloudSave|.*ChangeLog.*|.*Changelog.*|.*Audio.*|.*audio.*|.*Sound.*|.*sound.*|.*Volume.*|.*volume.*|.*Graphics.*|.*graphics.*|.*Quality.*|.*quality.*|.*ReducedMotion.*|.*Theme.*|.*theme.*|.*Background.*|.*background.*|.*Collapsed.*|.*collapsed.*|.*admin.*)$/i;
  const excludeCloud=/^(gabePlayerId|gabePlayerName|pubChatName|gabePlayerAnonymousAuthV1|gabeFirebaseWebApiKey|.*ChangeLog.*|.*Changelog.*|.*Audio.*|.*audio.*|.*Sound.*|.*sound.*|.*Volume.*|.*volume.*|.*Graphics.*|.*graphics.*|.*Quality.*|.*quality.*|.*ReducedMotion.*|.*Theme.*|.*theme.*|.*Background.*|.*background.*|.*Collapsed.*|.*collapsed.*|.*admin.*)$/i;
  let token="",refreshToken="",uid="",expiresAt=0,epoch=1,ready=false,busy=false,lastPayload="",lastWrite=0;
- function status(text,state){if(badge){badge.textContent="Cloud save: "+text;badge.title="Cloud save: "+text;badge.dataset.state=state||"busy"}}
+ function status(text,state){if(badge){const s=state||"busy";badge.textContent=s==="ready"?"☁ Saved":s==="error"?"☁ Save issue":"☁ Syncing";badge.title="Cloud save: "+text;badge.setAttribute("aria-label","Cloud save: "+text);badge.dataset.state=s}}
  function safeLocalGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
  function safeLocalSet(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
  function saveKeys(){const keys=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&!excludeCloud.test(k)&&!/[.#$\[\]\/]/.test(k))keys.push(k)}}catch(e){}return keys}
