@@ -16796,16 +16796,20 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
 /* Heuristic protection against synthetic and sustained machine-timed click spam. */
 (function(){
   "use strict";
-  const WINDOW=32, MIN_RATE=8.5, MAX_VARIATION=0.10;
+  const WINDOW=20, MIN_RATE=7.5, MAX_VARIATION=0.35;
   let clicks=[], nextId=0, lastNotice=0;
   function detect(){
     if(clicks.length<WINDOW)return;
     const sample=clicks.slice(-WINDOW), intervals=[];
     for(let i=1;i<sample.length;i++)intervals.push(sample[i].time-sample[i-1].time);
+    const elapsed=sample[sample.length-1].time-sample[0].time;
     const mean=intervals.reduce((a,b)=>a+b,0)/intervals.length;
-    if(mean<=0||(intervals.length*1000/(sample[sample.length-1].time-sample[0].time))<MIN_RATE)return;
+    if(mean<=0||elapsed<=0)return;
+    const rate=intervals.length*1000/elapsed;
     const variance=intervals.reduce((a,b)=>a+Math.pow(b-mean,2),0)/intervals.length;
-    if(Math.sqrt(variance)/mean>MAX_VARIATION)return;
+    const variation=Math.sqrt(variance)/mean;
+    /* Catch steady 7.5+ CPS, plus very fast bursts even with randomized timing. */
+    if(rate<MIN_RATE||(variation>MAX_VARIATION&&!(rate>=12&&elapsed<=2500)))return;
     const fresh=sample.filter(c=>!c.charged), amount=fresh.reduce((a,c)=>a+c.amount,0);
     if(amount<=0)return;
     fresh.forEach(c=>c.charged=true);
