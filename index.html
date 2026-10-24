@@ -16817,7 +16817,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
 /* Heuristic protection against synthetic and sustained machine-timed click spam. */
 (function(){
   "use strict";
-  const WINDOW=20, MIN_RATE=7.5, MAX_VARIATION=0.35;
+  const WINDOW=10, MIN_RATE=7.5, MAX_VARIATION=0.35;
   let clicks=[], nextId=0, lastNotice=0;
   function detect(){
     if(clicks.length<WINDOW)return;
