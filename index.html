@@ -13814,8 +13814,8 @@ function closeWebsite() {
   title, and changes array. These updates are shown to players in the
   CHANGELOG button on the site.
 */
-const CHANGELOG_ENTRIES = [ 
-    {
+const CHANGELOG_ENTRIES = [
+     {
     date: "2026-10-27",
     title: "Firebase",
     changes: [
@@ -16846,7 +16846,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
 (function(){
  "use strict";
  const API_KEY="AIzaSyBk7v0rBaJ_ziCX_9tJLjTOBUXgN5um9oE";
- const AUTH_KEY="gabePlayerAnonymousAuthV1";
+ const AUTH_KEY="gabePlayerAnonymousAuthV1_gabeClickerDefault";
  let token="",refreshToken="",uid="",expiresAt=0,authPromise=null;
  function localGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
  function localSet(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
