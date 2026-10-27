@@ -4190,7 +4190,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V8.9</div>
+  <div class="sidebarFoot">V9.0</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -13814,13 +13814,19 @@ function closeWebsite() {
   title, and changes array. These updates are shown to players in the
   CHANGELOG button on the site.
 */
-const CHANGELOG_ENTRIES = [
-     {
+const CHANGELOG_ENTRIES = [ 
+    {
+    date: "2026-10-27",
+    title: "Firebase",
+    changes: [
+      "NEW FIREBASE. i dont know what broke and what stats were reset but i hope it works."
+    ]
+  },
+      {
     date: "2026-10-27",
     title: "HYPERGAMY",
     changes: [
-      "New Hypergamy minigame in the minigames hub."
-    ]
+      "Added hypergamy to the minigames hub."
   },
   {
     date: "2026-10-25",
@@ -14201,7 +14207,7 @@ updateChangeLogBadge();
        (no trailing slash). While this is empty, the chat only
        works on YOUR browser (localStorage) - nobody else sees it.
        --------------------------------------------------------- */
-    const FIREBASE_URL = "https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app";
+    const FIREBASE_URL = "https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app";
 
     const POLL_MS = 15000;
     const MAX_NAME = 20;
@@ -14766,7 +14772,7 @@ updateChangeLogBadge();
     "use strict";
 
     /* Same database as the public chat. Leave in sync with FIREBASE_URL there. */
-    const FIREBASE_URL = "https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app";
+    const FIREBASE_URL = "https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app";
 
     const base = FIREBASE_URL.replace(/\/+$/, "");
 
@@ -15608,7 +15614,7 @@ updateChangeLogBadge();
    ========================================================= */
 (function(){
 'use strict';
-const DB='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
+const DB='https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app';
 const SUITS=['♠','♥','♦','♣'], RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 const RVAL=Object.fromEntries(RANKS.map((r,i)=>[r,i+2]));
 let mode='bots', deck=[], hand=null, roomCode='', room=null, polling=null, busy=false;
@@ -15865,7 +15871,7 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
   const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','gabeResearch','gabeDailyQuests','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
   const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
   const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch','gabeResearch','gabeDailyQuests']);
-  const saveTransferDb='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
+  const saveTransferDb='https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app';
   function createShortSaveCode(){const bytes=new Uint8Array(6);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
   window.exportSaveCode=async function(){
     const status=document.getElementById('saveTransferStatus'),out=document.getElementById('saveExport');
@@ -16063,7 +16069,7 @@ html.lowGraphics #caseReelTrack{transition:transform 5.2s cubic-bezier(.35,.1,.4
 </style>
 <script>
 (function(){
-  const DB="https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app";
+  const DB="https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app";
   const s={apiKey:"",token:"",refreshToken:"",expiresAt:0,uid:"",publishAt:0,appliedAt:0,busy:false};
   const undoStorageKey="gabeAdminMarketUndoV1";
   let undoStack=[];
@@ -16783,11 +16789,11 @@ draw();ui();
 @media(max-width:620px){#hypergamyGameScreen{inset:64px 0 0 62px;padding:8px}#hypergamyGameScreen .hg-head{padding-bottom:8px}#hypergamyGameScreen .hg-head strong{font-size:13px}#hypergamyGameScreen .hg-head span{display:none}#hypergamyGameScreen .hg-actions button,#hypergamyGameScreen .hg-actions a{padding:7px 8px;font-size:10px}}
 </style>
 <section id="hypergamyGameScreen" class="gScreen" aria-label="Hypergamy life simulation"><header class="hg-head"><div><strong>HYPERGAMY</strong><span>LIFE SIM · OPEN WORLD</span></div><div class="hg-actions"><button type="button" onclick="openMinigameHub()">← Minigames</button><a href="https://github.com/neekeri117/hypergamy-game/blob/main/index.html" target="_blank" rel="noopener noreferrer">View source on GitHub ↗</a></div></header><iframe id="hypergamyFrame" title="Hypergamy life simulation" src="about:blank" loading="lazy" allow="fullscreen; autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
-<script id="hypergamyMinigameNavigation">(function(){var frame=document.getElementById("hypergamyFrame");function loadHypergamy(){if(!frame||frame.dataset.loaded||frame.dataset.loading)return;frame.dataset.loading="true";fetch("https://raw.githubusercontent.com/neekeri117/hypergamy-game/main/index.html",{cache:"no-cache"}).then(function(response){if(!response.ok)throw new Error("HTTP "+response.status);return response.text()}).then(function(source){var base="<base href=\"https://raw.githubusercontent.com/neekeri117/hypergamy-game/main/\">";if(!/<head\b[^>]*>/i.test(source))throw new Error("The game page has no HTML head.");source=source.replace(/<head(\b[^>]*)>/i,"<head$1>"+base);var blobUrl=URL.createObjectURL(new Blob([source],{type:"text/html"}));frame.dataset.loaded="true";frame.dataset.loading="";frame.dataset.blobUrl=blobUrl;frame.src=blobUrl}).catch(function(){frame.dataset.loading="";frame.srcdoc="<!doctype html><html><head><meta charset=\"utf-8\"><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#101610;color:#eef2e9;font:15px system-ui;text-align:center}a{color:#c5f36b}</style></head><body><p>Could not load Hypergamy from GitHub. Check your internet connection and <a href=\"https://github.com/neekeri117/hypergamy-game/blob/main/index.html\" target=\"_blank\" rel=\"noopener\">open the source page</a>.</p></body></html>"})}window.openHypergamyGame=function(){["clickerScreen","casinoScreen","stockMarketScreen","casesScreen","empireScreen","siteHome","socialScreen","galaxyScreen","toaletGameScreen"].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display="none"});document.querySelectorAll(".gScreen").forEach(function(e){e.style.display="none"});var screen=document.getElementById("hypergamyGameScreen");if(screen)screen.style.display="flex";document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(function(b){b.classList.toggle("active",b.dataset.page==="minigames")});loadHypergamy()};window.addEventListener("pagehide",function(){if(frame&&frame.dataset.blobUrl)URL.revokeObjectURL(frame.dataset.blobUrl)})})();</script>
+<script id="hypergamyMinigameNavigation">(function(){var frame=document.getElementById("hypergamyFrame");function loadHypergamy(){if(!frame||frame.dataset.loaded||frame.dataset.loading)return;frame.dataset.loading="true";fetch("https://raw.githubusercontent.com/neekeri117/hypergamy-game/main/index.html",{cache:"no-cache"}).then(function(response){if(!response.ok)throw new Error("HTTP "+response.status);return response.text()}).then(function(source){var base="<base href=\"https://raw.githubusercontent.com/neekeri117/hypergamy-game/main/\">";if(!/<head\b[^>]*>/i.test(source))throw new Error("The game page has no HTML head.");source=source.replace(/<head(\b[^>]*)>/i,"<head$1>"+base);var blobUrl=URL.createObjectURL(new Blob([source],{type:"text/html"}));frame.dataset.loaded="true";frame.dataset.loading="";frame.dataset.blobUrl=blobUrl;frame.src=blobUrl}).catch(function(){frame.dataset.loading="";frame.srcdoc="<!doctype html><html><head><meta charset=\"utf-8\"><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#101610;color:#eef2e9;font:15px system-ui;text-align:center}a{color:#c5f36b}</style></head><body><p>Could not load Hypergamy from GitHub. Check your internet connection and <a href=\"https://github.com/neekeri117/hypergamy-game/blob/main/index.html\" target=\"_blank\" rel=\"noopener\">open the source page</a>.</p></body></html>"})}window.openHypergamyGame=function(){["clickerScreen","casinoScreen","stockMarketScreen","casesScreen","empireScreen","siteHome","socialScreen","galaxyScreen","toaletGameScreen"].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display="none"});document.querySelectorAll(".gScreen").forEach(function(e){e.style.display="none"});var screen=document.getElementById("hypergamyGameScreen");if(screen)screen.style.display="flex";document.querySelectorAll(".siteNavLink,.siteSideLink").forEach(function(b){b.classList.toggle("active",b.dataset.page==="minigames")});loadHypergamy()};var gameScreen=document.getElementById("hypergamyGameScreen");function stopHypergamyMusic(){try{var audio=frame&&frame.contentDocument&&frame.contentDocument.getElementById("bg-music");if(audio)audio.pause()}catch(e){}}if(gameScreen&&window.MutationObserver)new MutationObserver(function(){if(gameScreen.style.display==="none")stopHypergamyMusic()}).observe(gameScreen,{attributes:true,attributeFilter:["style"]});document.addEventListener("visibilitychange",function(){if(document.hidden)stopHypergamyMusic()});window.addEventListener("pagehide",function(){stopHypergamyMusic();if(frame&&frame.dataset.blobUrl)URL.revokeObjectURL(frame.dataset.blobUrl)})})();</script>
 <script id="minigameHubRouletteAndWipe">
 (function(){
 'use strict';
-const db='https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app';
+const db='https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app';
 const baseId=(()=>{try{return localStorage.getItem('gabePlayerId')||'guest'+Math.random().toString(36).slice(2,10)}catch(e){return 'guest'+Math.random().toString(36).slice(2,10)}})();
 const playerId=String(baseId).replace(/[.#$\/\[\]]/g,'_').slice(0,48);
 let roomCode='',room=null,pollTimer=0,requestBusy=false;
@@ -16839,7 +16845,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
 /* Local saves stay in this browser. Firebase auth is requested lazily only for shared world play and manual save-code transfers. */
 (function(){
  "use strict";
- const API_KEY="AIzaSyDdgL7BiR3PJmYPbyGTKJalkI4hwUYb8fY";
+ const API_KEY="AIzaSyBk7v0rBaJ_ziCX_9tJLjTOBUXgN5um9oE";
  const AUTH_KEY="gabePlayerAnonymousAuthV1";
  let token="",refreshToken="",uid="",expiresAt=0,authPromise=null;
  function localGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -17054,7 +17060,7 @@ window.addEventListener('beforeunload',()=>clearInterval(pollTimer));
 <script id="worldConquestGame">
 (function(){
  "use strict";
- const DB="https://gaben-chat-default-rtdb.europe-west1.firebasedatabase.app";
+ const DB="https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app";
  /* Change this name (e.g. "season2") to start a brand-new world without deleting anything in Firebase. */
  const WORLD="main";
  const seasonNow=()=>{const W=window.GABE_WIPE||{at:0,count:0};return Date.now()>=W.at?(Number(W.count)||0):0};
