@@ -4190,7 +4190,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V8.8</div>
+  <div class="sidebarFoot">V8.9</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -13815,6 +13815,13 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+     {
+    date: "2026-10-27",
+    title: "HYPERGAMY",
+    changes: [
+      "New game in the minigames hub.",
+    ]
+  },
   {
     date: "2026-10-25",
     title: "Full Save Wipe",
@@ -16758,8 +16765,22 @@ draw();ui();
 @media(max-width:900px){.sidebarGroupLabel{display:none}.sidebarUtilityLinks{margin:0}.sidebarMinigames{margin-top:auto!important}.saveWipeEvent{right:10px;bottom:10px;align-items:flex-start;flex-direction:column;gap:5px;width:min(355px,calc(100vw - 84px));padding:9px 11px}.saveWipeCountdown{font-size:16px}}
 @media(max-width:620px){.saveWipeEvent{padding:12px}.saveWipeEvent strong{font-size:14px}.saveWipeEvent span{font-size:10px}.rrMultiPanel{padding:14px}.rrMultiButton{flex:1}}
 </style>
-<section id="minigameHubScreen" class="gScreen" style="display:none"><div class="mgHubWrap"><header class="mgHubHeader"><small>QUICK BREAKS · FRIENDLY COMPETITION</small><h1>MINIGAMES</h1><p>Pick a game and jump straight in.</p></header><div class="mgHubGrid"><button class="mgHubCard" onclick="openWorldConquest()"><span>🌍</span><strong>World Conquest</strong><p>Claim a country, grow your economy, and fight for the map.</p><small>REAL-TIME STRATEGY</small></button><button class="mgHubCard" onclick="openToaletGame()"><span>🎮</span><strong>Toalet Peli</strong><p>Take a quick break with the classic mini-game.</p><small>ARCADE</small></button></div></div></section>
+<section id="minigameHubScreen" class="gScreen" style="display:none"><div class="mgHubWrap"><header class="mgHubHeader"><small>QUICK BREAKS · FRIENDLY COMPETITION</small><h1>MINIGAMES</h1><p>Pick a game and jump straight in.</p></header><div class="mgHubGrid"><button class="mgHubCard" onclick="openWorldConquest()"><span>🌍</span><strong>World Conquest</strong><p>Claim a country, grow your economy, and fight for the map.</p><small>REAL-TIME STRATEGY</small></button><button class="mgHubCard" onclick="openToaletGame()"><span>🎮</span><strong>Toalet Peli</strong><p>Take a quick break with the classic mini-game.</p><small>ARCADE</small></button><button class="mgHubCard mgHypergamy" onclick="openHypergamyGame()"><span>🌆</span><strong>Hypergamy</strong><p>Explore the city, build your life, and meet people at your own pace.</p><small>LIFE SIM · OPEN WORLD</small></button></div></div></section>
 
+<style id="hypergamyMinigameStyles">
+#hypergamyGameScreen{position:fixed;z-index:520;inset:74px 0 0 220px;display:none;flex-direction:column;padding:14px;background:radial-gradient(ellipse at 50% 0,#172642,#090d16 68%);color:#edf3ff;font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+#hypergamyGameScreen .hg-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 2px 12px}
+#hypergamyGameScreen .hg-head strong{font-size:16px;letter-spacing:.08em}
+#hypergamyGameScreen .hg-head span{margin-left:10px;color:#8d9bb2;font-size:10px;letter-spacing:.12em}
+#hypergamyGameScreen .hg-actions{display:flex;align-items:center;gap:8px}
+#hypergamyGameScreen .hg-actions button,#hypergamyGameScreen .hg-actions a{padding:8px 11px;border:1px solid #35425b;border-radius:8px;background:#151c29;color:#dce8f7;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer}
+#hypergamyGameScreen .hg-actions a{border-color:#32747e;color:#7ce9e4}
+#hypergamyGameScreen iframe{flex:1;width:100%;min-height:0;border:1px solid #2b3b55;border-radius:14px;background:#101610}
+@media(max-width:900px){#hypergamyGameScreen{left:76px;padding:12px}}
+@media(max-width:620px){#hypergamyGameScreen{inset:64px 0 0 62px;padding:8px}#hypergamyGameScreen .hg-head{padding-bottom:8px}#hypergamyGameScreen .hg-head strong{font-size:13px}#hypergamyGameScreen .hg-head span{display:none}#hypergamyGameScreen .hg-actions button,#hypergamyGameScreen .hg-actions a{padding:7px 8px;font-size:10px}}
+</style>
+<section id="hypergamyGameScreen" class="gScreen" aria-label="Hypergamy life simulation"><header class="hg-head"><div><strong>HYPERGAMY</strong><span>LIFE SIM · OPEN WORLD</span></div><div class="hg-actions"><button type="button" onclick="openMinigameHub()">← Minigames</button><a href="hypergamy-game/index.html" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a></div></header><iframe title="Hypergamy life simulation" src="hypergamy-game/index.html" loading="lazy" allow="fullscreen; autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
+<script id="hypergamyMinigameNavigation">window.openHypergamyGame=function(){['clickerScreen','casinoScreen','stockMarketScreen','casesScreen','empireScreen','siteHome','socialScreen','galaxyScreen','toaletGameScreen'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none'});document.querySelectorAll('.gScreen').forEach(function(e){e.style.display='none'});var screen=document.getElementById('hypergamyGameScreen');if(screen)screen.style.display='flex';document.querySelectorAll('.siteNavLink,.siteSideLink').forEach(function(b){b.classList.toggle('active',b.dataset.page==='minigames')})};</script>
 <script id="minigameHubRouletteAndWipe">
 (function(){
 'use strict';
