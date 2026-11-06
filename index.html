@@ -11422,7 +11422,7 @@ updateClicker();
     function boostMgmtCost(l) { return Math.ceil(100000 * Math.pow(3.6, l)); }
     function boostFranCost(l) { return Math.ceil(10000000 * Math.pow(25, l)); }
     const COMP_GROWTH = 1.10;      /* ...and every level costs at least 10% more than the last one */
-    const COMP_TARGET = 2.5;       /* after a purchase, the next level is priced at 250% of the cash you have left */
+    const COMP_TARGET = 2.5;       /* after a purchase, the next level is priced at 150% of the cash you have left */
     function compCost() {
         /* the price is locked in at purchase time, so you must grind up to it */
         return Math.max(
