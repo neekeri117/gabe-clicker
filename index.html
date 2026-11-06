@@ -4190,7 +4190,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V9.2</div>
+  <div class="sidebarFoot">V9.3</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -11404,11 +11404,12 @@ updateClicker();
     function boostMgmtCost(l) { return Math.ceil(100000 * Math.pow(3.6, l)); }
     function boostFranCost(l) { return Math.ceil(10000000 * Math.pow(25, l)); }
     const COMP_GROWTH = 1.10;      /* ...and every level costs at least 10% more than the last one */
+    const COMP_TARGET = 2.5;       /* after a purchase, the next level is priced at 250% of the cash you have left */
     function compCost() {
+        /* the price is locked in at purchase time, so you must grind up to it */
         return Math.max(
             COMP_MIN_COST,
-            Math.floor(gabeClicks * COMP_RATE),
-            Math.ceil((boostState.compLast || 0) * COMP_GROWTH)
+            boostState.compNext || Math.ceil((boostState.compLast || 0) * COMP_GROWTH)
         );
     }
 
@@ -11536,6 +11537,17 @@ updateClicker();
     offState = cleanNumbers(loadJSON("empireOffline"));
     botState = cleanNumbers(loadJSON("empireBot"));
     boostState = cleanNumbers(loadJSON("empireBoost"));
+
+    /* One-time fix: wipe Compound Interest levels bought while it was glitched (near-free infinite levels). */
+    try {
+        if (!localStorage.getItem("empireCompReset1")) {
+            boostState.comp = 0;
+            boostState.compLast = 0;
+            boostState.compNext = 0;
+            localStorage.setItem("empireBoost", JSON.stringify(boostState));
+            localStorage.setItem("empireCompReset1", "1");
+        }
+    } catch (e) {}
 
     function saveEmpire() {
         try {
@@ -12132,7 +12144,7 @@ updateClicker();
 
             o.cost = compCost();
             o.meta = "Level " + lvl + " · ×" + fmt(compMult()) + " all income → ×" + fmt(compMult() * (1 + COMP_BONUS)) +
-                ". Infinite levels: costs the bigger of " + Math.round(COMP_RATE * 100) + "% of your cash or " + Math.round((COMP_GROWTH - 1) * 100) + "% more than your last purchase (min " + money(COMP_MIN_COST) + ").";
+                ". Infinite levels: after each purchase the next one is priced at " + Math.round(COMP_TARGET * 100) + "% of the cash you have left, so you have to grind up to it.";
             o.sub = money(o.cost);
             o.active = lvl > 0;
             o.disabled = gabeClicks < COMP_MIN_COST;
@@ -12227,6 +12239,11 @@ updateClicker();
         } else if (id === "comp") {
             boostState.comp = (boostState.comp || 0) + 1;
             boostState.compLast = info.cost;
+            boostState.compNext = Math.max(
+                COMP_MIN_COST,
+                Math.ceil(gabeClicks * COMP_TARGET),
+                Math.ceil(info.cost * COMP_GROWTH)
+            );
         } else if (id === "eff2") {
             boostState.eff = (boostState.eff || 0) + 1;
         } else if (id === "mgmt") {
