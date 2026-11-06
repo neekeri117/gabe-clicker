@@ -4190,7 +4190,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V9.1</div>
+  <div class="sidebarFoot">V9.2</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -4401,6 +4401,14 @@ onclick="openCasino()"
 <h2>
     CLICK SHOP
 </h2>
+
+<div class="shopModes" id="shopModes">
+    <button type="button" class="shopMode active" data-mode="1" onclick="setShopBuyMode('1')">×1</button>
+    <button type="button" class="shopMode" data-mode="10" onclick="setShopBuyMode('10')">×10</button>
+    <button type="button" class="shopMode" data-mode="100" onclick="setShopBuyMode('100')">×100</button>
+    <button type="button" class="shopMode" data-mode="1000" onclick="setShopBuyMode('1000')">×1000</button>
+    <button type="button" class="shopMode" data-mode="max" onclick="setShopBuyMode('max')">MAX</button>
+</div>
 
 <div class="upgrade">
 
@@ -5292,7 +5300,7 @@ onclick="closeCases()"
     $0
 </div>
 <div class="caseBatchControls">
-  <label>OPEN <select id="caseOpenQuantity" aria-label="Cases to open at once" onchange="updateCaseOpenLabels()"><option value="1">1</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="max">MAX (up to 100)</option></select></label>
+  <label>OPEN <select id="caseOpenQuantity" aria-label="Cases to open at once" onchange="updateCaseOpenLabels()"><option value="1">1</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="250">250</option><option value="500">500</option><option value="1000">1,000</option><option value="max">MAX (up to 1,000)</option></select></label>
   <label class="caseSkipLabel"><input id="caseSkipAnimation" type="checkbox"> Skip opening animation</label>
 </div>
 
@@ -6361,14 +6369,41 @@ const upgrades = {
 
 };
 
+let shopBuyMode = "1";
+
+function shopQty(id) {
+
+    const upgrade = upgrades[id];
+
+    if (shopBuyMode === "max") {
+        return Math.max(1, Math.floor(gabeClicks / upgrade.cost));
+    }
+
+    return Math.max(1, parseInt(shopBuyMode, 10) || 1);
+}
+
+function setShopBuyMode(mode) {
+
+    shopBuyMode = mode;
+
+    document.querySelectorAll("#shopModes .shopMode").forEach(function(b) {
+        b.classList.toggle("active", b.getAttribute("data-mode") === mode);
+    });
+
+    updateShopButtons();
+}
+
 function buyUpgrade(id) {
 
     const upgrade =
         upgrades[id];
 
+    const qty = shopQty(id);
+    const total = upgrade.cost * qty;
+
     if (
         gabeClicks <
-        upgrade.cost
+        total
     ) {
 
         alert(
@@ -6379,20 +6414,26 @@ function buyUpgrade(id) {
     }
 
     gabeClicks -=
-        upgrade.cost;
+        total;
 
     clickPower +=
-        upgrade.power;
+        upgrade.power * qty;
 
     updateClicker();
 
     saveGame();
 
-    alert(
+    const msg =
         "UPGRADE BOUGHT!\n\n+$" +
-        upgrade.power +
-        " per click!"
-    );
+        formatNumber(upgrade.power * qty) +
+        " per click!" +
+        (qty > 1 ? " (×" + formatNumber(qty) + ")" : "");
+
+    if (qty > 1 && typeof showToast === "function") {
+        showToast(msg);
+    } else {
+        alert(msg);
+    }
 }
 
 /* =========================================================
@@ -6460,15 +6501,26 @@ function updateShopButtons() {
                 "Button"
             );
 
+        const qty = shopQty(i);
+        const total = upgrades[i].cost * qty;
+        const card = button.closest(".upgrade");
+
+        if (card) {
+            const desc = card.querySelector(".upgradeDescription");
+            const cost = card.querySelector(".upgradeCost");
+            if (desc) { desc.textContent = "+$" + formatNumber(upgrades[i].power * qty) + " per click"; }
+            if (cost) { cost.textContent = "Cost: $" + formatNumber(total); }
+        }
+
         if (
             gabeClicks >=
-            upgrades[i].cost
+            total
         ) {
 
             button.disabled = false;
 
             button.textContent =
-                "BUY";
+                qty > 1 ? "BUY ×" + formatNumber(qty) : "BUY";
 
         } else {
 
@@ -10864,7 +10916,7 @@ function selectedCaseQuantity(price) {
     const pick = document.getElementById("caseOpenQuantity");
     const value = pick ? pick.value : "1";
     const affordable = Math.max(0, Math.floor(gabeClicks / price));
-    if (value === "max") return Math.min(100, affordable);
+    if (value === "max") return Math.min(1000, affordable);
     return Math.min(Math.max(1, Number(value) || 1), affordable);
 }
 
@@ -10930,6 +10982,7 @@ function openCase(caseKey) {
             }
 
             if (caseHistory.length > 12) caseHistory.length = 12;
+            if (caseInventory.length > 5000) caseInventory.length = 5000;
             try { localStorage.setItem("caseInventory", JSON.stringify(caseInventory)); } catch (e) {}
             const tier = CASE_TIERS[drop.tier], profit = totalPayout - def.price * quantity;
             result.textContent = quantity > 1 ? quantity + " CASES OPENED" : (drop.itemName || tier.name);
@@ -11350,7 +11403,14 @@ updateClicker();
     function boostEffCost(l)  { return Math.ceil(50000 * Math.pow(3.6, l)); }
     function boostMgmtCost(l) { return Math.ceil(100000 * Math.pow(3.6, l)); }
     function boostFranCost(l) { return Math.ceil(10000000 * Math.pow(25, l)); }
-    function compCost()       { return Math.max(COMP_MIN_COST, Math.floor(gabeClicks * COMP_RATE)); }
+    const COMP_GROWTH = 1.10;      /* ...and every level costs at least 10% more than the last one */
+    function compCost() {
+        return Math.max(
+            COMP_MIN_COST,
+            Math.floor(gabeClicks * COMP_RATE),
+            Math.ceil((boostState.compLast || 0) * COMP_GROWTH)
+        );
+    }
 
     function bizBoost()  { return 1 + 0.25 * (boostState.eff || 0); }
     function rentBoost() { return 1 + 0.25 * (boostState.mgmt || 0); }
@@ -12072,7 +12132,7 @@ updateClicker();
 
             o.cost = compCost();
             o.meta = "Level " + lvl + " · ×" + fmt(compMult()) + " all income → ×" + fmt(compMult() * (1 + COMP_BONUS)) +
-                ". Infinite levels: always costs " + Math.round(COMP_RATE * 100) + "% of your cash (min " + money(COMP_MIN_COST) + ").";
+                ". Infinite levels: costs the bigger of " + Math.round(COMP_RATE * 100) + "% of your cash or " + Math.round((COMP_GROWTH - 1) * 100) + "% more than your last purchase (min " + money(COMP_MIN_COST) + ").";
             o.sub = money(o.cost);
             o.active = lvl > 0;
             o.disabled = gabeClicks < COMP_MIN_COST;
@@ -12166,6 +12226,7 @@ updateClicker();
             botState.power = (botState.power || 0) + 1;
         } else if (id === "comp") {
             boostState.comp = (boostState.comp || 0) + 1;
+            boostState.compLast = info.cost;
         } else if (id === "eff2") {
             boostState.eff = (boostState.eff || 0) + 1;
         } else if (id === "mgmt") {
@@ -13930,10 +13991,12 @@ function closeWebsite() {
 const CHANGELOG_ENTRIES = [
       {
     date: "2026-11-6",
-    title: "Small Upgrades",
+    title: "Small QoL Updates",
     changes: [
-      "New upgrades in the UPGRADES tab of Empire. Making money is now easier later on."
-      "Fixed the suffixes stopping at Oc, now theres No, Dc, UDc... and so on."
+      "Added new upgrades in the UPGRADES tab of the empire. Making money is now easier.",
+      "Fixed the suffix bug stopping at Oc, now continues onwards to No, Dc, UDc... and so on",
+      "Added the ability to put ALL IN in all casino games easier.",
+      "Boosted the amounts of cases that can be opened at once."
     ]
   },
      {
@@ -17379,6 +17442,78 @@ const SEA_RANGE=150;
   else if(a==="attack")run(()=>attack(false));else if(a==="attackfrom")run(()=>attack(true));
   else if(a==="offer")run(offerTrade);else if(a==="accept")run(()=>acceptTrade(b.dataset.id));else if(a==="cancel")run(()=>cancelTrade(b.dataset.id))});
  window.addEventListener("beforeunload",()=>{if(timer)clearInterval(timer);if(ticker)clearInterval(ticker)});
+})();
+</script>
+
+<style id="bulkBuyStyles">
+.shopModes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 14px}
+.shopMode{padding:8px 16px;border:1px solid #3a4150;border-radius:9px;background:#171c25;color:#cfd6e2;font-weight:900;cursor:pointer}
+.shopMode:hover{border-color:#a45bd2}
+.shopMode.active{background:linear-gradient(135deg,#602a86,#a340dc);border-color:#c06cff;color:#fff}
+.allInRow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0 10px}
+.allInBtn{padding:8px 16px;border:1px solid #8a6a16;border-radius:9px;background:linear-gradient(135deg,#7a5400,#e0ab00);color:#fff;font-weight:900;letter-spacing:.06em;cursor:pointer}
+.allInBtn.small{background:#202638;border-color:#464c5f;letter-spacing:0}
+.allInBtn:hover{filter:brightness(1.15)}
+</style>
+<script id="allInScript">
+/* ALL IN / ½ / MAX buttons for every casino game's bet box */
+(function () {
+    "use strict";
+
+    const BET_IDS = ["casinoBetAmount", "blackjackBet", "pokerBet", "slotsBet", "plinkoBet", "rrBet"];
+
+    function cash() {
+        try { return Math.max(0, Math.floor(Number(gabeClicks) || 0)); } catch (e) { return 0; }
+    }
+
+    function setBet(input, value) {
+        input.value = String(Math.max(0, Math.floor(value)));
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    function addButtons(id) {
+
+        const input = document.getElementById(id);
+
+        if (!input || input.dataset.allIn) { return; }
+
+        input.dataset.allIn = "1";
+
+        const row = document.createElement("div");
+        row.className = "allInRow";
+
+        function mk(label, cls, fn) {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "allInBtn " + cls;
+            b.textContent = label;
+            b.addEventListener("click", function(e) { e.preventDefault(); fn(); });
+            row.appendChild(b);
+        }
+
+        mk("½", "small", function() { setBet(input, cash() / 2); });
+        mk("2×", "small", function() { setBet(input, Math.min(cash(), (Number(input.value) || 0) * 2)); });
+        mk("💰 ALL IN", "", function() { setBet(input, cash()); });
+
+        input.insertAdjacentElement("afterend", row);
+    }
+
+    function init() { BET_IDS.forEach(addButtons); }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+
+    /* some games build their bet box later: try again shortly */
+    let pending = false;
+    new MutationObserver(function() {
+        if (pending) { return; }
+        pending = true;
+        setTimeout(function() { pending = false; init(); }, 400);
+    }).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 </body>
