@@ -4190,7 +4190,7 @@ alt=""
 <aside class="siteSidebar" aria-label="Game navigation">
   <div class="sidebarIdentity"><img src="iced out gaben.png" alt=""><div><strong>GABE CLICKER</strong><small id="sidebarGreeting">Good evening, Player</small></div></div>
   <div class="sidebarGroupLabel">PLAY</div><div class="sidebarLinks"><button class="siteSideLink active" data-page="clicker" onclick="switchSitePage('clicker')"><span>⌁</span>Clicker</button><button class="siteSideLink" data-page="casino" onclick="switchSitePage('casino')"><span>▦</span>Casino</button><button class="siteSideLink" data-page="cases" onclick="switchSitePage('cases')"><span>⬡</span>Cases</button><button class="siteSideLink" data-page="stocks" onclick="switchSitePage('stocks')"><span>⌁</span>Stocks</button><button class="siteSideLink" data-page="empire" onclick="switchSitePage('empire')"><span>♜</span>Empire</button></div><div class="sidebarGroupLabel sidebarMoreLabel">SOCIAL &amp; PROGRESS</div><div class="sidebarLinks sidebarUtilityLinks"><button class="siteSideLink" data-page="social" onclick="switchSitePage('social')"><span>♧</span>Social<i id="socialUnreadBadge" class="socialUnreadBadge" aria-label="Unread chat message">!</i></button><button class="siteSideLink" data-page="progression" onclick="openProgression()"><span>R</span>Progression</button></div><div class="sidebarMinigames" aria-label="Minigame hub"><div class="sidebarGroupLabel">MINIGAMES</div><button class="siteSideLink" data-page="minigames" onclick="openMinigameHub()"><span>🎮</span>Minigame Hub</button></div>
-  <div class="sidebarFoot">V9.0</div>
+  <div class="sidebarFoot">V9.1</div>
 </aside>
 <main id="siteHome" class="siteHome">
   <section class="homeHero"><div><div class="eyebrow" id="siteGreeting">WELCOME BACK</div><h1>TIME TO <em>MAKE MONEY</em> MOVE</h1><p>Click, gamble, trade, unbox, expand. The empire doesn't build itself.</p></div><div class="netWorthCard"><span>NET WORTH</span><strong id="siteNetWorth">$0</strong></div></section>
@@ -6053,7 +6053,37 @@ function updateClicker() {
    ========================================================= */
 
 /* Like formatNumber, but keeps up to 2 decimals (for per-click amounts). */
+/* Shared big-number suffixes (goes all the way to Vigintillion, then scientific). */
+window.GABE_SUFFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "UDc", "DDc", "TDc", "QaDc", "QiDc", "SxDc", "SpDc", "OcDc", "NoDc", "Vg"];
+
+window.gabeBigFmt = function(n) {
+
+    n = Number(n);
+
+    if (!isFinite(n)) { return n < 0 ? "-∞" : "∞"; }
+
+    if (n < 0) { return "-" + window.gabeBigFmt(-n); }
+
+    const S = window.GABE_SUFFIXES;
+
+    let tier = Math.floor(Math.log10(n) / 3);
+
+    if (tier >= S.length) {
+        const exp = Math.floor(Math.log10(n));
+        return (n / Math.pow(10, exp)).toFixed(2) + "e" + exp;
+    }
+
+    let scaled = n / Math.pow(1000, tier);
+
+    /* 999.96K should become 1.00M, not "1000K" */
+    if (scaled >= 999.5 && tier < S.length - 1) { tier++; scaled /= 1000; }
+
+    return (scaled >= 100 ? scaled.toFixed(0) : scaled >= 10 ? scaled.toFixed(1) : scaled.toFixed(2)) + S[tier];
+};
+
 function formatMoney(number) {
+
+    if (Math.abs(number) >= 1e9) { return window.gabeBigFmt(number); }
 
     return (Math.round(number * 100) / 100).toLocaleString(
         "en-US",
@@ -6062,6 +6092,8 @@ function formatMoney(number) {
 }
 
 function formatNumber(number) {
+
+    if (Math.abs(number) >= 1e9) { return window.gabeBigFmt(number); }
 
     return Math.floor(number).toLocaleString(
         "en-US"
@@ -11307,6 +11339,24 @@ updateClicker();
     const BOT_SPEED_MAX = 20;       /* clicks per second = 1 + 0.5 * level */
     const BOT_POWER_MAX = 15;       /* power = 10% + 10% * level of a normal click */
 
+    /* Empire boosts (income upgrades that keep scaling with the late game) */
+    const BOOST_EFF_MAX = 30;      /* +25% business income per level */
+    const BOOST_MGMT_MAX = 30;     /* +25% rent per level */
+    const BOOST_FRAN_MAX = 12;     /* x1.5 ALL empire income per level */
+    const COMP_RATE = 0.15;        /* Compound Interest costs 15% of your cash... */
+    const COMP_MIN_COST = 100000;  /* ...but never less than this */
+    const COMP_BONUS = 0.02;       /* each level: x1.02 all empire income, forever */
+
+    function boostEffCost(l)  { return Math.ceil(50000 * Math.pow(3.6, l)); }
+    function boostMgmtCost(l) { return Math.ceil(100000 * Math.pow(3.6, l)); }
+    function boostFranCost(l) { return Math.ceil(10000000 * Math.pow(25, l)); }
+    function compCost()       { return Math.max(COMP_MIN_COST, Math.floor(gabeClicks * COMP_RATE)); }
+
+    function bizBoost()  { return 1 + 0.25 * (boostState.eff || 0); }
+    function rentBoost() { return 1 + 0.25 * (boostState.mgmt || 0); }
+    function compMult()  { return Math.min(1e300, Math.pow(1 + COMP_BONUS, boostState.comp || 0)); }
+    function globalBoost() { return Math.min(1e300, Math.pow(1.5, boostState.fran || 0) * compMult()); }
+
     function botSpeedCost(lvl) { return Math.ceil(800 * Math.pow(1.45, lvl)); }
     function botPowerCost(lvl) { return Math.ceil(2000 * Math.pow(1.6, lvl)); }
 
@@ -11393,6 +11443,7 @@ updateClicker();
     let propOwned = {};
     let offState = {};
     let botState = {};
+    let boostState = {};
     let carry = 0;
     let lastTick = Date.now();
     let buyMode = "1";
@@ -11424,6 +11475,7 @@ updateClicker();
     propOwned = cleanNumbers(loadJSON("empireProps"));
     offState = cleanNumbers(loadJSON("empireOffline"));
     botState = cleanNumbers(loadJSON("empireBot"));
+    boostState = cleanNumbers(loadJSON("empireBoost"));
 
     function saveEmpire() {
         try {
@@ -11431,6 +11483,7 @@ updateClicker();
             localStorage.setItem("empireProps", JSON.stringify(propOwned));
             localStorage.setItem("empireOffline", JSON.stringify(offState));
             localStorage.setItem("empireBot", JSON.stringify(botState));
+            localStorage.setItem("empireBoost", JSON.stringify(boostState));
             localStorage.setItem("empireLast", String(Date.now()));
         } catch (e) {}
     }
@@ -11440,6 +11493,7 @@ updateClicker();
         propOwned = {};
         offState = {};
         botState = {};
+        boostState = {};
         carry = 0;
         lastTick = Date.now();
         saveEmpire();
@@ -11467,10 +11521,7 @@ updateClicker();
             return Math.floor(n).toLocaleString("en-US");
         }
 
-        let tier = Math.min(SUFFIXES.length - 1, Math.floor(Math.log10(n) / 3));
-        const scaled = n / Math.pow(1000, tier);
-
-        return (scaled >= 100 ? scaled.toFixed(0) : scaled >= 10 ? scaled.toFixed(1) : scaled.toFixed(2)) + SUFFIXES[tier];
+        return window.gabeBigFmt(n);
     }
 
     function money(n) {
@@ -11515,13 +11566,13 @@ updateClicker();
     function bizBusinessIncome() {
         let sum = 0;
         BIZ.forEach(function(b) { sum += bizIncomeAt(b, level(b)); });
-        return sum * synergy();
+        return sum * synergy() * bizBoost();
     }
 
     function rentIncome() {
         let sum = 0;
         PROPS.forEach(function(p) { sum += owned(p) * p.rent; });
-        return sum;
+        return sum * rentBoost();
     }
 
     /* ---- Gabe Bot ---- */
@@ -11556,7 +11607,7 @@ updateClicker();
     function totalIncome() {
         const empireMult = window.gabeEmpireResearchMultiplier ? window.gabeEmpireResearchMultiplier() : 1;
         const botMult = window.gabeAutomationResearchMultiplier ? window.gabeAutomationResearchMultiplier() : 1;
-        return (bizBusinessIncome() + rentIncome()) * empireMult + botIncome() * botMult;
+        return ((bizBusinessIncome() + rentIncome()) * empireMult + botIncome() * botMult) * globalBoost();
     }
 
     /* used by achievements and Gabe events */
@@ -11945,6 +11996,10 @@ updateClicker();
         { id: "bot",   icon: "🤖", name: "Gabe Bot",           section: "🤖 AUTO CLICKER" },
         { id: "speed", icon: "⚡", name: "Bot Speed" },
         { id: "power", icon: "💪", name: "Bot Power" },
+        { id: "comp",  icon: "♾️", name: "Compound Interest",  section: "💎 EMPIRE BOOSTS" },
+        { id: "eff2",  icon: "📈", name: "Business Efficiency" },
+        { id: "mgmt",  icon: "🧑‍💼", name: "Property Management" },
+        { id: "fran",  icon: "🌐", name: "Franchise Empire" },
         { id: "dur",   icon: "⏳", name: "Offline Duration",   section: "🌙 OFFLINE EARNINGS" },
         { id: "eff",   icon: "📊", name: "Offline Efficiency" }
     ];
@@ -12011,6 +12066,56 @@ updateClicker();
                 o.disabled = !botOwned();
             }
 
+        } else if (id === "comp") {
+
+            const lvl = boostState.comp || 0;
+
+            o.cost = compCost();
+            o.meta = "Level " + lvl + " · ×" + fmt(compMult()) + " all income → ×" + fmt(compMult() * (1 + COMP_BONUS)) +
+                ". Infinite levels: always costs " + Math.round(COMP_RATE * 100) + "% of your cash (min " + money(COMP_MIN_COST) + ").";
+            o.sub = money(o.cost);
+            o.active = lvl > 0;
+            o.disabled = gabeClicks < COMP_MIN_COST;
+
+        } else if (id === "eff2") {
+
+            const lvl = boostState.eff || 0;
+
+            if (lvl >= BOOST_EFF_MAX) {
+                maxed("Level " + lvl + "/" + BOOST_EFF_MAX + " · +" + (lvl * 25) + "% business income");
+            } else {
+                o.cost = boostEffCost(lvl);
+                o.meta = "Level " + lvl + "/" + BOOST_EFF_MAX + " · +" + (lvl * 25) + "% → +" + ((lvl + 1) * 25) + "% business income";
+                o.sub = money(o.cost);
+                o.active = lvl > 0;
+            }
+
+        } else if (id === "mgmt") {
+
+            const lvl = boostState.mgmt || 0;
+
+            if (lvl >= BOOST_MGMT_MAX) {
+                maxed("Level " + lvl + "/" + BOOST_MGMT_MAX + " · +" + (lvl * 25) + "% rent income");
+            } else {
+                o.cost = boostMgmtCost(lvl);
+                o.meta = "Level " + lvl + "/" + BOOST_MGMT_MAX + " · +" + (lvl * 25) + "% → +" + ((lvl + 1) * 25) + "% rent income";
+                o.sub = money(o.cost);
+                o.active = lvl > 0;
+            }
+
+        } else if (id === "fran") {
+
+            const lvl = boostState.fran || 0;
+
+            if (lvl >= BOOST_FRAN_MAX) {
+                maxed("Level " + lvl + "/" + BOOST_FRAN_MAX + " · ×" + fmt(Math.pow(1.5, lvl)) + " all empire income");
+            } else {
+                o.cost = boostFranCost(lvl);
+                o.meta = "Level " + lvl + "/" + BOOST_FRAN_MAX + " · ×" + fmt(Math.pow(1.5, lvl)) + " → ×" + fmt(Math.pow(1.5, lvl + 1)) + " all empire income";
+                o.sub = money(o.cost);
+                o.active = lvl > 0;
+            }
+
         } else if (id === "dur") {
 
             const lvl = Math.min(OFFLINE_HOURS.length - 1, offState.dur || 0);
@@ -12059,6 +12164,14 @@ updateClicker();
             botState.speed = (botState.speed || 0) + 1;
         } else if (id === "power") {
             botState.power = (botState.power || 0) + 1;
+        } else if (id === "comp") {
+            boostState.comp = (boostState.comp || 0) + 1;
+        } else if (id === "eff2") {
+            boostState.eff = (boostState.eff || 0) + 1;
+        } else if (id === "mgmt") {
+            boostState.mgmt = (boostState.mgmt || 0) + 1;
+        } else if (id === "fran") {
+            boostState.fran = (boostState.fran || 0) + 1;
         } else if (id === "dur") {
             offState.dur = (offState.dur || 0) + 1;
         } else {
@@ -13815,6 +13928,14 @@ function closeWebsite() {
   CHANGELOG button on the site.
 */
 const CHANGELOG_ENTRIES = [
+      {
+    date: "2026-11-6",
+    title: "Small Upgrades",
+    changes: [
+      "New upgrades in the UPGRADES tab of Empire. Making money is now easier later on."
+      "Fixed the suffixes stopping at Oc, now theres No, Dc, UDc... and so on."
+    ]
+  },
      {
     date: "2026-10-27",
     title: "Firebase",
@@ -15288,10 +15409,7 @@ updateChangeLogBadge();
 
         if (n < 1e6) { return Math.floor(n).toLocaleString("en-US"); }
 
-        const tier = Math.min(SUFFIXES.length - 1, Math.floor(Math.log10(n) / 3));
-        const scaled = n / Math.pow(1000, tier);
-
-        return (scaled >= 100 ? scaled.toFixed(0) : scaled >= 10 ? scaled.toFixed(1) : scaled.toFixed(2)) + SUFFIXES[tier];
+        return window.gabeBigFmt(n);
     }
 
     let lbTab = "net";
@@ -15869,9 +15987,9 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
   window.setLowGraphics=function(enabled){const on=!!enabled;document.documentElement.classList.toggle('lowGraphics',on);try{localStorage.setItem('gabeLowGraphics',on?'1':'0');}catch(e){}const b=document.getElementById('lowGraphicsButton');if(b){b.textContent='Low graphics: '+(on?'On':'Off');b.setAttribute('aria-pressed',String(on));}};
   window.toggleLowGraphics=function(){window.setLowGraphics(!document.documentElement.classList.contains('lowGraphics'));};
   try{window.setLowGraphics(localStorage.getItem('gabeLowGraphics')==='1');}catch(e){window.setLowGraphics(false);}
-  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireLast','gabeStats','gabeAch','gabeResearch','gabeDailyQuests','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
+  const saveKeys=['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','stockMarketData','stockPortfolio','selectedStock','stockMarketNews','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireBoost','empireLast','gabeStats','gabeAch','gabeResearch','gabeDailyQuests','luckLevel','gabeLeaderboardPlayTime','gabePlayerName','pubChatName'];
   const numericSaveKeys=new Set(['gabeClicks','clickPower','rebirthLevel','vaultLevel','vaultAmount','vaultLastTick','casinoKickUntil','empireLast','luckLevel','gabeLeaderboardPlayTime']);
-  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','gabeStats','gabeAch','gabeResearch','gabeDailyQuests']);
+  const jsonSaveKeys=new Set(['stockMarketData','stockPortfolio','caseInventory','empireBiz','empireProps','empireOffline','empireBot','empireBoost','gabeStats','gabeAch','gabeResearch','gabeDailyQuests']);
   const saveTransferDb='https://gabe-clicker-default-rtdb.europe-west1.firebasedatabase.app';
   function createShortSaveCode(){const bytes=new Uint8Array(6);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
   window.exportSaveCode=async function(){
@@ -15962,9 +16080,9 @@ input,select,textarea,.casinoInput,.pokerField{border:1px solid #344660!importan
   function dashboardTick(){
     let money=0;try{if(typeof gabeClicks==='number')money=gabeClicks;}catch(e){}
     const cash='$'+(Number(money)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    const balance=Number(money)||0,absBalance=Math.abs(balance),suffixes=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
+    const balance=Number(money)||0,absBalance=Math.abs(balance),suffixes=window.GABE_SUFFIXES||['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
     let compactCash=cash;
-    if(absBalance>=1e6){let tier=Math.floor(Math.log10(absBalance)/3),scaled=absBalance/Math.pow(1000,tier);if(scaled>=999.5&&tier<suffixes.length-1){tier++;scaled/=1000;}compactCash=tier>=suffixes.length?cash:(balance<0?'-$':'$')+scaled.toFixed(scaled>=100?0:scaled>=10?1:2)+suffixes[tier];}
+    if(absBalance>=1e6){let tier=Math.floor(Math.log10(absBalance)/3),scaled=absBalance/Math.pow(1000,tier);if(scaled>=999.5&&tier<suffixes.length-1){tier++;scaled/=1000;}compactCash=tier>=suffixes.length?(balance<0?'-$':'$')+window.gabeBigFmt(absBalance):(balance<0?'-$':'$')+scaled.toFixed(scaled>=100?0:scaled>=10?1:2)+suffixes[tier];}
     const headerBalance=document.getElementById('siteBalance');if(headerBalance){headerBalance.textContent=window.matchMedia('(max-width:620px)').matches?compactCash:cash;headerBalance.title=cash;}
     const netWorth=document.getElementById('siteNetWorth');if(netWorth)netWorth.textContent=cash;
     let incomeRate=0;try{if(typeof window.getEmpireIncome==='function')incomeRate=Number(window.getEmpireIncome())||0;if(typeof window.gabeIncomeMult==='function')incomeRate*=Number(window.gabeIncomeMult())||1;}catch(e){}
